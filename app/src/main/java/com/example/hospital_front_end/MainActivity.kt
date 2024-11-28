@@ -4,13 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.hospital_front_end.ui.screens.LoginView
 import com.example.hospital_front_end.ui.theme.HospitalFrontendTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +21,50 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HospitalFrontendTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AppContent()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun AppContent() {
+    Surface(
+        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Box {
+            MainScreen()
+        }
+    }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    HospitalFrontendTheme {
-        Greeting("Android")
+fun MainScreen() {
+    val nurseList = listOf(
+        "Juan Pérez",
+        "María Gómez",
+        "Luis Fernández",
+        "Ana López",
+        "Carlos Díaz",
+        "Sofía Ramírez",
+        "Diego Herrera",
+        "Paula Ortiz",
+        "Andrés Castro",
+        "Elena Vargas",
+        "Miguel Ángel Rodríguez",
+        "Natalia Morales"
+    )
+
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "login") {
+
+        composable("login") {
+            LoginView(
+                onLoginSuccess = { /* navController.navigate("navegacion")*/ },
+                onBack = { navController.popBackStack() }
+            )
+        }
     }
 }
