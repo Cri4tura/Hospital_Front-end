@@ -9,10 +9,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,25 +29,29 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
 import coil.compose.AsyncImage
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(onLoginSuccess: () -> Unit, onBack: () -> Unit) {
+fun LoginView(onLoginSuccess: () -> Unit) {
     var username by remember { mutableStateOf<String>("") }
     var password by remember { mutableStateOf<String>("") }
     var errorMessage by remember { mutableStateOf<String>("") }
+    var passwordVisible by remember { mutableStateOf(false) }
 
     // Comment when DB connection done
-    username = "admin"
+    username = "admin@gmail.com"
     password = "1234"
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp),
+            .padding(8.dp)
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -52,7 +60,7 @@ fun LoginView(onLoginSuccess: () -> Unit, onBack: () -> Unit) {
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 45.dp, top = 100.dp)
+            modifier = Modifier.padding(bottom = 45.dp, top = 20.dp)
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -68,13 +76,18 @@ fun LoginView(onLoginSuccess: () -> Unit, onBack: () -> Unit) {
             contentScale = ContentScale.FillBounds
         )
 
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         TextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("User", style = MaterialTheme.typography.bodyLarge) },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Email", style = MaterialTheme.typography.bodyLarge) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(15.dp),
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -84,36 +97,80 @@ fun LoginView(onLoginSuccess: () -> Unit, onBack: () -> Unit) {
             onValueChange = { password = it },
             label = { Text("Password", style = MaterialTheme.typography.bodyLarge) },
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            shape = RoundedCornerShape(15.dp),
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    val icon = if (passwordVisible) R.drawable.visibility_off else R.drawable.visibility
+                    val description = if (passwordVisible) "Hide password" else "Show password"
+                    Image(
+                        modifier = Modifier
+                            .width(35.dp)
+                            .height(35.dp),
+                        painter = painterResource(id = icon),
+                        contentDescription = description
+                    )
+                }
+            }
         )
 
         if (errorMessage == "Incorrect credentials") {
             Text(
                 text = errorMessage,
                 color = Color.Red,
-                modifier = Modifier.padding(bottom = 8.dp)
             )
         } else {
             Text(
                 text = errorMessage,
                 color = Color.Green,
-                modifier = Modifier.padding(bottom = 8.dp)
             )
         }
 
         Button(
             onClick = {
-                if (username == "admin" && password == "1234") {
-                    errorMessage = "Log In successful"
-                    //onLoginSuccess()
+                if (username == "admin@gmail.com" && password == "1234") {
+                    //errorMessage = "Log In successful"
+                    onLoginSuccess()
                 } else {
                     errorMessage = "Incorrect credentials"
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Log In", style = MaterialTheme.typography.bodyLarge)
+            Text(
+                "Log In",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+            )
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            "Don't have an account yet?",
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(horizontal = 10.dp),
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Button(
+            onClick = { /* TODO: Go to RegisterView */ },
+            modifier = Modifier
+                .fillMaxWidth()
+
+        ) {
+            Text(
+                "Sign In",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
