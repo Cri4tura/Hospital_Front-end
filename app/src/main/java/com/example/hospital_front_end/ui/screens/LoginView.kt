@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
@@ -92,8 +93,7 @@ fun LoginView(onLoginSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextField(
-            value = password,
+        TextField(value = password,
             onValueChange = { password = it },
             label = { Text("Password", style = MaterialTheme.typography.bodyLarge) },
             modifier = Modifier.fillMaxWidth(),
@@ -105,7 +105,8 @@ fun LoginView(onLoginSuccess: () -> Unit) {
             ),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    val icon = if (passwordVisible) R.drawable.visibility_off else R.drawable.visibility
+                    val icon =
+                        if (passwordVisible) R.drawable.visibility_off else R.drawable.visibility
                     val description = if (passwordVisible) "Hide password" else "Show password"
                     Image(
                         modifier = Modifier
@@ -115,8 +116,7 @@ fun LoginView(onLoginSuccess: () -> Unit) {
                         contentDescription = description
                     )
                 }
-            }
-        )
+            })
 
         if (errorMessage == "Incorrect credentials") {
             Text(
@@ -138,8 +138,7 @@ fun LoginView(onLoginSuccess: () -> Unit) {
                 } else {
                     errorMessage = "Incorrect credentials"
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
+            }, modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 "Log In",
@@ -158,9 +157,7 @@ fun LoginView(onLoginSuccess: () -> Unit) {
             style = MaterialTheme.typography.bodyMedium
         )
         Button(
-            onClick = { /* TODO: Go to RegisterView */ },
-            modifier = Modifier
-                .fillMaxWidth()
+            onClick = { /* TODO: Go to RegisterView */ }, modifier = Modifier.fillMaxWidth()
 
         ) {
             Text(
@@ -182,4 +179,10 @@ fun AnimatedGif() {
         contentDescription = "GIF animado",
         modifier = Modifier.size(250.dp)
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginViewPreview() {
+    LoginView(onLoginSuccess = { /* Simulated Login Success */ })
 }

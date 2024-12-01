@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
 
@@ -62,4 +63,24 @@ fun NurseList(nurseList: List<String>, onBack: () -> Unit) {
             Text("Back")
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MyNurseListPreview() {
+    val nurseList = listOf(
+        "Juan Pérez",
+        "María Gómez",
+        "Luis Fernández",
+        "Ana López",
+        "Carlos Díaz",
+        "Sofía Ramírez",
+        "Diego Herrera",
+        "Paula Ortiz",
+        "Andrés Castro",
+        "Elena Vargas",
+        "Miguel Ángel Rodríguez",
+        "Natalia Morales"
+    )
+    NurseList(nurseList = nurseList, onBack = { /* Simulated Back Action */ })
 }

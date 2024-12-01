@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
@@ -26,8 +27,7 @@ import com.example.hospital_front_end.R
 
 @Composable
 fun NavigationView(
-    onConfirmLogout: () -> Unit,
-    onViewList: () -> Unit
+    onConfirmLogout: () -> Unit, onViewList: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -59,8 +59,8 @@ fun NavigationView(
         Button(
             onClick = onViewList,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .padding(8.dp)
+                .fillMaxWidth(),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.list),
@@ -140,20 +140,17 @@ fun NavigationView(
                 .fillMaxWidth()
                 .padding(8.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = lerp(Color.Red, Color.Black, 0.35f),
-                contentColor = Color.White
+                containerColor = lerp(Color.Red, Color.Black, 0.35f), contentColor = Color.White
             )
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Image(
                     painter = painterResource(id = R.drawable.log_out),
                     contentDescription = "Icon",
-                    modifier = Modifier
-                        .size(35.dp)
+                    modifier = Modifier.size(35.dp)
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -169,14 +166,11 @@ fun NavigationView(
             }
         }
         if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
+            AlertDialog(onDismissRequest = { showDialog = false },
                 title = { Text("Confirmation") },
                 text = { Text("Are you sure you want to log out??") },
                 dismissButton = {
-                    TextButton(
-                        onClick = { showDialog = false }
-                    ) {
+                    TextButton(onClick = { showDialog = false }) {
                         Text(
                             "No",
 
@@ -185,20 +179,26 @@ fun NavigationView(
                     }
                 },
                 confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showDialog = false
-                            onConfirmLogout()
-                        }
-                    ) {
-                        Text("Yes",
+                    TextButton(onClick = {
+                        showDialog = false
+                        onConfirmLogout()
+                    }) {
+                        Text(
+                            "Yes",
                             modifier = Modifier.padding(horizontal = 40.dp),
-                            color = lerp(Color.Red, Color.Black, 0.35f))
+                            color = lerp(Color.Red, Color.Black, 0.35f)
+                        )
                     }
-                }
-            )
+                })
         }
 
         Spacer(modifier = Modifier.height(32.dp))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NavigationViewPreview() {
+    NavigationView(onConfirmLogout = { /* Simulated Confirm Logout */ },
+        onViewList = { /* Simulated View List */ })
 }
