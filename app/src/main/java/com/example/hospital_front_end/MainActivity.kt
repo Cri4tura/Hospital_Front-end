@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.hospital_front_end.ui.screens.LoginView
 import com.example.hospital_front_end.ui.screens.NavigationView
+import com.example.hospital_front_end.ui.screens.NurseList
 import com.example.hospital_front_end.ui.theme.HospitalFrontendTheme
 
 class MainActivity : ComponentActivity() {
@@ -62,13 +63,19 @@ fun MainScreen() {
     NavHost(navController = navController, startDestination = "login") {
         composable("navegacion") {
             NavigationView(
-                onConfirmLogout = {navController.navigate("login")}
+                onConfirmLogout = {navController.navigate("login")},
+                onViewList = { navController.navigate("list") },
             )
         }
         composable("login") {
             LoginView(
                 onLoginSuccess = { navController.navigate("navegacion") }
             )
+        }
+        composable("list") {
+            NurseList(
+                nurseList = nurseList,
+                onBack = { navController.popBackStack() })
         }
     }
 }
