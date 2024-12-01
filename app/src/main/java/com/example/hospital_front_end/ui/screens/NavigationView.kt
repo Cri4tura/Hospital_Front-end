@@ -26,7 +26,8 @@ import com.example.hospital_front_end.R
 
 @Composable
 fun NavigationView(
-    onConfirmLogout: () -> Unit
+    onConfirmLogout: () -> Unit,
+    onViewList: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -56,10 +57,10 @@ fun NavigationView(
         Spacer(modifier = Modifier.weight(0.5f))
 
         Button(
-            onClick = { /* TODO: Acción del botón */ },
+            onClick = onViewList,
             modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.list),
