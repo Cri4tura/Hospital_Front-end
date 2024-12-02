@@ -12,9 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.hospital_front_end.ui.screens.LoginView
-import com.example.hospital_front_end.ui.screens.NavigationView
-import com.example.hospital_front_end.ui.screens.NurseList
+import com.example.hospital_front_end.ui.screens.*
 import com.example.hospital_front_end.ui.theme.HospitalFrontendTheme
 
 class MainActivity : ComponentActivity() {
@@ -55,7 +53,8 @@ fun MainScreen() {
         "Andrés Castro",
         "Elena Vargas",
         "Miguel Ángel Rodríguez",
-        "Natalia Morales"
+        "Natalia Morales",
+        "Natalia Gil"
     )
 
     val navController = rememberNavController()
@@ -65,6 +64,7 @@ fun MainScreen() {
             NavigationView(
                 onConfirmLogout = { navController.navigate("login") },
                 onViewList = { navController.navigate("list") },
+                onFindByName = { navController.navigate("findByName") }
             )
         }
         composable("login") {
@@ -72,6 +72,9 @@ fun MainScreen() {
         }
         composable("list") {
             NurseList(nurseList = nurseList, onBack = { navController.popBackStack() })
+        }
+        composable("findByName") {
+            FindByNameView(nurseList = nurseList, onBack = { navController.popBackStack() })
         }
     }
 }
