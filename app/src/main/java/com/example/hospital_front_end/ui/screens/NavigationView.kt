@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
 
-
 @Composable
 fun NavigationView(
     onConfirmLogout: () -> Unit, onViewList: () -> Unit, onFindByName: () -> Unit
@@ -194,5 +193,15 @@ fun NavigationView(
 
         Spacer(modifier = Modifier.height(32.dp))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NavigationViewPreview() {
+    NavigationView(
+        onConfirmLogout = { /* Simulated Confirm Logout */ },
+        onViewList = { /* Simulated View List */ },
+        onFindByName = TODO()
+    )
 }
 
