@@ -24,10 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
 
-
 @Composable
 fun NavigationView(
-    onConfirmLogout: () -> Unit, onViewList: () -> Unit
+    onConfirmLogout: () -> Unit, onViewList: () -> Unit, onFindByName: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -87,7 +86,7 @@ fun NavigationView(
         }
 
         Button(
-            onClick = { /* TODO: Acción del botón */ },
+            onClick = onFindByName,
             modifier = Modifier
                 .padding(8.dp)
                 .fillMaxWidth(),
@@ -199,6 +198,9 @@ fun NavigationView(
 @Preview(showBackground = true)
 @Composable
 fun NavigationViewPreview() {
-    NavigationView(onConfirmLogout = { /* Simulated Confirm Logout */ },
-        onViewList = { /* Simulated View List */ })
+    NavigationView(
+        onConfirmLogout = { /* Simulated Confirm Logout */ },
+        onViewList = { /* Simulated View List */ },
+        onFindByName = TODO()
+    )
 }
