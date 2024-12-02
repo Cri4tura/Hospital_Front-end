@@ -63,19 +63,15 @@ fun MainScreen() {
     NavHost(navController = navController, startDestination = "login") {
         composable("navegacion") {
             NavigationView(
-                onConfirmLogout = {navController.navigate("login")},
+                onConfirmLogout = { navController.navigate("login") },
                 onViewList = { navController.navigate("list") },
             )
         }
         composable("login") {
-            LoginView(
-                onLoginSuccess = { navController.navigate("navegacion") }
-            )
+            LoginView(onLoginSuccess = { navController.navigate("navegacion") })
         }
         composable("list") {
-            NurseList(
-                nurseList = nurseList,
-                onBack = { navController.popBackStack() })
+            NurseList(nurseList = nurseList, onBack = { navController.popBackStack() })
         }
     }
 }
