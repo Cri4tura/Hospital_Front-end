@@ -1,4 +1,4 @@
-package com.example.hospital_front_end.ui.screens
+package com.example.hospital_front_end.ui.screens.nurseInfo
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

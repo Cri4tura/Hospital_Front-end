@@ -1,4 +1,4 @@
-package com.example.hospital_front_end.ui.screens
+package com.example.hospital_front_end.ui.screens.nurseInfo
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.hospital_front_end.R
 
@@ -79,3 +80,22 @@ fun FindByNameView(nurseList: List<String>, onBack: () -> Unit) {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun FindByNameViewPreview() {
+    val nurseList = listOf(
+        "Juan Pérez",
+        "María Gómez",
+        "Luis Fernández",
+        "Ana López",
+        "Carlos Díaz",
+        "Sofía Ramírez",
+        "Diego Herrera",
+        "Paula Ortiz",
+        "Andrés Castro",
+        "Elena Vargas",
+        "Miguel Ángel Rodríguez",
+        "Natalia Morales"
+    )
+    FindByNameView(nurseList = nurseList, onBack = { /* Simulated Back Action */ })
+}

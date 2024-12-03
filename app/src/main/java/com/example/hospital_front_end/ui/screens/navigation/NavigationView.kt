@@ -1,4 +1,4 @@
-package com.example.hospital_front_end.ui.screens
+package com.example.hospital_front_end.ui.screens.navigation
 
 import androidx.compose.foundation.Image
 import androidx.compose.ui.graphics.Color
@@ -201,6 +201,6 @@ fun NavigationViewPreview() {
     NavigationView(
         onConfirmLogout = { /* Simulated Confirm Logout */ },
         onViewList = { /* Simulated View List */ },
-        onFindByName = TODO()
+        onFindByName = { /* Simulated Find By Name */ }
     )
 }

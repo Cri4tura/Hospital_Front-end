@@ -1,4 +1,4 @@
-package com.example.hospital_front_end.ui.screens
+package com.example.hospital_front_end.ui.screens.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -34,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
-import coil.compose.AsyncImage
+import com.example.hospital_front_end.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,8 +44,8 @@ fun LoginView(onLoginSuccess: () -> Unit) {
     var passwordVisible by remember { mutableStateOf(false) }
 
     // Comment when DB connection done
-    username = "admin@gmail.com"
-    password = "1234"
+    username = Constants.USER
+    password = Constants.PASS
 
     Column(
         modifier = Modifier
@@ -132,7 +131,7 @@ fun LoginView(onLoginSuccess: () -> Unit) {
 
         Button(
             onClick = {
-                if (username == "admin@gmail.com" && password == "1234") {
+                if (username == Constants.USER && password == Constants.PASS) {
                     //errorMessage = "Log In successful"
                     onLoginSuccess()
                 } else {
@@ -171,15 +170,6 @@ fun LoginView(onLoginSuccess: () -> Unit) {
     }
 }
 
-
-@Composable
-fun AnimatedGif() {
-    AsyncImage(
-        model = R.drawable.logo,
-        contentDescription = "GIF animado",
-        modifier = Modifier.size(250.dp)
-    )
-}
 
 @Preview(showBackground = true)
 @Composable

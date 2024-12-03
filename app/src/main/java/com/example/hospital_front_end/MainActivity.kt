@@ -12,7 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.hospital_front_end.ui.screens.*
+import com.example.hospital_front_end.ui.screens.login.LoginView
+import com.example.hospital_front_end.ui.screens.navigation.NavigationView
+import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
+import com.example.hospital_front_end.ui.screens.nurseInfo.NurseList
 import com.example.hospital_front_end.ui.theme.HospitalFrontendTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,20 +24,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HospitalFrontendTheme {
-                AppContent()
+                Surface(
+                    modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Box {
+                        MainScreen()
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun AppContent() {
-    Surface(
-        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Box {
-            MainScreen()
         }
     }
 }
