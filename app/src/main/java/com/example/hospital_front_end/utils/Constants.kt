@@ -1,6 +1,14 @@
-package com.example.hospital_front_end.utils;
+package com.example.hospital_front_end.utils
 
-public class Constants {
-    public static final String USER = "admin@gmail.com";
-    public static final String PASS = "1234";
+object Constants {
+
+    object Routes {
+        const val LOGIN = "login"
+        const val HOME = "home"
+        const val GET_ALL_NURSES = "getAllNurses"
+        const val FIND_BY_NAME = "findByName"
+    }
+
+    const val USER = "admin@gmail.com"
+    const val PASS = "1234"
 }

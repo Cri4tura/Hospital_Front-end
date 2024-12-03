@@ -1,4 +1,4 @@
-package com.example.hospital_front_end.ui.screens.navigation
+package com.example.hospital_front_end.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.ui.graphics.Color
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
 
 @Composable
-fun NavigationView(
+fun HomeView(
     onConfirmLogout: () -> Unit, onViewList: () -> Unit, onFindByName: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -197,8 +197,8 @@ fun NavigationView(
 
 @Preview(showBackground = true)
 @Composable
-fun NavigationViewPreview() {
-    NavigationView(
+fun HomeViewPreview() {
+    HomeView(
         onConfirmLogout = { /* Simulated Confirm Logout */ },
         onViewList = { /* Simulated View List */ },
         onFindByName = { /* Simulated Find By Name */ }
