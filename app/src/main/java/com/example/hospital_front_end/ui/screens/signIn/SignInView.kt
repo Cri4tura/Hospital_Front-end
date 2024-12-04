@@ -54,7 +54,6 @@ fun SignInView(
 
     var confirmPassword by remember { mutableStateOf<String>("") }
     var password by remember { mutableStateOf<String>("") }
-    var errorMessage by remember { mutableStateOf<String>("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
 
@@ -108,8 +107,7 @@ fun SignInView(
             singleLine = true
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = age,
+        OutlinedTextField(value = age,
             onValueChange = { age = it },
             label = { Text("Edad", style = MaterialTheme.typography.bodyLarge) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -122,8 +120,7 @@ fun SignInView(
             singleLine = true
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = email,
+        OutlinedTextField(value = email,
             onValueChange = { email = it },
             label = { Text("Email", style = MaterialTheme.typography.bodyLarge) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -136,8 +133,7 @@ fun SignInView(
             singleLine = true
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = registrationDate,
+        OutlinedTextField(value = registrationDate,
             onValueChange = { registrationDate = it },
             label = {
                 Text(
@@ -206,27 +202,7 @@ fun SignInView(
                         contentDescription = description
                     )
                 }
-            }
-        )
-
-        if (name.isNotEmpty() && lastName.isNotEmpty() && age.isNotEmpty() && email.isNotEmpty() && registrationDate.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
-            if (password == confirmPassword) {
-                Text(
-                    text = errorMessage,
-                    color = Color.Green,
-                )
-            } else {
-                Text(
-                    text = errorMessage,
-                    color = Color.Red,
-                )
-            }
-        } else {
-            Text(
-                text = errorMessage,
-                color = Color.Red,
-            )
-        }
+            })
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -235,7 +211,8 @@ fun SignInView(
 
                 if (name.isNotEmpty() && lastName.isNotEmpty() && age.isNotEmpty() && email.isNotEmpty() && registrationDate.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
                     if (password == confirmPassword) {
-                        Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT)
+                            .show()
 
                         onRegister(
                             name, lastName, age.toInt(), email, registrationDate
