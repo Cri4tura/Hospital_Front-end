@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.hospital_front_end.model.nurse.Nurse
 import com.example.hospital_front_end.ui.screens.home.HomeView
 import com.example.hospital_front_end.ui.screens.login.LoginView
 import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
@@ -11,7 +12,7 @@ import com.example.hospital_front_end.ui.screens.nurseInfo.NurseList
 import com.example.hospital_front_end.utils.Constants
 
 @Composable
-fun Navigation(navController: NavHostController, nurseList: List<String>) {
+fun Navigation(navController: NavHostController, nurseList: ArrayList<Nurse>) {
 
     NavHost(navController = navController, startDestination = Constants.Routes.LOGIN) {
         composable(Constants.Routes.HOME) {

@@ -13,11 +13,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.hospital_front_end.R
+import com.example.hospital_front_end.model.nurse.Nurse
+import java.util.Date
 
 @Composable
-fun FindByNameView(nurseList: List<String>, onBack: () -> Unit) {
+fun FindByNameView(nurseList: ArrayList<Nurse>, onBack: () -> Unit) {
     var searchList by remember { mutableStateOf("") }
-    var searchResults by remember { mutableStateOf(listOf<String>()) }
+    var searchResults by remember { mutableStateOf(listOf<Nurse>()) }
 
     Column(
         modifier = Modifier
@@ -27,7 +29,9 @@ fun FindByNameView(nurseList: List<String>, onBack: () -> Unit) {
         Text(
             "Find nurse by name",
             style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally)
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .align(Alignment.CenterHorizontally)
         )
 
         Spacer(modifier = Modifier.height(28.dp))
@@ -46,7 +50,10 @@ fun FindByNameView(nurseList: List<String>, onBack: () -> Unit) {
             value = searchList,
             onValueChange = { query ->
                 searchList = query
-                searchResults = nurseList.filter { it.contains(query, ignoreCase = true) }
+                searchResults = nurseList.filter { nurse ->
+                    nurse.getName().contains(query, ignoreCase = true) || nurse.getLastName()
+                        .contains(query, ignoreCase = true)
+                }
             },
 
             label = { Text("Insert nurse name", style = MaterialTheme.typography.bodyLarge) },
@@ -63,7 +70,7 @@ fun FindByNameView(nurseList: List<String>, onBack: () -> Unit) {
             )
             searchResults.forEach { nurse ->
                 Text(
-                    text = nurse,
+                    text = nurse.getName(),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
@@ -83,19 +90,17 @@ fun FindByNameView(nurseList: List<String>, onBack: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun FindByNameViewPreview() {
-    val nurseList = listOf(
-        "Juan Pérez",
-        "María Gómez",
-        "Luis Fernández",
-        "Ana López",
-        "Carlos Díaz",
-        "Sofía Ramírez",
-        "Diego Herrera",
-        "Paula Ortiz",
-        "Andrés Castro",
-        "Elena Vargas",
-        "Miguel Ángel Rodríguez",
-        "Natalia Morales"
+    val nurseList = arrayListOf(
+        Nurse(1, "Juan", "Pérez", 30, "juan.perez@example.com", Date()),
+        Nurse(2, "María", "Gómez", 28, "maria.gomez@example.com", Date()),
+        Nurse(3, "Luis", "Fernández", 35, "luis.fernandez@example.com", Date()),
+        Nurse(4, "Ana", "López", 40, "ana.lopez@example.com", Date()),
+        Nurse(5, "Carlos", "Díaz", 29, "carlos.diaz@example.com", Date()),
+        Nurse(6, "Sofía", "Ramírez", 32, "sofia.ramirez@example.com", Date()),
+        Nurse(7, "Diego", "Herrera", 27, "diego.herrera@example.com", Date()),
+        Nurse(8, "Paula", "Ortiz", 33, "paula.ortiz@example.com", Date()),
+        Nurse(9, "Andrés", "Castro", 31, "andres.castro@example.com", Date()),
+        Nurse(10, "Elena", "Vargas", 25, "elena.vargas@example.com", Date())
     )
     FindByNameView(nurseList = nurseList, onBack = { /* Simulated Back Action */ })
 }
