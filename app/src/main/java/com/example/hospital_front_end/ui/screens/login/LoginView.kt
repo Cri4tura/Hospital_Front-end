@@ -37,7 +37,7 @@ import com.example.hospital_front_end.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(onLoginSuccess: () -> Unit) {
+fun LoginView(onLoginSuccess: () -> Unit, goToRegister: () -> Unit) {
     var username by remember { mutableStateOf<String>("") }
     var password by remember { mutableStateOf<String>("") }
     var errorMessage by remember { mutableStateOf<String>("") }
@@ -78,8 +78,7 @@ fun LoginView(onLoginSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        TextField(
-            value = username,
+        TextField(value = username,
             onValueChange = { username = it },
             label = { Text("Email", style = MaterialTheme.typography.bodyLarge) },
             modifier = Modifier.fillMaxWidth(),
@@ -156,7 +155,7 @@ fun LoginView(onLoginSuccess: () -> Unit) {
             style = MaterialTheme.typography.bodyMedium
         )
         Button(
-            onClick = { /* TODO: Go to RegisterView */ }, modifier = Modifier.fillMaxWidth()
+            onClick = { goToRegister() }, modifier = Modifier.fillMaxWidth()
 
         ) {
             Text(
@@ -174,5 +173,8 @@ fun LoginView(onLoginSuccess: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun LoginViewPreview() {
-    LoginView(onLoginSuccess = { /* Simulated Login Success */ })
+    LoginView(
+        onLoginSuccess = { /* Simulated Login Success */ },
+        goToRegister = { /* Simulated Go to Register */ }
+    )
 }

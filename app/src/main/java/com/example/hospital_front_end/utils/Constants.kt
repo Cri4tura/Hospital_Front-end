@@ -4,6 +4,7 @@ object Constants {
 
     object Routes {
         const val LOGIN = "login"
+        const val SIGN_IN = "signIn"
         const val HOME = "home"
         const val GET_ALL_NURSES = "getAllNurses"
         const val FIND_BY_NAME = "findByName"

@@ -34,7 +34,7 @@ fun HomeView(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
-            .padding(top = 40.dp),
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -42,7 +42,7 @@ fun HomeView(
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 45.dp, top = 20.dp)
         )
         Spacer(modifier = Modifier.padding(16.dp))
         Image(
