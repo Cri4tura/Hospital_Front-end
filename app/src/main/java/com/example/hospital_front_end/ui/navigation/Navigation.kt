@@ -8,6 +8,7 @@ import com.example.hospital_front_end.ui.screens.home.HomeView
 import com.example.hospital_front_end.ui.screens.login.LoginView
 import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
 import com.example.hospital_front_end.ui.screens.nurseInfo.NurseList
+import com.example.hospital_front_end.ui.screens.signIn.SignInView
 import com.example.hospital_front_end.utils.Constants
 
 @Composable
@@ -22,13 +23,29 @@ fun Navigation(navController: NavHostController, nurseList: List<String>) {
             )
         }
         composable(Constants.Routes.LOGIN) {
-            LoginView(onLoginSuccess = { navController.navigate(Constants.Routes.HOME) })
+            LoginView(
+                onLoginSuccess = { navController.navigate(Constants.Routes.HOME) },
+                goToRegister = { navController.navigate(Constants.Routes.SIGN_IN) }
+            )
+        }
+        composable(Constants.Routes.SIGN_IN) {
+            SignInView(
+                onRegister = { name, lastName, age, email, registrationDate ->
+                    navController.navigate(Constants.Routes.HOME)
+                }
+            )
         }
         composable(Constants.Routes.GET_ALL_NURSES) {
-            NurseList(nurseList = nurseList, onBack = { navController.popBackStack() })
+            NurseList(
+                nurseList = nurseList,
+                onBack = { navController.popBackStack() }
+            )
         }
         composable(Constants.Routes.FIND_BY_NAME) {
-            FindByNameView(nurseList = nurseList, onBack = { navController.popBackStack() })
+            FindByNameView(
+                nurseList = nurseList,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
