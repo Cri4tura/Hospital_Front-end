@@ -1,7 +1,6 @@
 package com.example.hospital_front_end.ui.screens.nurseInfo
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -11,9 +10,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,102 +25,101 @@ import java.util.Date
 
 @Composable
 fun NurseList(nurseList: ArrayList<Nurse>, onBack: () -> Unit) {
+
     Column(
         modifier = Modifier
-            .padding(16.dp)
-            .padding(top = 40.dp)
-            .fillMaxSize()
+            .padding(8.dp)
+            .padding(top = 60.dp)
+            .fillMaxSize(),
     ) {
-        Text(
-            "List of Nurse",
-            style = MaterialTheme.typography.headlineLarge,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+        Button(
+            onClick = { onBack() }, colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent
+            ), modifier = Modifier.align(Alignment.End)
 
-        Spacer(modifier = Modifier.height(28.dp))
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.close),
+                contentDescription = "Back",
+                modifier = Modifier.size(32.dp)
+            )
+        }
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Image(
+                painter = painterResource(id = R.drawable.list),
+                contentDescription = "Icon",
+                modifier = Modifier.size(45.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                "List of Nurse",
+                style = MaterialTheme.typography.headlineLarge,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+        }
 
-        Image(
-            painter = painterResource(id = R.drawable.lista),
-            contentDescription = "Icon",
-            modifier = Modifier
-                .size(200.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         LazyColumn(
-            contentPadding = PaddingValues(bottom = 8.dp)
+            contentPadding = PaddingValues(bottom = 8.dp),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             items(nurseList) { nurse ->
-
-                Row {
+                Row(
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.user),
                         contentDescription = "Icon",
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(80.dp)
                             .align(Alignment.CenterVertically)
                     )
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(start = 25.dp)
+                            .align(Alignment.CenterVertically)
                     ) {
-                        Row(
-
-                        ) {
+                        Row {
                             Text(
                                 text = nurse.getName(),
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = nurse.getLastName(),
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
                             )
                         }
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Email: ${nurse.getEmail()}",
-                            style = MaterialTheme.typography.bodyMedium
+                            text = nurse.getEmail(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Cyan,
+                            fontSize = 14.sp
                         )
+
+                        /*
                         Text(
                             text = "Edad: ${nurse.getAge()}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Text(
-                            text = "Fecha: ${nurse.getRegisterDate()}",
+                            text = "Fecha: ${nurse.getRegisterFormatDate()}",
                             style = MaterialTheme.typography.bodyMedium
                         )
+
+                         */
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
-
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Button(
-                        onClick = onBack,
-                    ) {
-                        Text("Back")
-                    }
-                }
-            }
-
-
         }
-
-
     }
 }
 

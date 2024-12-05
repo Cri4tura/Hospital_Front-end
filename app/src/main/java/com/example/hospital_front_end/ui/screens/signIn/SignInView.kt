@@ -1,7 +1,11 @@
 package com.example.hospital_front_end.ui.screens.signIn
 
+import android.app.DatePickerDialog
+import android.widget.DatePicker
+import androidx.compose.ui.unit.dp
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +16,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,15 +42,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInView(
-    onRegister: (name: String, lastName: String, age: Int, email: String, registrationDate: String) -> Unit
+    onRegister: (name: String, lastName: String, birdthDay: String, email: String) -> Unit,
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -50,11 +62,28 @@ fun SignInView(
     var lastName by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var registrationDate by remember { mutableStateOf("") }
 
     var confirmPassword by remember { mutableStateOf<String>("") }
     var password by remember { mutableStateOf<String>("") }
     var passwordVisible by remember { mutableStateOf(false) }
+
+    var selectedDate by remember { mutableStateOf("") }
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+    val calendar = Calendar.getInstance()
+
+    val onDateClick = {
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                selectedDate = dateFormat.format(calendar.time)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
 
 
     Column(
@@ -64,14 +93,24 @@ fun SignInView(
             .padding(top = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Button(
+            onClick = { onBack() }, colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent
+            ), modifier = Modifier.align(Alignment.End)
+
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.close),
+                contentDescription = "Back",
+                modifier = Modifier.size(32.dp)
+            )
+        }
         Text(
             "New Account",
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 20.dp)
         )
-
         Image(
             painter = painterResource(id = R.drawable.id_card),
             contentDescription = "Icon",
@@ -79,7 +118,6 @@ fun SignInView(
                 .size(200.dp)
                 .padding(bottom = 8.dp)
         )
-
         Spacer(modifier = Modifier.weight(0.5f))
         OutlinedTextField(
             value = name,
@@ -90,7 +128,7 @@ fun SignInView(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
-            label = { Text("Nombre", style = MaterialTheme.typography.bodyLarge) },
+            label = { Text("Name", style = MaterialTheme.typography.bodyLarge) },
             singleLine = true
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -103,27 +141,14 @@ fun SignInView(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
-            label = { Text("Apellidos", style = MaterialTheme.typography.bodyLarge) },
+            label = { Text("Surname", style = MaterialTheme.typography.bodyLarge) },
             singleLine = true
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = age,
-            onValueChange = { age = it },
-            label = { Text("Edad", style = MaterialTheme.typography.bodyLarge) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            shape = RoundedCornerShape(15.dp),
-            modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            singleLine = true
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = email,
+        OutlinedTextField(
+            value = email,
             onValueChange = { email = it },
             label = { Text("Email", style = MaterialTheme.typography.bodyLarge) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(
@@ -133,25 +158,33 @@ fun SignInView(
             singleLine = true
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = registrationDate,
-            onValueChange = { registrationDate = it },
+        OutlinedTextField(value = selectedDate,
+            onValueChange = { selectedDate = it },
             label = {
                 Text(
-                    "Fecha de Registro (YYYY-MM-DD)", style = MaterialTheme.typography.bodyLarge
+                    "Birth Date (DD-MM-YYYY)", style = MaterialTheme.typography.bodyLarge
                 )
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
-            singleLine = true
-        )
-
+            singleLine = true,
+            trailingIcon = {
+                IconButton(onClick = { onDateClick() }) {
+                    Image(
+                        modifier = Modifier
+                            .width(35.dp)
+                            .height(35.dp),
+                        painter = painterResource(R.drawable.calendar),
+                        contentDescription = "Calendar"
+                    )
+                }
+            })
         Spacer(modifier = Modifier.height(8.dp))
-
         OutlinedTextField(value = password,
             onValueChange = { password = it },
             label = { Text("Password", style = MaterialTheme.typography.bodyLarge) },
@@ -176,9 +209,7 @@ fun SignInView(
                     )
                 }
             })
-
         Spacer(modifier = Modifier.height(8.dp))
-
         OutlinedTextField(value = confirmPassword,
             onValueChange = { confirmPassword = it },
             label = { Text("Confirm Password", style = MaterialTheme.typography.bodyLarge) },
@@ -203,19 +234,17 @@ fun SignInView(
                     )
                 }
             })
-
         Spacer(modifier = Modifier.weight(1f))
-
         Button(
             onClick = {
 
-                if (name.isNotEmpty() && lastName.isNotEmpty() && age.isNotEmpty() && email.isNotEmpty() && registrationDate.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
+                if (name.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty() && selectedDate.isNotEmpty()) {
                     if (password == confirmPassword) {
                         Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT)
                             .show()
 
                         onRegister(
-                            name, lastName, age.toInt(), email, registrationDate
+                            name, lastName, selectedDate, email
                         )
                     } else {
                         Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
@@ -226,19 +255,21 @@ fun SignInView(
             }, modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Registrar",
+                text = "Create Account",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
-
         }
-
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun NurseRegisterScreenPreview() {
-    SignInView { name, lastName, age, email, registrationDate -> }
+    SignInView(onRegister = { name, lastName, age, email ->
+        println("Registered: $name $lastName, Age: $age, Email: $email")
+    }, onBack = {
+        println("Back action triggered")
+    })
 }
