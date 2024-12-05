@@ -42,7 +42,7 @@ fun HomeView(
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 45.dp, top = 20.dp)
+            modifier = Modifier.padding(bottom = 20.dp, top = 20.dp)
         )
         Spacer(modifier = Modifier.padding(16.dp))
         Image(

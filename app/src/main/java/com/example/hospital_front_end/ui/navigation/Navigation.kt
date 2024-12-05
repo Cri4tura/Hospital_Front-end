@@ -31,9 +31,10 @@ fun Navigation(navController: NavHostController, nurseList: ArrayList<Nurse>) {
         }
         composable(Constants.Routes.SIGN_IN) {
             SignInView(
-                onRegister = { name, lastName, age, email, registrationDate ->
+                onRegister = { name, lastName, birdthDay, email ->
                     navController.navigate(Constants.Routes.HOME)
-                }
+                },
+                onBack = { navController.popBackStack() }
             )
         }
         composable(Constants.Routes.GET_ALL_NURSES) {
