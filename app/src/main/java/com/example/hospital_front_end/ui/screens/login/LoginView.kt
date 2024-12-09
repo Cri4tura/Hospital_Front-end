@@ -44,8 +44,8 @@ fun LoginView(onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit) {
     var passwordVisible by remember { mutableStateOf(false) }
 
     // Comment when DB connection done
-    username = Constants.USER
-    password = Constants.PASS
+    username = Constants.DEFAULT_USERNAME
+    password = Constants.DEFAULT_PASSWORD
 
     Column(
         modifier = Modifier
@@ -131,7 +131,7 @@ fun LoginView(onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit) {
 
         Button(
             onClick = {
-                if (username == Constants.USER && password == Constants.PASS) {
+                if (username == Constants.DEFAULT_USERNAME && password == Constants.DEFAULT_PASSWORD) {
                     //errorMessage = "Log In successful"
                     onNavigateToHome()
                 } else {

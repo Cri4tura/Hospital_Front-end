@@ -21,7 +21,7 @@ sealed class NavigationEvent {
     object NavigateBack : NavigationEvent()
 }
 
-class NavigationViewModel(nurseList: List<Nurse>) : ViewModel() {
+class NavigationViewModel() : ViewModel() {
 
     private val nurseRepository = NurseRepository()
 

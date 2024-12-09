@@ -17,17 +17,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        val nurseRepository = NurseRepository()
-        val nurseList = nurseRepository.getNurseList()
-
         setContent {
             HospitalFrontendTheme {
                 Surface(
                     modifier = androidx.compose.ui.Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val viewModel = NavigationViewModel(nurseList)
+                    val viewModel = NavigationViewModel()
                     Navigation(navController = rememberNavController(), viewModel = viewModel)
                 }
             }
