@@ -37,7 +37,7 @@ import com.example.hospital_front_end.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(onLoginSuccess: () -> Unit, goToRegister: () -> Unit) {
+fun LoginView(onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit) {
     var username by remember { mutableStateOf<String>("") }
     var password by remember { mutableStateOf<String>("") }
     var errorMessage by remember { mutableStateOf<String>("") }
@@ -78,7 +78,8 @@ fun LoginView(onLoginSuccess: () -> Unit, goToRegister: () -> Unit) {
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        TextField(value = username,
+        TextField(
+            value = username,
             onValueChange = { username = it },
             label = { Text("Email", style = MaterialTheme.typography.bodyLarge) },
             modifier = Modifier.fillMaxWidth(),
@@ -132,7 +133,7 @@ fun LoginView(onLoginSuccess: () -> Unit, goToRegister: () -> Unit) {
             onClick = {
                 if (username == Constants.USER && password == Constants.PASS) {
                     //errorMessage = "Log In successful"
-                    onLoginSuccess()
+                    onNavigateToHome()
                 } else {
                     errorMessage = "Incorrect credentials"
                 }
@@ -155,7 +156,7 @@ fun LoginView(onLoginSuccess: () -> Unit, goToRegister: () -> Unit) {
             style = MaterialTheme.typography.bodyMedium
         )
         Button(
-            onClick = { goToRegister() }, modifier = Modifier.fillMaxWidth()
+            onClick = { navigateToSignIn() }, modifier = Modifier.fillMaxWidth()
 
         ) {
             Text(
@@ -174,7 +175,7 @@ fun LoginView(onLoginSuccess: () -> Unit, goToRegister: () -> Unit) {
 @Composable
 fun LoginViewPreview() {
     LoginView(
-        onLoginSuccess = { /* Simulated Login Success */ },
-        goToRegister = { /* Simulated Go to Register */ }
+        onNavigateToHome = { /* Simulated Login Success */ },
+        navigateToSignIn = { /* Simulated Go to Register */ }
     )
 }

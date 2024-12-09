@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -90,20 +91,11 @@ fun SignInView(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
-            .padding(top = 40.dp),
+            .padding(top = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(
-            onClick = { onBack() }, colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            ), modifier = Modifier.align(Alignment.End)
-
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.close),
-                contentDescription = "Back",
-                modifier = Modifier.size(32.dp)
-            )
+        IconButton(onClick = onBack, modifier = Modifier.align(Alignment.End)) {
+            Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
         }
         Text(
             "New Account",
