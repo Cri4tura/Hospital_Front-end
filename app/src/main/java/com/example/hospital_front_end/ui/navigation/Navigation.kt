@@ -6,13 +6,15 @@ import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.hospital_front_end.model.nurse.Nurse
 import com.example.hospital_front_end.ui.screens.home.HomeView
 import com.example.hospital_front_end.ui.screens.login.LoginView
+import com.example.hospital_front_end.ui.screens.login.LoginViewModel
 import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
 import com.example.hospital_front_end.ui.screens.nurseInfo.NurseList
 import com.example.hospital_front_end.ui.screens.signIn.SignInView
 import com.example.hospital_front_end.utils.Constants
+
+
 
 @Composable
 fun Navigation(
@@ -23,12 +25,12 @@ fun Navigation(
     LaunchedEffect(key1 = viewModel) {
         viewModel.navigationEvent.collect { event ->
             when (event) {
-                NavigationEvent.NavigateToHome -> navController.navigate(Constants.Screen.Home.route)
-                NavigationEvent.NavigateToLogin -> navController.navigate(Constants.Screen.Login.route)
-                NavigationEvent.NavigateToFindByName -> navController.navigate(Constants.Screen.FindByName.route)
-                NavigationEvent.NavigateToNurseList -> navController.navigate(Constants.Screen.NurseList.route)
-                NavigationEvent.NavigateToRegister -> navController.navigate(Constants.Screen.SignIn.route)
-                NavigationEvent.NavigateBack -> navController.popBackStack()
+                Constants.NavigationEvent.NavigateToHome -> navController.navigate(Constants.Screen.Home.route)
+                Constants.NavigationEvent.NavigateToLogin -> navController.navigate(Constants.Screen.Login.route)
+                Constants.NavigationEvent.NavigateToFindByName -> navController.navigate(Constants.Screen.FindByName.route)
+                Constants.NavigationEvent.NavigateToNurseList -> navController.navigate(Constants.Screen.NurseList.route)
+                Constants.NavigationEvent.NavigateToRegister -> navController.navigate(Constants.Screen.SignIn.route)
+                Constants.NavigationEvent.NavigateBack -> navController.popBackStack()
             }
         }
     }
@@ -43,6 +45,7 @@ fun Navigation(
         }
         composable(Constants.Screen.Login.route) {
             LoginView(
+                viewModel = LoginViewModel(),
                 onNavigateToHome = { viewModel.navigateToHome() },
                 navigateToSignIn = { viewModel.navigateToSignIn() }
             )

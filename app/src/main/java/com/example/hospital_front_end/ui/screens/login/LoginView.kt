@@ -2,6 +2,7 @@ package com.example.hospital_front_end.ui.screens.login
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -33,16 +37,26 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit) {
+fun LoginView(
+    viewModel: LoginViewModel,
+    onNavigateToHome: () -> Unit,
+    navigateToSignIn: () -> Unit
+) {
+    val context = LocalContext.current as FragmentActivity
+    val isAuthenticated by viewModel.authenticationState.observeAsState(false)
+    var auth by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf<String>("") }
     var password by remember { mutableStateOf<String>("") }
     var errorMessage by remember { mutableStateOf<String>("") }
     var passwordVisible by remember { mutableStateOf(false) }
+
+    viewModel.setupAuth(context)
 
     // Comment when DB connection done
     username = Constants.DEFAULT_USERNAME
@@ -94,7 +108,7 @@ fun LoginView(onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
-            
+
             value = password,
             onValueChange = { password = it },
             label = { Text("Password", style = MaterialTheme.typography.bodyLarge) },
@@ -148,6 +162,24 @@ fun LoginView(onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit) {
                 fontWeight = FontWeight.Bold,
             )
         }
+        Text(
+            "Authenticate with biometrics",
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(horizontal = 10.dp)
+                .clickable {
+                    viewModel.setupAuth(context)
+                    if(auth){
+                        onNavigateToHome()
+                    } else {
+                        viewModel.authenticate(context) { isAuthenticated ->
+                            auth = isAuthenticated
+                            onNavigateToHome()
+                        }
+                    }
+                },
+            style = MaterialTheme.typography.bodyMedium,
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -165,19 +197,27 @@ fun LoginView(onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit) {
             Text(
                 "Sign In",
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Bold
             )
         }
 
         Spacer(modifier = Modifier.height(32.dp))
     }
+
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated) {
+            onNavigateToHome()
+        }
+    }
 }
 
+
 @Preview()
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun LoginViewPreview() {
     LoginView(
+        viewModel = LoginViewModel(),
         onNavigateToHome = { /* Simulated Login Success */ },
         navigateToSignIn = { /* Simulated Go to Register */ }
     )
