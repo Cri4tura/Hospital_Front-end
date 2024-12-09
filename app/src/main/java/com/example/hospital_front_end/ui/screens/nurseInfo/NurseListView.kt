@@ -1,5 +1,6 @@
 package com.example.hospital_front_end.ui.screens.nurseInfo
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -61,8 +62,8 @@ fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit) {
 
 }
 
-
-@Preview(showBackground = true)
+@Preview()
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun MyNurseListPreview() {
     val nurseList = NurseRepository().getNurseList()

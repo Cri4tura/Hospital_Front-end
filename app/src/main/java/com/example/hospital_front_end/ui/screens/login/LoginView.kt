@@ -1,5 +1,6 @@
 package com.example.hospital_front_end.ui.screens.login
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -92,7 +93,9 @@ fun LoginView(onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextField(value = password,
+        TextField(
+            
+            value = password,
             onValueChange = { password = it },
             label = { Text("Password", style = MaterialTheme.typography.bodyLarge) },
             modifier = Modifier.fillMaxWidth(),
@@ -170,8 +173,8 @@ fun LoginView(onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit) {
     }
 }
 
-
-@Preview(showBackground = true)
+@Preview()
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun LoginViewPreview() {
     LoginView(
