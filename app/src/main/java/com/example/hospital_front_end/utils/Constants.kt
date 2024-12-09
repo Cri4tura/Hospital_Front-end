@@ -2,10 +2,6 @@ package com.example.hospital_front_end.utils
 
 object Constants {
 
-    // VARIABLES
-    const val DEFAULT_USERNAME = "admin@gmail.com"
-    const val DEFAULT_PASSWORD = "1234"
-
     // SCREENS
     sealed class Screen(val route: String) {
         object Home : Screen("home")
@@ -24,5 +20,17 @@ object Constants {
         object NavigateToFindByName : NavigationEvent()
         object NavigateBack : NavigationEvent()
     }
+
+    object LoginError {
+        const val CORRECT_CREDENTIALS = 0
+        const val INCORRECT_CREDENTIALS = -1
+    }
+
+
+    // VARIABLES
+    const val DEFAULT_USERNAME = "admin@gmail.com"
+    const val DEFAULT_PASSWORD = "1234"
+
+
 }
 

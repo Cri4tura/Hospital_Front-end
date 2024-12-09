@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Hospital-Front-end</string>
+    <string name="log_in_button_text">Log In</string>
+    <string name="log_out_button_text">Log Out</string>
+    <string name="sign_in_button_text">Sign In</string>
+    <string name="no_account_yet_text">Don\'t have an account yet?</string>
+    <string name="authenticate_with_biometrics_text">Authenticate with Biometrics</string>
+    <string name="email_placeholder_text">Email</string>
+    <string name="password_placeholder_text">Password</string>
+    <string name="homepage_title_text">Hospital Administration</string>
+    <string name="incorrect_credentials_text">Incorrect credentials</string>
+    <string name="incorrect_password_text">Invalid password</string>
+    <string name="incorrect_email_text">Invalid email</string>
+    <string name="correct_credentials_text">Correct credentials</string>
 </resources>

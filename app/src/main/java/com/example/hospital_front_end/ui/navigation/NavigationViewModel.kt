@@ -13,9 +13,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-
-
-
 class NavigationViewModel() : ViewModel() {
 
     private val nurseRepository = NurseRepository()
@@ -37,26 +34,31 @@ class NavigationViewModel() : ViewModel() {
             _navigationEvent.emit(Constants.NavigationEvent.NavigateToHome)
         }
     }
+
     fun navigateToLogin() {
         viewModelScope.launch {
             _navigationEvent.emit(Constants.NavigationEvent.NavigateToLogin)
         }
     }
+
     fun navigateToSignIn() {
         viewModelScope.launch {
             _navigationEvent.emit(Constants.NavigationEvent.NavigateToRegister)
         }
     }
+
     fun navigateToNurseList() {
         viewModelScope.launch {
             _navigationEvent.emit(Constants.NavigationEvent.NavigateToNurseList)
         }
     }
+
     fun navigateToFindByName() {
         viewModelScope.launch {
             _navigationEvent.emit(Constants.NavigationEvent.NavigateToFindByName)
         }
     }
+
     fun navigateBack() {
         viewModelScope.launch {
             _navigationEvent.emit(Constants.NavigationEvent.NavigateBack)

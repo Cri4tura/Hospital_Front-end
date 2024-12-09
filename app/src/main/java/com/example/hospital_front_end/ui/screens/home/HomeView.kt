@@ -3,7 +3,6 @@ package com.example.hospital_front_end.ui.screens.home
 import androidx.compose.foundation.Image
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -67,7 +66,8 @@ fun HomeView(
             imageResource = R.drawable.search_id,
             text = "Find by ID",
             contentDescription = "Find by ID Button",
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = false
         )
         PrimaryButton(
             onClick = onSearchByName,
@@ -82,7 +82,8 @@ fun HomeView(
             imageResource = R.drawable.update,
             text = "Update Nurse",
             contentDescription = "Update Nurse Button",
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+                    enabled = false
         )
 
         PrimaryButton(
@@ -90,7 +91,8 @@ fun HomeView(
             imageResource = R.drawable.delete,
             text = "Delete Nurse",
             contentDescription = "Delete Nurse Button",
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = false
         )
         Spacer(modifier = Modifier.weight(1f))
 
@@ -100,7 +102,7 @@ fun HomeView(
                 .fillMaxWidth()
                 .padding(8.dp),
             enabled = true,
-            text = "Log Out"
+            text = "Log Out",
         )
 
         LogoutConfirmationDialog(
@@ -126,10 +128,6 @@ fun PrimaryButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Blue.copy(alpha = 0.6f),
-            contentColor = Color.Black
-        )
     ) {
         Icon(
             painter = painterResource(id = imageResource),
