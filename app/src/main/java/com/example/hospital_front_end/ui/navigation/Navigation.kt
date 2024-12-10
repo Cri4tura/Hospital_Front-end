@@ -1,52 +1,75 @@
 package com.example.hospital_front_end.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.hospital_front_end.model.nurse.Nurse
 import com.example.hospital_front_end.ui.screens.home.HomeView
 import com.example.hospital_front_end.ui.screens.login.LoginView
+import com.example.hospital_front_end.ui.screens.login.LoginViewModel
 import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
 import com.example.hospital_front_end.ui.screens.nurseInfo.NurseList
 import com.example.hospital_front_end.ui.screens.signIn.SignInView
 import com.example.hospital_front_end.utils.Constants
 
-@Composable
-fun Navigation(navController: NavHostController, nurseList: ArrayList<Nurse>) {
 
-    NavHost(navController = navController, startDestination = Constants.Routes.LOGIN) {
-        composable(Constants.Routes.HOME) {
+
+@Composable
+fun Navigation(
+    navController: NavHostController,
+    viewModel: NavigationViewModel
+) {
+
+    LaunchedEffect(key1 = viewModel) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                Constants.NavigationEvent.NavigateToHome -> navController.navigate(Constants.Screen.Home.route)
+                Constants.NavigationEvent.NavigateToLogin -> navController.navigate(Constants.Screen.Login.route)
+                Constants.NavigationEvent.NavigateToFindByName -> navController.navigate(Constants.Screen.FindByName.route)
+                Constants.NavigationEvent.NavigateToNurseList -> navController.navigate(Constants.Screen.NurseList.route)
+                Constants.NavigationEvent.NavigateToRegister -> navController.navigate(Constants.Screen.SignIn.route)
+                Constants.NavigationEvent.NavigateBack -> navController.popBackStack()
+            }
+        }
+    }
+
+    NavHost(navController = navController, startDestination = Constants.Screen.Login.route) {
+        composable(Constants.Screen.Home.route) {
             HomeView(
-                onConfirmLogout = { navController.navigate(Constants.Routes.LOGIN) },
-                onViewList = { navController.navigate(Constants.Routes.GET_ALL_NURSES) },
-                onFindByName = { navController.navigate(Constants.Routes.FIND_BY_NAME) }
+                onConfirmLogout = { viewModel.navigateToLogin() },
+                onViewNurseList = { viewModel.navigateToNurseList() },
+                onSearchByName = { viewModel.navigateToFindByName() }
             )
         }
-        composable(Constants.Routes.LOGIN) {
+        composable(Constants.Screen.Login.route) {
             LoginView(
-                onLoginSuccess = { navController.navigate(Constants.Routes.HOME) },
-                goToRegister = { navController.navigate(Constants.Routes.SIGN_IN) }
+                viewModel = LoginViewModel(),
+                onNavigateToHome = { viewModel.navigateToHome() },
+                navigateToSignIn = { viewModel.navigateToSignIn() }
             )
         }
-        composable(Constants.Routes.SIGN_IN) {
+        composable(Constants.Screen.SignIn.route) {
             SignInView(
                 onRegister = { name, lastName, birdthDay, email ->
-                    navController.navigate(Constants.Routes.HOME)
+                    viewModel.navigateToHome( )
                 },
-                onBack = { navController.popBackStack() }
+                onBack = { viewModel.navigateBack() }
             )
         }
-        composable(Constants.Routes.GET_ALL_NURSES) {
+        composable(Constants.Screen.NurseList.route) {
+            val nurseList by viewModel.nurseList.collectAsState()
             NurseList(
                 nurseList = nurseList,
-                onBack = { navController.popBackStack() }
+                onBack = { viewModel.navigateBack() }
             )
         }
-        composable(Constants.Routes.FIND_BY_NAME) {
+        composable(Constants.Screen.FindByName.route) {
+            val nurseList by viewModel.nurseList.collectAsState()
             FindByNameView(
                 nurseList = nurseList,
-                onBack = { navController.popBackStack() }
+                onBack = { viewModel.navigateBack() }
             )
         }
     }
