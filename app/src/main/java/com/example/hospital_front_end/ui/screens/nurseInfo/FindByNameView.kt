@@ -3,6 +3,7 @@ package com.example.hospital_front_end.ui.screens.nurseInfo
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.model.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
@@ -39,7 +41,7 @@ import kotlin.text.contains
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit) {
+fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nurse) -> Unit) {
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
 
@@ -52,7 +54,11 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit) {
         }
     }
 
-    Column(modifier = Modifier.padding(16.dp).padding(top = 20.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .padding(top = 20.dp)
+    ) {
         IconButton(onClick = onBack, modifier = Modifier.align(Alignment.End)) {
             Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
         }
@@ -96,7 +102,7 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit) {
             )
             LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
                 items(filteredNurses) { nurse ->
-                    NurseItem(nurse)
+                    NurseItem(nurse, navigateToProfile)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -108,8 +114,13 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NurseItem(nurse: Nurse) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+fun NurseItem(nurse: Nurse, navigateToProfile: (Nurse) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                navigateToProfile(nurse)
+            }) {
         Image(
             painter = painterResource(id = R.drawable.user),
             contentDescription = "Nurse Icon", modifier = Modifier.size(60.dp)
@@ -134,5 +145,8 @@ fun NurseItem(nurse: Nurse) {
 @Composable
 fun FindByNameViewPreview() {
     val nurseList = NurseRepository().getNurseList()
-    FindByNameView(nurseList = nurseList, onBack = { /* Simulated Back Action */ })
+    FindByNameView(
+        nurseList = nurseList,
+        onBack = { /* Simulated Back Action */ },
+        navigateToProfile = { /* Simulated Profile Action */ })
 }

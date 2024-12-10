@@ -154,13 +154,13 @@ fun SignInView(
             onValueChange = { selectedDate = it },
             label = {
                 Text(
-                    "Birth Date (DD-MM-YYYY)", style = MaterialTheme.typography.bodyLarge
+                    "Birth Date (DD/MM/YYYY)", style = MaterialTheme.typography.bodyLarge
                 )
             },
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
@@ -183,7 +183,7 @@ fun SignInView(
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),

@@ -1,6 +1,8 @@
 package com.example.hospital_front_end.ui.screens.nurseInfo
 
 import android.content.res.Configuration
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -23,10 +25,15 @@ import com.example.hospital_front_end.R
 import com.example.hospital_front_end.model.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit) {
+fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nurse) -> Unit) {
 
-    Column(modifier = Modifier.padding(16.dp).padding(top = 20.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .padding(top = 20.dp)
+    ) {
 
         IconButton(onClick = onBack, modifier = Modifier.align(Alignment.End)) {
             Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
@@ -51,7 +58,7 @@ fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit) {
         if (nurseList.isNotEmpty()) {
             LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
                 items(nurseList) { nurse ->
-                    NurseItem(nurse)
+                    NurseItem(nurse, navigateToProfile)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -62,10 +69,15 @@ fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit) {
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview()
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun MyNurseListPreview() {
     val nurseList = NurseRepository().getNurseList()
-    NurseList(nurseList = nurseList, onBack = { /* Simulated Back Action */ })
+    NurseList(
+        nurseList = nurseList,
+        onBack = { /* Simulated Back Action */ },
+        navigateToProfile = { /* Simulated Profile Action */ }
+    )
 }

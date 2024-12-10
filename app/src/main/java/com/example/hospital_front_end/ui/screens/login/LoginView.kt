@@ -58,8 +58,8 @@ fun LoginView(
     viewModel.setupAuth(context)
 
     // TODO: Comment when DB connection done
-    //email = Constants.DEFAULT_USERNAME
-    //password = Constants.DEFAULT_PASSWORD
+    email = Constants.DEFAULT_USERNAME
+    password = Constants.DEFAULT_PASSWORD
 
     Column(
         modifier = Modifier

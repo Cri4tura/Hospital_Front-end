@@ -9,6 +9,7 @@ object Constants {
         object SignIn : Screen("signIn")
         object NurseList : Screen("nurseList")
         object FindByName : Screen("findByName")
+        object Profile : Screen("profile")
     }
 
     // NAVIGATION
@@ -19,6 +20,7 @@ object Constants {
         object NavigateToNurseList : NavigationEvent()
         object NavigateToFindByName : NavigationEvent()
         object NavigateBack : NavigationEvent()
+        object NavigateToProfile : NavigationEvent()
     }
 
     object LoginError {
