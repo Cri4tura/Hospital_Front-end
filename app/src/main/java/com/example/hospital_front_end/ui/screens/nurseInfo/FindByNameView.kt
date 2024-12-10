@@ -1,5 +1,7 @@
 package com.example.hospital_front_end.ui.screens.nurseInfo
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.height
@@ -34,6 +36,7 @@ import com.example.hospital_front_end.nurseRepository.NurseRepository
 import kotlinx.coroutines.delay
 import kotlin.text.contains
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit) {
@@ -44,7 +47,7 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit) {
     LaunchedEffect(searchQuery) {
         delay(300)
         filteredNurses = nurseList.filter { nurse ->
-            nurse.getName().contains(searchQuery, ignoreCase = true) || nurse.getLastName()
+            nurse.name.contains(searchQuery, ignoreCase = true) || nurse.surname
                 .contains(searchQuery, ignoreCase = true)
         }
     }
@@ -62,7 +65,7 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit) {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                "Find nurse by name",
+                "Find nurse",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -73,10 +76,10 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit) {
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { query -> searchQuery = query },
-            label = { Text("Insert nurse name", style = MaterialTheme.typography.bodyLarge) },
+            label = { Text("Insert name", style = MaterialTheme.typography.bodyLarge) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
@@ -103,29 +106,30 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NurseItem(nurse: Nurse) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
-            painter = painterResource(id = R.drawable.user), // Consider using Material Icons
-            contentDescription = "Nurse Icon", modifier = Modifier.size(80.dp)
+            painter = painterResource(id = R.drawable.user),
+            contentDescription = "Nurse Icon", modifier = Modifier.size(60.dp)
         )
         Column(modifier = Modifier.padding(start = 16.dp)) {
             Text(
-                text = "${nurse.getName()} ${nurse.getLastName()}", // Assuming you added fullName to Nurse
+                text = "${nurse.name} ${nurse.surname}",
                 style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = nurse.getEmail(),
+                text = nurse.email,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Cyan
             )
-            // ... other nurse details
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun FindByNameViewPreview() {

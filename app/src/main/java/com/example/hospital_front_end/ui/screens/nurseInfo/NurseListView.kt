@@ -40,7 +40,7 @@ fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit) {
                 modifier = Modifier.size(24.dp)
             )
             Text(
-                "List of Nurse",
+                "Nurses",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
