@@ -30,8 +30,9 @@ import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.model.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
+import com.example.hospital_front_end.ui.navigation.NurseExtendedItem
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
 fun ProfileView(nurse: Nurse, onBack: () -> Unit) {
     Column(
@@ -61,94 +62,6 @@ fun ProfileView(nurse: Nurse, onBack: () -> Unit) {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun NurseExtendedItem(nurse: Nurse) {
-
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Image(
-            painter = painterResource(id = R.drawable.user),
-            contentDescription = "Nurse Icon", modifier = Modifier.size(120.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = "${nurse.name} ${nurse.surname}",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            fontSize = 28.sp
-        )
-    }
-
-    Spacer(modifier = Modifier.height(20.dp))
-    
-    Column {
-        Row {
-            Text(
-                text = "Age: ",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
-                fontSize = 22.sp
-            )
-            Text(
-                text = nurse.age.toString(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
-                fontSize = 22.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Row {
-            Text(
-                text = "Birth Date: ",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
-                fontSize = 22.sp
-            )
-            Text(
-                text = nurse.formatDate(nurse.birthDate),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
-                fontSize = 22.sp
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row {
-            Text(
-                text = "Email: ",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
-                fontSize = 22.sp
-            )
-            Text(
-                text = nurse.email,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
-                fontSize = 22.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Row {
-            Text(
-                text = "Register Date: ",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
-                fontSize = 22.sp
-            )
-            Text(
-                text = nurse.formatDate(nurse.registerDate),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
-                fontSize = 22.sp
-            )
-        }
-    }
-
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ProfileViewPreview() {
@@ -156,5 +69,4 @@ fun ProfileViewPreview() {
         nurse = NurseRepository().getNurseList()[0],
         onBack = { /* Simulated Back Action */ }
     )
-
 }

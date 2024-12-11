@@ -24,8 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.model.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
+import com.example.hospital_front_end.ui.navigation.NurseItem
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
 fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nurse) -> Unit) {
 
@@ -69,7 +70,7 @@ fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nu
 
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Preview()
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable

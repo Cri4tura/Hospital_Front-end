@@ -8,7 +8,7 @@ import java.time.Period
 import java.time.ZoneId
 import java.util.Date
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 data class Nurse(
     val id: Int,
     val name: String,

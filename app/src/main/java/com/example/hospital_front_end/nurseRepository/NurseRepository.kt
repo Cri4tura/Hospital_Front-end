@@ -9,7 +9,7 @@ import java.util.Date
 class NurseRepository {
     private var nurseList = mutableListOf<Nurse>()
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    
     fun getNurseList(): ArrayList<Nurse> {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
          nurseList = arrayListOf(

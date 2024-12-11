@@ -1,11 +1,9 @@
 package com.example.hospital_front_end.ui.screens.signIn
 
 import android.app.DatePickerDialog
-import android.widget.DatePicker
 import androidx.compose.ui.unit.dp
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,11 +41,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
+import com.example.hospital_front_end.ui.components.EmailInput
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,17 +133,11 @@ fun SignInView(
             singleLine = true
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email", style = MaterialTheme.typography.bodyLarge) },
-            shape = RoundedCornerShape(15.dp),
-            modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White
-            ),
-            singleLine = true
+        EmailInput(
+            email = email,
+            onEmailChange = { email = it },
+            isError = null
+            //isError = viewModel.emailError.value
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(value = selectedDate,

@@ -35,10 +35,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.model.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
+import com.example.hospital_front_end.ui.navigation.NurseItem
 import kotlinx.coroutines.delay
 import kotlin.text.contains
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nurse) -> Unit) {
@@ -112,35 +113,7 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun NurseItem(nurse: Nurse, navigateToProfile: (Nurse) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                navigateToProfile(nurse)
-            }) {
-        Image(
-            painter = painterResource(id = R.drawable.user),
-            contentDescription = "Nurse Icon", modifier = Modifier.size(60.dp)
-        )
-        Column(modifier = Modifier.padding(start = 16.dp)) {
-            Text(
-                text = "${nurse.name} ${nurse.surname}",
-                style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = nurse.email,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan
-            )
-        }
-    }
-}
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun FindByNameViewPreview() {
