@@ -17,9 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
-import com.example.hospital_front_end.ui.navigation.LogoutButton
-import com.example.hospital_front_end.ui.navigation.LogoutConfirmationDialog
-import com.example.hospital_front_end.ui.navigation.PrimaryButton
+import com.example.hospital_front_end.ui.components.LogoutButton
+import com.example.hospital_front_end.ui.components.LogoutConfirmationDialog
+import com.example.hospital_front_end.ui.components.PrimaryButton
 
 @Composable
 fun HomeView(

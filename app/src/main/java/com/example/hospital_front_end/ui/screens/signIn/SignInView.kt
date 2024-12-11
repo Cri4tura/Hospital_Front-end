@@ -46,7 +46,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInView(
     onRegister: (name: String, lastName: String, birdthDay: String, email: String) -> Unit,

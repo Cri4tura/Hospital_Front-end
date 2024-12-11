@@ -1,7 +1,5 @@
-package com.example.hospital_front_end.model.nurse
+package com.example.hospital_front_end.models.nurse
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
@@ -25,8 +23,7 @@ data class Nurse(
         }
 
     fun formatDate(date: Date): String {
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-        return dateFormat.format(date)
+        return SimpleDateFormat("dd/MM/yyyy").format(date)
     }
 }
 

@@ -33,6 +33,7 @@ import com.example.hospital_front_end.ui.components.EmailInput
 import com.example.hospital_front_end.ui.components.FingerPrintAuth
 import com.example.hospital_front_end.ui.components.PasswordInput
 import com.example.hospital_front_end.ui.components.VideoPlayer
+import com.example.hospital_front_end.utils.Constants
 
 @Composable
 fun LoginView(
@@ -48,8 +49,8 @@ fun LoginView(
     viewModel.setupAuth(context)
 
     // TODO: Comment when DB connection done
-    // email = Constants.DEFAULT_USERNAME
-    // password = Constants.DEFAULT_PASSWORD
+     email = Constants.DEFAULT_USERNAME
+     password = Constants.DEFAULT_PASSWORD
 
     Column(
         modifier = Modifier
