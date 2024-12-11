@@ -49,8 +49,10 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile
     LaunchedEffect(searchQuery) {
         delay(300)
         filteredNurses = nurseList.filter { nurse ->
-            nurse.name.contains(searchQuery, ignoreCase = true) || nurse.surname
-                .contains(searchQuery, ignoreCase = true)
+            nurse.name.contains(searchQuery, ignoreCase = true) ||
+            nurse.surname.contains(searchQuery, ignoreCase = true) ||
+            nurse.email.contains(searchQuery, ignoreCase = true) ||
+            nurse.age.toString().contains(searchQuery)
         }
     }
 
@@ -128,6 +130,11 @@ fun NurseItem(nurse: Nurse, navigateToProfile: (Nurse) -> Unit) {
         Column(modifier = Modifier.padding(start = 16.dp)) {
             Text(
                 text = "${nurse.name} ${nurse.surname}",
+                style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "${nurse.age} years old",
                 style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
