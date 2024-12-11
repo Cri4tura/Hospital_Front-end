@@ -1,5 +1,7 @@
 package com.example.hospital_front_end.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.unit.Constraints
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,8 +15,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 class NavigationViewModel() : ViewModel() {
 
+    lateinit var selectedNurse: Nurse
     private val nurseRepository = NurseRepository()
 
     private val _nurseList = MutableStateFlow<List<Nurse>>(emptyList())
@@ -62,6 +66,14 @@ class NavigationViewModel() : ViewModel() {
     fun navigateBack() {
         viewModelScope.launch {
             _navigationEvent.emit(Constants.NavigationEvent.NavigateBack)
+        }
+
+    }
+
+    fun navigateToProfile(nurse: Nurse) {
+        selectedNurse = nurse
+        viewModelScope.launch {
+            _navigationEvent.emit(Constants.NavigationEvent.NavigateToProfile)
         }
 
     }

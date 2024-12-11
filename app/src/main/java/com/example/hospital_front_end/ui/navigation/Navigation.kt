@@ -1,5 +1,7 @@
 package com.example.hospital_front_end.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.*
@@ -11,11 +13,13 @@ import com.example.hospital_front_end.ui.screens.login.LoginView
 import com.example.hospital_front_end.ui.screens.login.LoginViewModel
 import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
 import com.example.hospital_front_end.ui.screens.nurseInfo.NurseList
+import com.example.hospital_front_end.ui.screens.profile.ProfileView
 import com.example.hospital_front_end.ui.screens.signIn.SignInView
 import com.example.hospital_front_end.utils.Constants
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(
     navController: NavHostController,
@@ -30,6 +34,7 @@ fun Navigation(
                 Constants.NavigationEvent.NavigateToFindByName -> navController.navigate(Constants.Screen.FindByName.route)
                 Constants.NavigationEvent.NavigateToNurseList -> navController.navigate(Constants.Screen.NurseList.route)
                 Constants.NavigationEvent.NavigateToRegister -> navController.navigate(Constants.Screen.SignIn.route)
+                Constants.NavigationEvent.NavigateToProfile -> navController.navigate(Constants.Screen.Profile.route)
                 Constants.NavigationEvent.NavigateBack -> navController.popBackStack()
             }
         }
@@ -62,13 +67,25 @@ fun Navigation(
             val nurseList by viewModel.nurseList.collectAsState()
             NurseList(
                 nurseList = nurseList,
-                onBack = { viewModel.navigateBack() }
+                onBack = { viewModel.navigateBack() },
+                navigateToProfile = { nurse ->
+                    viewModel.navigateToProfile(nurse)
+                }
             )
         }
         composable(Constants.Screen.FindByName.route) {
             val nurseList by viewModel.nurseList.collectAsState()
             FindByNameView(
                 nurseList = nurseList,
+                onBack = { viewModel.navigateBack() },
+                navigateToProfile = { nurse ->
+                    viewModel.navigateToProfile(nurse)
+                }
+            )
+        }
+        composable(Constants.Screen.Profile.route) {
+            ProfileView(
+                nurse = viewModel.selectedNurse,
                 onBack = { viewModel.navigateBack() }
             )
         }
