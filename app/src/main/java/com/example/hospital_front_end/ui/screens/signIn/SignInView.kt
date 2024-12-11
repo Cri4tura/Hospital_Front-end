@@ -116,9 +116,10 @@ fun SignInView(
             onValueChange = { name = it },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White,
+                unfocusedPlaceholderColor = Color.White
             ),
             label = { Text("Name", style = MaterialTheme.typography.bodyLarge) },
             singleLine = true
@@ -129,9 +130,9 @@ fun SignInView(
             onValueChange = { lastName = it },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             label = { Text("Surname", style = MaterialTheme.typography.bodyLarge) },
             singleLine = true
@@ -143,9 +144,9 @@ fun SignInView(
             label = { Text("Email", style = MaterialTheme.typography.bodyLarge) },
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             singleLine = true
         )
@@ -161,8 +162,8 @@ fun SignInView(
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             singleLine = true,
             trailingIcon = {
@@ -184,8 +185,8 @@ fun SignInView(
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             shape = RoundedCornerShape(15.dp),
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -208,9 +209,9 @@ fun SignInView(
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
             ),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
