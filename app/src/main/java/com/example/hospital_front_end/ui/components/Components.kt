@@ -85,8 +85,7 @@ fun EmailInput(
 fun FingerPrintAuth(
     context: Context,
     modifier: Modifier
-)
-{
+) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -153,7 +152,7 @@ fun PasswordInput(
                     if (passwordVisible) R.drawable.visibility_off else R.raw.vista
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
-                if (passwordVisible){
+                if (passwordVisible) {
                     Image(
                         modifier = Modifier
                             .width(35.dp)
@@ -302,7 +301,10 @@ fun PrimaryButton(
 
 @Composable
 fun LogoutButton(
-    onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean, text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean,
+    text: String,
 ) {
     Button(
         onClick = onClick,
@@ -356,7 +358,10 @@ fun LogoutConfirmationDialog(
 }
 
 @Composable
-fun NurseItem(nurse: Nurse, navigateToProfile: (Nurse) -> Unit) {
+fun NurseItem(
+    nurse: Nurse,
+    navigateToProfile: (Nurse) -> Unit
+) {
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
@@ -383,7 +388,9 @@ fun NurseItem(nurse: Nurse, navigateToProfile: (Nurse) -> Unit) {
 }
 
 @Composable
-fun NurseExtendedItem(nurse: Nurse) {
+fun NurseExtendedItem(
+    nurse: Nurse
+) {
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
