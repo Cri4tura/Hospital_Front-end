@@ -1,8 +1,6 @@
 package com.example.hospital_front_end.ui.screens.nurseInfo
 
 import android.content.res.Configuration
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -22,10 +20,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.hospital_front_end.R
-import com.example.hospital_front_end.model.nurse.Nurse
+import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
+import com.example.hospital_front_end.ui.components.NurseItem
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nurse) -> Unit) {
 
@@ -69,7 +67,6 @@ fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nu
 
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview()
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable

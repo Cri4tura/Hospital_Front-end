@@ -1,11 +1,8 @@
 package com.example.hospital_front_end.ui.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.ui.unit.Constraints
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.hospital_front_end.model.nurse.Nurse
+import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 import com.example.hospital_front_end.utils.Constants
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,7 +12,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 class NavigationViewModel() : ViewModel() {
 
     lateinit var selectedNurse: Nurse

@@ -1,8 +1,10 @@
 package com.example.hospital_front_end
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -15,6 +17,7 @@ import com.example.hospital_front_end.ui.navigation.NavigationViewModel
 import com.example.hospital_front_end.ui.theme.HospitalFrontendTheme
 
 class MainActivity : AppCompatActivity() {
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

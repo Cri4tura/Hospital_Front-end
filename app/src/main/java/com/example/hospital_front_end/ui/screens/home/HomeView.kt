@@ -1,15 +1,9 @@
 package com.example.hospital_front_end.ui.screens.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,13 +11,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
+import com.example.hospital_front_end.ui.components.LogoutButton
+import com.example.hospital_front_end.ui.components.LogoutConfirmationDialog
+import com.example.hospital_front_end.ui.components.PrimaryButton
 
 @Composable
 fun HomeView(
@@ -115,84 +111,6 @@ fun HomeView(
     }
 }
 
-@Composable
-fun PrimaryButton(
-    onClick: () -> Unit,
-    imageResource: Int,
-    text: String,
-    contentDescription: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-    ) {
-        Icon(
-            painter = painterResource(id = imageResource),
-            contentDescription = contentDescription,
-            modifier = Modifier.size(ButtonDefaults.IconSize)
-        )
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
-fun LogoutButton(
-    onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean, text: String,
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Red.copy(alpha = 0.7f),
-            contentColor = Color.Black
-        )
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.log_out),
-            contentDescription = "Log Out",
-            modifier = Modifier.size(ButtonDefaults.IconSize)
-        )
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
-fun LogoutConfirmationDialog(
-    showDialog: Boolean,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("Confirmation") },
-            text = { Text("Are you sure you want to log out?") },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text("No", color = lerp(Color.Green, Color.Black, 0.35f))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    onDismiss()
-                    onConfirm()
-                }) {
-                    Text(
-                        "Yes",
-                        modifier = Modifier.padding(horizontal = 40.dp),
-                        color = lerp(Color.Red, Color.Black, 0.35f)
-                    )
-                }
-            }
-        )
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

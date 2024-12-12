@@ -1,7 +1,5 @@
 package com.example.hospital_front_end.ui.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.*
@@ -17,9 +15,6 @@ import com.example.hospital_front_end.ui.screens.profile.ProfileView
 import com.example.hospital_front_end.ui.screens.signIn.SignInView
 import com.example.hospital_front_end.utils.Constants
 
-
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(
     navController: NavHostController,
@@ -57,7 +52,7 @@ fun Navigation(
         }
         composable(Constants.Screen.SignIn.route) {
             SignInView(
-                onRegister = { name, lastName, birdthDay, email ->
+                onRegister = { _, _, _, _ ->
                     viewModel.navigateToHome( )
                 },
                 onBack = { viewModel.navigateBack() }

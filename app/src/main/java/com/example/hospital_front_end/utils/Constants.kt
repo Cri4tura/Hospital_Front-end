@@ -23,11 +23,6 @@ object Constants {
         object NavigateToProfile : NavigationEvent()
     }
 
-    object LoginError {
-        const val CORRECT_CREDENTIALS = 0
-        const val INCORRECT_CREDENTIALS = -1
-    }
-
 
     // VARIABLES
     const val DEFAULT_USERNAME = "admin@gmail.com"

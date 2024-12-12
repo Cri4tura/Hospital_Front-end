@@ -1,9 +1,5 @@
 package com.example.hospital_front_end.ui.screens.nurseInfo
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,19 +22,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.hospital_front_end.R
-import com.example.hospital_front_end.model.nurse.Nurse
+import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
+import com.example.hospital_front_end.ui.components.NurseItem
 import kotlinx.coroutines.delay
 import kotlin.text.contains
 
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nurse) -> Unit) {
     var searchQuery by remember { mutableStateOf("") }
@@ -114,40 +105,6 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun NurseItem(nurse: Nurse, navigateToProfile: (Nurse) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                navigateToProfile(nurse)
-            }) {
-        Image(
-            painter = painterResource(id = R.drawable.user),
-            contentDescription = "Nurse Icon", modifier = Modifier.size(60.dp)
-        )
-        Column(modifier = Modifier.padding(start = 16.dp)) {
-            Text(
-                text = "${nurse.name} ${nurse.surname}",
-                style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${nurse.age} years old",
-                style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = nurse.email,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan
-            )
-        }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun FindByNameViewPreview() {
