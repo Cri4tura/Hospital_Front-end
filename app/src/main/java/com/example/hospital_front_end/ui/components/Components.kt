@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -101,13 +101,26 @@ fun FingerPrintAuth(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        VideoPlayer(
-            context = context,
-            videoResId = R.raw.escaneo,
-            modifier = Modifier
-                .size(50.dp)
-                .aspectRatio(1f)
-        )
+        Row {
+
+            VideoPlayer(
+                context = context,
+                videoResId = R.raw.escaneo_facial,
+                modifier = Modifier
+                    .size(50.dp)
+                    .aspectRatio(1f)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            VideoPlayer(
+                context = context,
+                videoResId = R.raw.escaneo,
+                modifier = Modifier
+                    .size(50.dp)
+                    .aspectRatio(1f)
+            )
+        }
     }
 }
 
@@ -117,7 +130,8 @@ fun PasswordInput(
     passwordVisible: Boolean,
     onPasswordChange: (String) -> Unit,
     onPasswordVisibilityToggle: () -> Unit,
-    isError: String?
+    isError: String?,
+    context: Context,
 ) {
     OutlinedTextField(
         value = password,
@@ -136,15 +150,26 @@ fun PasswordInput(
         trailingIcon = {
             IconButton(onClick = onPasswordVisibilityToggle) {
                 val icon =
-                    if (passwordVisible) R.drawable.visibility_off else R.drawable.visibility
+                    if (passwordVisible) R.drawable.visibility_off else R.raw.vista
                 val description = if (passwordVisible) "Hide password" else "Show password"
-                Image(
-                    modifier = Modifier
-                        .width(35.dp)
-                        .height(35.dp),
-                    painter = painterResource(id = icon),
-                    contentDescription = description
-                )
+
+                if (passwordVisible){
+                    Image(
+                        modifier = Modifier
+                            .width(35.dp)
+                            .height(35.dp),
+                        painter = painterResource(id = icon),
+                        contentDescription = description
+                    )
+                } else {
+                    IconVideoPlayer(
+                        context = context,
+                        videoResId = icon,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .aspectRatio(1f)
+                    )
+                }
             }
         }
     )
@@ -163,34 +188,91 @@ fun VideoPlayer(
     context: Context,
     videoResId: Int,
     modifier: Modifier = Modifier,
-    borderColor: Color = MaterialTheme.colorScheme.primary, // Color del borde
-    borderWidth: Dp = 2.dp // Grosor del borde
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    borderWidth: Dp = 2.dp
 ) {
-    // Crear y recordar el reproductor ExoPlayer
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
             val mediaItem = MediaItem.fromUri(videoUri)
             setMediaItem(mediaItem)
-            repeatMode = ExoPlayer.REPEAT_MODE_ALL // Hacer que el video se reproduzca en bucle
+            repeatMode = ExoPlayer.REPEAT_MODE_ALL
             prepare()
-            playWhenReady = true // Comenzar a reproducir automáticamente
+            playWhenReady = true
         }
     }
 
-    // Liberar recursos del reproductor cuando el Composable se destruya
     DisposableEffect(exoPlayer) {
         onDispose {
             exoPlayer.release()
         }
     }
 
-    // Mostrar el reproductor ExoPlayer con forma redonda y borde
     AndroidView(
         factory = { PlayerView(it).apply { player = exoPlayer; useController = false } },
         modifier = modifier
-            .clip(CircleShape) // Hace que la vista sea circular
-            .border(borderWidth, borderColor, CircleShape) // Agrega un borde alrededor del círculo
+            .clip(CircleShape)
+            .border(borderWidth, borderColor, CircleShape)
+    )
+}
+
+@Composable
+fun IconVideoPlayer(
+    context: Context,
+    videoResId: Int,
+    modifier: Modifier = Modifier,
+) {
+
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
+            val mediaItem = MediaItem.fromUri(videoUri)
+            setMediaItem(mediaItem)
+            repeatMode = ExoPlayer.REPEAT_MODE_ALL
+            prepare()
+            playWhenReady = true
+        }
+    }
+
+    DisposableEffect(exoPlayer) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    AndroidView(
+        factory = { PlayerView(it).apply { player = exoPlayer; useController = false } },
+        modifier = modifier
+            .clip(CircleShape)
+    )
+}
+
+@Composable
+fun SquareIconVideoPlayer(
+    context: Context,
+    videoResId: Int,
+    modifier: Modifier = Modifier,
+) {
+
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
+            val mediaItem = MediaItem.fromUri(videoUri)
+            setMediaItem(mediaItem)
+            repeatMode = ExoPlayer.REPEAT_MODE_ALL
+            prepare()
+            playWhenReady = true
+        }
+    }
+
+    DisposableEffect(exoPlayer) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    AndroidView(
+        factory = { PlayerView(it).apply { player = exoPlayer; useController = false } },
     )
 }
 
@@ -294,7 +376,7 @@ fun NurseItem(nurse: Nurse, navigateToProfile: (Nurse) -> Unit) {
             Text(
                 text = nurse.email,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan
+                color = Color.DarkGray
             )
         }
     }
@@ -324,13 +406,13 @@ fun NurseExtendedItem(nurse: Nurse) {
             Text(
                 text = "Age: ",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
+                color = Color.Black,
                 fontSize = 22.sp
             )
             Text(
                 text = nurse.age.toString(),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
+                color = Color.Black,
                 fontSize = 22.sp
             )
         }
@@ -340,13 +422,13 @@ fun NurseExtendedItem(nurse: Nurse) {
             Text(
                 text = "Birth Date: ",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
+                color = Color.Black,
                 fontSize = 22.sp
             )
             Text(
                 text = nurse.formatDate(nurse.birthDate),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
+                color = Color.Black,
                 fontSize = 22.sp
             )
         }
@@ -355,13 +437,13 @@ fun NurseExtendedItem(nurse: Nurse) {
             Text(
                 text = "Email: ",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
+                color = Color.Black,
                 fontSize = 22.sp
             )
             Text(
                 text = nurse.email,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
+                color = Color.Black,
                 fontSize = 22.sp
             )
         }
@@ -371,13 +453,13 @@ fun NurseExtendedItem(nurse: Nurse) {
             Text(
                 text = "Register Date: ",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
+                color = Color.Black,
                 fontSize = 22.sp
             )
             Text(
                 text = nurse.formatDate(nurse.registerDate),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Cyan,
+                color = Color.Black,
                 fontSize = 22.sp
             )
         }

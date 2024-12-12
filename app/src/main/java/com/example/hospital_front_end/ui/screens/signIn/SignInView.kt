@@ -3,7 +3,6 @@ package com.example.hospital_front_end.ui.screens.signIn
 import android.app.DatePickerDialog
 import androidx.compose.ui.unit.dp
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -32,15 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.ui.components.EmailInput
+import com.example.hospital_front_end.ui.components.PasswordInput
+import com.example.hospital_front_end.ui.components.SquareIconVideoPlayer
+import com.example.hospital_front_end.ui.components.VideoPlayer
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -89,20 +86,24 @@ fun SignInView(
         IconButton(onClick = onBack, modifier = Modifier.align(Alignment.End)) {
             Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
         }
+        /*
         Text(
             "New Account",
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
         )
-        Image(
-            painter = painterResource(id = R.drawable.id_card),
-            contentDescription = "Icon",
+
+         */
+        Spacer(modifier = Modifier.height(16.dp))
+        VideoPlayer(
+            context = context,
+            videoResId = R.raw.unirse,
             modifier = Modifier
                 .size(200.dp)
                 .padding(bottom = 8.dp)
         )
-        Spacer(modifier = Modifier.weight(0.5f))
+        Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
@@ -154,66 +155,42 @@ fun SignInView(
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { onDateClick() }) {
-                    Image(
+                    SquareIconVideoPlayer(
+                        context = context,
+                        videoResId = R.raw.calendario,
                         modifier = Modifier
-                            .width(35.dp)
-                            .height(35.dp),
-                        painter = painterResource(R.drawable.calendar),
-                        contentDescription = "Calendar"
+                            .size(35.dp)
                     )
                 }
-            })
+            }
+        )
+
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = password,
-            onValueChange = { password = it },
-            label = { Text("Password", style = MaterialTheme.typography.bodyLarge) },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White
-            ),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    val icon =
-                        if (passwordVisible) R.drawable.visibility_off else R.drawable.visibility
-                    val description = if (passwordVisible) "Hide password" else "Show password"
-                    Image(
-                        modifier = Modifier
-                            .width(35.dp)
-                            .height(35.dp),
-                        painter = painterResource(id = icon),
-                        contentDescription = description
-                    )
-                }
-            })
+
+        PasswordInput(
+            password = password,
+            passwordVisible = passwordVisible,
+            onPasswordChange = { password = it },
+            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
+            isError = null,
+            //isError = viewModel.passwordError.value,
+            context = context,
+        )
+
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password", style = MaterialTheme.typography.bodyLarge) },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White
-            ),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    val icon =
-                        if (passwordVisible) R.drawable.visibility_off else R.drawable.visibility
-                    val description = if (passwordVisible) "Hide password" else "Show password"
-                    Image(
-                        modifier = Modifier
-                            .width(35.dp)
-                            .height(35.dp),
-                        painter = painterResource(id = icon),
-                        contentDescription = description
-                    )
-                }
-            })
+
+        PasswordInput(
+            password = confirmPassword,
+            passwordVisible = passwordVisible,
+            onPasswordChange = { confirmPassword = it },
+            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
+            isError = null,
+            //isError = viewModel.passwordError.value,
+            context = context,
+        )
+
         Spacer(modifier = Modifier.weight(1f))
+
         Button(
             onClick = {
 
@@ -234,7 +211,7 @@ fun SignInView(
             }, modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Create Account",
+                text = "Create New Account",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
             )
