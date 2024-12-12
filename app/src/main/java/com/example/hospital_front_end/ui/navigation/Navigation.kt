@@ -52,7 +52,7 @@ fun Navigation(
         }
         composable(Constants.Screen.SignIn.route) {
             SignInView(
-                onRegister = { name, lastName, birdthDay, email ->
+                onRegister = { _, _, _, _ ->
                     viewModel.navigateToHome( )
                 },
                 onBack = { viewModel.navigateBack() }
