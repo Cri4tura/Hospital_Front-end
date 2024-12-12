@@ -40,8 +40,10 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile
     LaunchedEffect(searchQuery) {
         delay(300)
         filteredNurses = nurseList.filter { nurse ->
-            nurse.name.contains(searchQuery, ignoreCase = true) || nurse.surname
-                .contains(searchQuery, ignoreCase = true)
+            nurse.name.contains(searchQuery, ignoreCase = true) ||
+            nurse.surname.contains(searchQuery, ignoreCase = true) ||
+            nurse.email.contains(searchQuery, ignoreCase = true) ||
+            nurse.age.toString().contains(searchQuery)
         }
     }
 
