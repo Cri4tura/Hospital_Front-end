@@ -119,6 +119,16 @@ fun FingerPrintAuth(
                     .size(50.dp)
                     .aspectRatio(1f)
             )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            VideoPlayer(
+                context = context,
+                videoResId = R.raw.escaneo_ocular,
+                modifier = Modifier
+                    .size(50.dp)
+                    .aspectRatio(1f)
+            )
         }
     }
 }
