@@ -1,5 +1,6 @@
 [versions]
 agp = "8.6.1"
+compose = "1.0.0-alpha.1"
 coreSplashscreen = "1.0.1"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
@@ -21,6 +22,7 @@ toolsCore = "1.0.0-alpha10"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
+compose = { module = "com.github.bumptech.glide:compose", version.ref = "compose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

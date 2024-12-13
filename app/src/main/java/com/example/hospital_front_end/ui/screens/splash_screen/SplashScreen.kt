@@ -36,7 +36,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavController) {
     LaunchedEffect(key1 = true) {
-        delay(2000)
+        delay(3000)
         navController.popBackStack()
         navController.navigate(Constants.Screen.Login.route)
     }
@@ -57,7 +57,7 @@ fun Splash() {
         ) {
             VideoScreenSlpash(
                 context = context,
-                videoResId = R.raw.splash_video_final,
+                videoResId = R.raw.itock,
                 modifier = Modifier
                     .fillMaxHeight()
             )
