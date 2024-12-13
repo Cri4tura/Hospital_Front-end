@@ -28,6 +28,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.ui.components.IconVideoPlayer
 import com.example.hospital_front_end.utils.Constants
@@ -36,13 +38,14 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavController) {
     LaunchedEffect(key1 = true) {
-        delay(3000)
+        delay(5000)
         navController.popBackStack()
         navController.navigate(Constants.Screen.Login.route)
     }
     Splash()
 }
 
+@kotlin.OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun Splash() {
     val context = LocalContext.current
@@ -55,11 +58,21 @@ fun Splash() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
+
+            /*
             VideoScreenSlpash(
                 context = context,
                 videoResId = R.raw.itock,
                 modifier = Modifier
                     .fillMaxHeight()
+            )
+
+             */
+
+            GlideImage(
+                model = R.drawable.intro,
+                contentDescription = "Glide image ",
+                modifier = Modifier.fillMaxSize()
             )
         }
     }

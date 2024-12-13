@@ -64,16 +64,16 @@ fun LoginView(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-        /*
-        GlideImage(
-            model = R.drawable.output,
-            contentDescription = "Glide image ",
-            modifier = Modifier
-                .size(300.dp)
-        )
+
+//        GlideImage(
+//            model = R.drawable.output,
+//            contentDescription = "Glide image ",
+//            modifier = Modifier
+//                .size(300.dp)
+//        )
 
 
-         */
+
 
         VideoPlayer(
             context = context,

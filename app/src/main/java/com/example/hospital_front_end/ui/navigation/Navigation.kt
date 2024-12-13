@@ -44,7 +44,7 @@ fun Navigation(
         }
         composable(Constants.Screen.Home.route) {
             HomeView(
-                onConfirmLogout = { viewModel.navigateToLogin() },
+                onConfirmLogout = { navController.popBackStack(); viewModel.navigateToLogin() },
                 onViewNurseList = { viewModel.navigateToNurseList() },
                 onSearchByName = { viewModel.navigateToFindByName() }
             )
@@ -59,7 +59,7 @@ fun Navigation(
         composable(Constants.Screen.SignIn.route) {
             SignInView(
                 onRegister = { _, _, _, _ ->
-                    viewModel.navigateToHome( )
+                    navController.popBackStack(); viewModel.navigateToHome( )
                 },
                 onBack = { viewModel.navigateBack() }
             )

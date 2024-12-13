@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,6 +49,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
 
@@ -133,6 +136,7 @@ fun FingerPrintAuth(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun PasswordInput(
     password: String,
@@ -159,7 +163,7 @@ fun PasswordInput(
         trailingIcon = {
             IconButton(onClick = onPasswordVisibilityToggle) {
                 val icon =
-                    if (passwordVisible) R.drawable.visibility_off else R.raw.vista
+                    if (passwordVisible) R.drawable.visibility_off else R.drawable.password_eye
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
                 if (passwordVisible) {
@@ -171,6 +175,13 @@ fun PasswordInput(
                         contentDescription = description
                     )
                 } else {
+
+                    GlideImage(
+                        model = R.drawable.output,
+                        contentDescription = "Glide image ",
+                        modifier = Modifier.fillMaxSize()
+                    )
+    /*
                     IconVideoPlayer(
                         context = context,
                         videoResId = icon,
@@ -179,6 +190,8 @@ fun PasswordInput(
                             .aspectRatio(1f),
                         contentScale = ContentScale.Crop
                     )
+
+     */
                 }
             }
         }
