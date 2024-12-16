@@ -42,7 +42,7 @@ fun HomeView(
             fontWeight = FontWeight.Bold,
         )
         Image(
-            painter = painterResource(id = R.drawable.nurse),
+            painter = painterResource(id = R.drawable.nurse_register),
             contentDescription = "Home screen illustration of a nurse",
             modifier = Modifier
                 .size(200.dp)

@@ -64,26 +64,18 @@ fun LoginView(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-
 //        GlideImage(
 //            model = R.drawable.output,
 //            contentDescription = "Glide image ",
 //            modifier = Modifier
 //                .size(300.dp)
 //        )
-
-
-
-
-        VideoPlayer(
-            context = context,
-            videoResId = R.raw.cruz_medica,
+        GlideImage(
+            model = R.drawable.init_logo,
+            contentDescription = "Glide image ",
             modifier = Modifier
                 .size(300.dp)
-                .aspectRatio(1f)
         )
-
-
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -104,7 +96,7 @@ fun LoginView(
             context = context,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = { viewModel.login(email, password) },

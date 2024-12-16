@@ -38,7 +38,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavController) {
     LaunchedEffect(key1 = true) {
-        delay(5000)
+        delay(4300)
         navController.popBackStack()
         navController.navigate(Constants.Screen.Login.route)
     }
@@ -58,17 +58,6 @@ fun Splash() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-
-            /*
-            VideoScreenSlpash(
-                context = context,
-                videoResId = R.raw.itock,
-                modifier = Modifier
-                    .fillMaxHeight()
-            )
-
-             */
-
             GlideImage(
                 model = R.drawable.intro,
                 contentDescription = "Glide image ",
@@ -109,7 +98,8 @@ fun VideoScreenSlpash(
             PlayerView(it).apply {
                 player = exoPlayer
                 useController = false // Ocultar controles
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM // Forzar zoom para llenar el contenedor
+                resizeMode =
+                    AspectRatioFrameLayout.RESIZE_MODE_ZOOM // Forzar zoom para llenar el contenedor
             }
         },
         modifier = modifier
