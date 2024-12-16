@@ -33,17 +33,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.ui.components.EmailInput
 import com.example.hospital_front_end.ui.components.PasswordInput
 import com.example.hospital_front_end.ui.components.SquareIconVideoPlayer
-import com.example.hospital_front_end.ui.components.VideoPlayer
-import com.example.hospital_front_end.utils.Constants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun SignInView(
     onRegister: (name: String, lastName: String, birdthDay: String, email: String) -> Unit,
@@ -77,7 +77,6 @@ fun SignInView(
         ).show()
     }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,24 +87,13 @@ fun SignInView(
         IconButton(onClick = onBack, modifier = Modifier.align(Alignment.End)) {
             Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
         }
-        /*
-        Text(
-            "New Account",
-            style = MaterialTheme.typography.headlineLarge,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-        )
-
-         */
         Spacer(modifier = Modifier.height(16.dp))
-        VideoPlayer(
-            context = context,
-            videoResId = R.raw.unirse,
-            modifier = Modifier
-                .size(200.dp)
-                .padding(bottom = 8.dp)
+        GlideImage(
+            model = R.drawable.pildora,
+            contentDescription = "Glide image ",
+            modifier = Modifier.size(200.dp)
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },

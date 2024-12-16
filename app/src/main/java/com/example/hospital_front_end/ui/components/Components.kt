@@ -84,10 +84,13 @@ fun EmailInput(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun FingerPrintAuth(
     context: Context,
-    modifier: Modifier
+    modifier: Modifier,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    borderWidth: Dp = 2.dp
 ) {
     Column(
         modifier = modifier,
@@ -104,34 +107,30 @@ fun FingerPrintAuth(
         Spacer(modifier = Modifier.height(8.dp))
 
         Row {
-
-            VideoPlayer(
-                context = context,
-                videoResId = R.raw.escaneo_facial,
+            GlideImage(
+                model = R.drawable.escaneo_facial,
+                contentDescription = "Glide image ",
                 modifier = Modifier
+                    .size(50.dp)
+                    .aspectRatio(1f)
+                    .clip(CircleShape)
+                    .border(borderWidth, borderColor, CircleShape)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            GlideImage(
+                model = R.drawable.huella_dactilar,
+                contentDescription = "Glide image ",
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .border(borderWidth, borderColor, CircleShape)
                     .size(50.dp)
                     .aspectRatio(1f)
             )
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            VideoPlayer(
-                context = context,
-                videoResId = R.raw.escaneo,
-                modifier = Modifier
-                    .size(50.dp)
-                    .aspectRatio(1f)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            VideoPlayer(
-                context = context,
-                videoResId = R.raw.escaneo_ocular,
-                modifier = Modifier
-                    .size(50.dp)
-                    .aspectRatio(1f)
-            )
         }
     }
 }
@@ -181,17 +180,17 @@ fun PasswordInput(
                         contentDescription = "Glide image ",
                         modifier = Modifier.fillMaxSize()
                     )
-    /*
-                    IconVideoPlayer(
-                        context = context,
-                        videoResId = icon,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .aspectRatio(1f),
-                        contentScale = ContentScale.Crop
-                    )
+                    /*
+                                    IconVideoPlayer(
+                                        context = context,
+                                        videoResId = icon,
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .aspectRatio(1f),
+                                        contentScale = ContentScale.Crop
+                                    )
 
-     */
+                     */
                 }
             }
         }

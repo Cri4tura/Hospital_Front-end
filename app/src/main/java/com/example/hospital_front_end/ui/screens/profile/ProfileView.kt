@@ -52,6 +52,7 @@ fun ProfileView(nurse: Nurse, onBack: () -> Unit) {
 fun ProfileViewPreview() {
     ProfileView(
         nurse = NurseRepository().getNurseList()[0],
-        onBack = { /* Simulated Back Action */ }
+        onBack = { // Simulated Back Action
+             }
     )
 }
