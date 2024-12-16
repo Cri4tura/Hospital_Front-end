@@ -10,6 +10,7 @@ object Constants {
         object NurseList : Screen("nurseList")
         object FindByName : Screen("findByName")
         object Profile : Screen("profile")
+        object SplashScreen : Screen("splashScreen")
     }
 
     // NAVIGATION
@@ -21,6 +22,7 @@ object Constants {
         object NavigateToFindByName : NavigationEvent()
         object NavigateBack : NavigationEvent()
         object NavigateToProfile : NavigationEvent()
+        object NavigateToSplashScreen : NavigationEvent()
     }
 
 

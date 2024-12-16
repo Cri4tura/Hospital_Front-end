@@ -13,6 +13,8 @@ import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
 import com.example.hospital_front_end.ui.screens.nurseInfo.NurseList
 import com.example.hospital_front_end.ui.screens.profile.ProfileView
 import com.example.hospital_front_end.ui.screens.signIn.SignInView
+
+import com.example.hospital_front_end.ui.screens.splash_screen.SplashScreen
 import com.example.hospital_front_end.utils.Constants
 
 @Composable
@@ -30,15 +32,19 @@ fun Navigation(
                 Constants.NavigationEvent.NavigateToNurseList -> navController.navigate(Constants.Screen.NurseList.route)
                 Constants.NavigationEvent.NavigateToRegister -> navController.navigate(Constants.Screen.SignIn.route)
                 Constants.NavigationEvent.NavigateToProfile -> navController.navigate(Constants.Screen.Profile.route)
+                Constants.NavigationEvent.NavigateToSplashScreen -> navController.navigate(Constants.Screen.SplashScreen.route)
                 Constants.NavigationEvent.NavigateBack -> navController.popBackStack()
             }
         }
     }
 
-    NavHost(navController = navController, startDestination = Constants.Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Constants.Screen.SplashScreen.route) {
+        composable(Constants.Screen.SplashScreen.route) {
+            SplashScreen(navController = navController)
+        }
         composable(Constants.Screen.Home.route) {
             HomeView(
-                onConfirmLogout = { viewModel.navigateToLogin() },
+                onConfirmLogout = { navController.popBackStack(); viewModel.navigateToLogin() },
                 onViewNurseList = { viewModel.navigateToNurseList() },
                 onSearchByName = { viewModel.navigateToFindByName() }
             )
@@ -53,7 +59,7 @@ fun Navigation(
         composable(Constants.Screen.SignIn.route) {
             SignInView(
                 onRegister = { _, _, _, _ ->
-                    viewModel.navigateToHome( )
+                    navController.popBackStack(); viewModel.navigateToHome( )
                 },
                 onBack = { viewModel.navigateBack() }
             )

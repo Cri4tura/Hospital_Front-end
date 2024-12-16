@@ -28,6 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.ui.components.EmailInput
 import com.example.hospital_front_end.ui.components.FingerPrintAuth
@@ -35,6 +37,7 @@ import com.example.hospital_front_end.ui.components.PasswordInput
 import com.example.hospital_front_end.ui.components.VideoPlayer
 import com.example.hospital_front_end.utils.Constants
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun LoginView(
     viewModel: LoginViewModel, onNavigateToHome: () -> Unit, navigateToSignIn: () -> Unit
@@ -61,14 +64,16 @@ fun LoginView(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = stringResource(R.string.homepage_title_text),
-            style = MaterialTheme.typography.headlineLarge,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+//        GlideImage(
+//            model = R.drawable.output,
+//            contentDescription = "Glide image ",
+//            modifier = Modifier
+//                .size(300.dp)
+//        )
+
+
+
 
         VideoPlayer(
             context = context,
@@ -77,6 +82,8 @@ fun LoginView(
                 .size(300.dp)
                 .aspectRatio(1f)
         )
+
+
 
         Spacer(modifier = Modifier.height(16.dp))
 

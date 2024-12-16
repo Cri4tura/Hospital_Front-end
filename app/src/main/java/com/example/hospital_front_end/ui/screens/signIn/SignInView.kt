@@ -33,11 +33,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.ui.components.EmailInput
 import com.example.hospital_front_end.ui.components.PasswordInput
 import com.example.hospital_front_end.ui.components.SquareIconVideoPlayer
 import com.example.hospital_front_end.ui.components.VideoPlayer
+import com.example.hospital_front_end.utils.Constants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -202,6 +204,7 @@ fun SignInView(
                         onRegister(
                             name, lastName, selectedDate, email
                         )
+
                     } else {
                         Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
                     }
