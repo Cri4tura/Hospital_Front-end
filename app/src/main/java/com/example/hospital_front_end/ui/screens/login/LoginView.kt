@@ -92,8 +92,7 @@ fun LoginView(
             passwordVisible = passwordVisible,
             onPasswordChange = { password = it },
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
-            isError = viewModel.passwordError.value,
-            context = context,
+            isError = viewModel.passwordError.value
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -122,8 +121,7 @@ fun LoginView(
                             auth = isAuthenticated
                         }
                     }
-                },
-            context = context
+                }
         )
 
         Spacer(modifier = Modifier.weight(1f))

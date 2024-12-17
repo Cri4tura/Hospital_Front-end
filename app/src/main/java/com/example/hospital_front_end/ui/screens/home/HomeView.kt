@@ -21,98 +21,21 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.ui.components.LogoutButton
 import com.example.hospital_front_end.ui.components.LogoutConfirmationDialog
+import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
 import com.example.hospital_front_end.ui.components.PrimaryButton
+import com.example.hospital_front_end.ui.navigation.NavigationViewModel
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun HomeView(
-    onConfirmLogout: () -> Unit, onViewNurseList: () -> Unit, onSearchByName: () -> Unit
+    navViewModel: NavigationViewModel
 ) {
-    var showDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp)
-            .padding(top = 60.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(
-            "Menu",
-            style = MaterialTheme.typography.headlineLarge,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
+    MyAppBarWithDrawer(navViewModel = navViewModel,
+        pageTitle = "Home",
+        //imageResource = R.drawable.info
         )
 
-        GlideImage(
-            model = R.drawable.pildora,
-            contentDescription = "Glide image ",
-            modifier = Modifier
-                .size(200.dp)
-                .padding(bottom = 8.dp)
-        )
-
-        PrimaryButton(
-            onClick = onViewNurseList,
-            imageResource = R.drawable.list,
-            text = "View List",
-            contentDescription = "View List Button",
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        PrimaryButton(
-            onClick = { /* TODO */ },
-            imageResource = R.drawable.search_id,
-            text = "Find by ID",
-            contentDescription = "Find by ID Button",
-            modifier = Modifier.fillMaxWidth(),
-            enabled = false
-        )
-        PrimaryButton(
-            onClick = onSearchByName,
-            imageResource = R.drawable.search,
-            text = "Find by Name",
-            contentDescription = "Find by Name Button",
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        PrimaryButton(
-            onClick = { /* TODO: Acción del botón */ },
-            imageResource = R.drawable.update,
-            text = "Update Nurse",
-            contentDescription = "Update Nurse Button",
-            modifier = Modifier.fillMaxWidth(),
-            enabled = false
-        )
-
-        PrimaryButton(
-            onClick = { /* TODO: Acción del botón */ },
-            imageResource = R.drawable.delete,
-            text = "Delete Nurse",
-            contentDescription = "Delete Nurse Button",
-            modifier = Modifier.fillMaxWidth(),
-            enabled = false
-        )
-        Spacer(modifier = Modifier.weight(1f))
-
-        LogoutButton(
-            onClick = { showDialog = true },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            enabled = true,
-            text = "Log Out",
-        )
-
-        LogoutConfirmationDialog(
-            showDialog = showDialog,
-            onDismiss = { showDialog = false },
-            onConfirm = onConfirmLogout
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-    }
 }
 
 
@@ -120,8 +43,9 @@ fun HomeView(
 @Composable
 fun HomeViewPreview() {
     HomeView(
-        onConfirmLogout = { /* Simulated Confirm Logout */ },
-        onViewNurseList = { /* Simulated View List */ },
-        onSearchByName = { /* Simulated Find By Name */ }
+        navViewModel = NavigationViewModel()
+        //onConfirmLogout = { /* Simulated Confirm Logout */ },
+        //onViewNurseList = { /* Simulated View List */ },
+        //onSearchByName = { /* Simulated Find By Name */ }
     )
 }

@@ -22,41 +22,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
+import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
 import com.example.hospital_front_end.ui.components.NurseItem
+import com.example.hospital_front_end.ui.navigation.NavigationViewModel
 
 @Composable
-fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nurse) -> Unit) {
+fun NurseList(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
 
+    MyAppBarWithDrawer(
+        navViewModel = navViewModel,
+        pageTitle = "Nurse List",
+        //imageResource = R.drawable.list
+    )
     Column(
         modifier = Modifier
             .padding(16.dp)
-            .padding(top = 20.dp)
     ) {
 
-        IconButton(onClick = onBack, modifier = Modifier.align(Alignment.End)) {
-            Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-
-            Icon(
-                painter = painterResource(id = R.drawable.list),
-                contentDescription = "List Icon",
-                modifier = Modifier.size(24.dp)
-            )
-            Text(
-                "Nurses",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(100.dp))
 
         if (nurseList.isNotEmpty()) {
             LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
                 items(nurseList) { nurse ->
-                    NurseItem(nurse, navigateToProfile)
+                    NurseItem(nurse, navViewModel)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -74,7 +62,6 @@ fun MyNurseListPreview() {
     val nurseList = NurseRepository().getNurseList()
     NurseList(
         nurseList = nurseList,
-        onBack = { /* Simulated Back Action */ },
-        navigateToProfile = { /* Simulated Profile Action */ }
+        navViewModel = NavigationViewModel()
     )
 }

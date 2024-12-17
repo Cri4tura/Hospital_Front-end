@@ -1,13 +1,9 @@
 package com.example.hospital_front_end
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,7 +24,7 @@ class MainActivity : AppCompatActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val viewModel = NavigationViewModel()
-                    Navigation(navController = rememberNavController(), viewModel = viewModel)
+                    Navigation(navController = rememberNavController(), navViewModel = viewModel)
                 }
             }
         }

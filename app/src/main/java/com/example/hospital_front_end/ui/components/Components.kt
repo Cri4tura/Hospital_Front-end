@@ -1,15 +1,19 @@
 package com.example.hospital_front_end.ui.components
 
 import android.content.Context
+import android.content.res.Resources.Theme
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,27 +22,50 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -49,10 +76,194 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import androidx.navigation.NavController
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
+import com.example.hospital_front_end.ui.navigation.NavigationViewModel
+import com.example.hospital_front_end.utils.Constants
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyAppBarWithDrawer(
+    navViewModel: NavigationViewModel,
+    pageTitle: String,
+    //imageResource: Int,
+) {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.66f) // 2/3 del ancho total
+                    .fillMaxHeight()
+                    .background(Color(0xFFBBDEFB))
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    DrawerContent(
+                        scope = scope,
+                        drawerState = drawerState,
+                        navViewModel = navViewModel
+                    )
+                }
+
+            }
+        },
+        drawerState = drawerState
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        TitleMenu(
+                            title = pageTitle.uppercase(),
+                            //icon = ImageVector.vectorResource(id = imageResource)
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                scope.launch { drawerState.open() }
+                            }) {
+                            Image(
+                                painter = painterResource(R.drawable.menu),
+                                contentDescription = "Menú"
+                            )
+                        }
+                    },
+                    actions = {
+                        // Botón de configuración
+                        IconButton(
+                            onClick = { navViewModel.navigateBack() }) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Configuración"
+                            )
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding)) {
+                // Contenido de la pantalla
+            }
+        }
+    }
+}
+
+@Composable
+fun DrawerContent(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+    navViewModel: NavigationViewModel
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .background(color = MaterialTheme.colorScheme.secondary)
+
+    ) {
+        Spacer(modifier = Modifier.height(60.dp))
+
+        TextMenu(
+            imageResource = R.drawable.list,
+            text = "Directory",
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    scope.launch { drawerState.close() }
+                    navViewModel.navigateToNurseList()
+                },
+            enabled = true
+
+        )
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.background
+        )
+        TextMenu(
+            imageResource = R.drawable.search,
+            text = "Search",
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    scope.launch { drawerState.close() }
+                    navViewModel.navigateToFindByName()
+                },
+            enabled = true
+        )
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.background
+        )
+        TextMenu(
+            imageResource = R.drawable.search_id,
+            text = "Find by ID",
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    scope.launch { drawerState.close() }
+                    //TODO()
+                },
+            enabled = false
+        )
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.background
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        LogoutButton(
+            onClick = { showDialog = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            enabled = true,
+            text = "Log Out",
+        )
+
+        LogoutConfirmationDialog(
+            showDialog = showDialog,
+            onDismiss = { showDialog = false },
+            onConfirm = { navViewModel.navigateToLogin() }
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+    }
+}
+
+@Composable
+fun TitleMenu(
+    title: String,
+    //icon: ImageVector
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+//        Icon(
+//            imageVector = icon,
+//            contentDescription = "Icon",
+//            modifier = Modifier.size(24.dp)
+//        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            title,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
 
 @Composable
 fun EmailInput(
@@ -84,13 +295,9 @@ fun EmailInput(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun FingerPrintAuth(
-    context: Context,
     modifier: Modifier,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
-    borderWidth: Dp = 2.dp
 ) {
     Column(
         modifier = modifier,
@@ -106,16 +313,15 @@ fun FingerPrintAuth(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-       Image(
-           painter = painterResource(id = R.drawable.huella),
-           contentDescription = "Fingerprint Icon",
-           modifier = Modifier.size(50.dp)
+        Image(
+            painter = painterResource(id = R.drawable.huella),
+            contentDescription = "Fingerprint Icon",
+            modifier = Modifier.size(50.dp)
 
-       )
+        )
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun PasswordInput(
     password: String,
@@ -123,7 +329,6 @@ fun PasswordInput(
     onPasswordChange: (String) -> Unit,
     onPasswordVisibilityToggle: () -> Unit,
     isError: String?,
-    context: Context,
 ) {
     OutlinedTextField(
         value = password,
@@ -201,67 +406,6 @@ fun VideoPlayer(
 }
 
 @Composable
-fun IconVideoPlayer(
-    context: Context,
-    videoResId: Int,
-    modifier: Modifier = Modifier,
-    contentScale: ContentScale,
-) {
-
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
-            val mediaItem = MediaItem.fromUri(videoUri)
-            setMediaItem(mediaItem)
-            repeatMode = ExoPlayer.REPEAT_MODE_ALL
-            prepare()
-            playWhenReady = true
-        }
-    }
-
-    DisposableEffect(exoPlayer) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-
-    AndroidView(
-        factory = { PlayerView(it).apply { player = exoPlayer; useController = false } },
-        modifier = modifier
-            .clip(CircleShape)
-    )
-}
-
-@Composable
-fun SquareIconVideoPlayer(
-    context: Context,
-    videoResId: Int,
-    modifier: Modifier = Modifier,
-) {
-
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
-            val mediaItem = MediaItem.fromUri(videoUri)
-            setMediaItem(mediaItem)
-            repeatMode = ExoPlayer.REPEAT_MODE_ALL
-            prepare()
-            playWhenReady = true
-        }
-    }
-
-    DisposableEffect(exoPlayer) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-
-    AndroidView(
-        factory = { PlayerView(it).apply { player = exoPlayer; useController = false } },
-    )
-}
-
-@Composable
 fun PrimaryButton(
     onClick: () -> Unit,
     imageResource: Int,
@@ -282,6 +426,39 @@ fun PrimaryButton(
         )
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+fun TextMenu(
+    imageResource: Int,
+    text: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    Row(
+        modifier = if (enabled) modifier
+            .padding(horizontal = 16.dp)
+            .height(45.dp) else modifier
+            .alpha(0.5f)
+            .padding(horizontal = 16.dp)
+            .height(45.dp)
+            .clickable() {},
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Image(
+            painter = painterResource(id = imageResource),
+            contentDescription = text,
+            modifier = Modifier.size(35.dp)
+        )
+        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        Text(
+            text = text.uppercase(),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
     }
 }
 
@@ -346,13 +523,13 @@ fun LogoutConfirmationDialog(
 @Composable
 fun NurseItem(
     nurse: Nurse,
-    navigateToProfile: (Nurse) -> Unit
+    navViewModel: NavigationViewModel
 ) {
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navigateToProfile(nurse)
+                navViewModel.navigateToProfile(nurse)
             }) {
         Image(
             painter = painterResource(id = R.drawable.user),

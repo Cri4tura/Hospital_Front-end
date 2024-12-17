@@ -25,14 +25,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
+import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
 import com.example.hospital_front_end.ui.components.NurseItem
+import com.example.hospital_front_end.ui.navigation.NavigationViewModel
 import kotlinx.coroutines.delay
 import kotlin.text.contains
 
 @Composable
-fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nurse) -> Unit) {
+fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
 
@@ -41,36 +44,22 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile
         delay(300)
         filteredNurses = nurseList.filter { nurse ->
             nurse.name.contains(searchQuery, ignoreCase = true) ||
-            nurse.surname.contains(searchQuery, ignoreCase = true) ||
-            nurse.email.contains(searchQuery, ignoreCase = true) ||
-            nurse.age.toString().contains(searchQuery)
+                    nurse.surname.contains(searchQuery, ignoreCase = true) ||
+                    nurse.email.contains(searchQuery, ignoreCase = true) ||
+                    nurse.age.toString().contains(searchQuery)
         }
     }
-
+    MyAppBarWithDrawer(
+        navViewModel = navViewModel,
+        pageTitle = "Search",
+        //imageResource = R.drawable.search
+    )
     Column(
         modifier = Modifier
             .padding(16.dp)
-            .padding(top = 20.dp)
     ) {
-        IconButton(onClick = onBack, modifier = Modifier.align(Alignment.End)) {
-            Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
-        }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = "Search",
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                "Find nurse",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(100.dp))
 
         OutlinedTextField(
             value = searchQuery,
@@ -95,7 +84,7 @@ fun FindByNameView(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile
             )
             LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
                 items(filteredNurses) { nurse ->
-                    NurseItem(nurse, navigateToProfile)
+                    NurseItem(nurse, navViewModel)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -111,6 +100,6 @@ fun FindByNameViewPreview() {
     val nurseList = NurseRepository().getNurseList()
     FindByNameView(
         nurseList = nurseList,
-        onBack = { /* Simulated Back Action */ },
-        navigateToProfile = { /* Simulated Profile Action */ })
+        navViewModel = NavigationViewModel()
+    )
 }

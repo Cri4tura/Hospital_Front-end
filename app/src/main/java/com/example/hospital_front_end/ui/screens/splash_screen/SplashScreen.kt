@@ -31,7 +31,6 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.hospital_front_end.R
-import com.example.hospital_front_end.ui.components.IconVideoPlayer
 import com.example.hospital_front_end.utils.Constants
 import kotlinx.coroutines.delay
 
@@ -48,7 +47,6 @@ fun SplashScreen(navController: NavController) {
 @kotlin.OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun Splash() {
-    val context = LocalContext.current
     Box( // Usar Box para el video en pantalla completa
         modifier = Modifier
             .fillMaxSize() // Ocupa toda la pantalla
