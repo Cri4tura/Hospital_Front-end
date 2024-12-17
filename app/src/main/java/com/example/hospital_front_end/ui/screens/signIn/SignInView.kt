@@ -3,6 +3,7 @@ package com.example.hospital_front_end.ui.screens.signIn
 import android.app.DatePickerDialog
 import androidx.compose.ui.unit.dp
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -88,10 +90,12 @@ fun SignInView(
             Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        GlideImage(
-            model = R.drawable.pildora,
+        Image(
+            painter = painterResource(id = R.drawable.nurse_register),
             contentDescription = "Glide image ",
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier
+                .size(200.dp)
+                .padding(bottom = 8.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
@@ -145,11 +149,9 @@ fun SignInView(
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { onDateClick() }) {
-                    SquareIconVideoPlayer(
-                        context = context,
-                        videoResId = R.raw.calendario,
-                        modifier = Modifier
-                            .size(35.dp)
+                    Icon(
+                        painter = painterResource(id = R.drawable.calendar),
+                        contentDescription = "Calendar"
                     )
                 }
             }
