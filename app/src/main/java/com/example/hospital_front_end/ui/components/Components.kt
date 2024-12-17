@@ -106,32 +106,12 @@ fun FingerPrintAuth(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row {
-            GlideImage(
-                model = R.drawable.escaneo_facial,
-                contentDescription = "Glide image ",
-                modifier = Modifier
-                    .size(50.dp)
-                    .aspectRatio(1f)
-                    .clip(CircleShape)
-                    .border(borderWidth, borderColor, CircleShape)
-            )
+       Image(
+           painter = painterResource(id = R.drawable.huella),
+           contentDescription = "Fingerprint Icon",
+           modifier = Modifier.size(50.dp)
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            GlideImage(
-                model = R.drawable.huella_dactilar,
-                contentDescription = "Glide image ",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .border(borderWidth, borderColor, CircleShape)
-                    .size(50.dp)
-                    .aspectRatio(1f)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-        }
+       )
     }
 }
 
@@ -162,7 +142,7 @@ fun PasswordInput(
         trailingIcon = {
             IconButton(onClick = onPasswordVisibilityToggle) {
                 val icon =
-                    if (passwordVisible) R.drawable.visibility_off else R.drawable.password_eye
+                    if (passwordVisible) R.drawable.visibility_off else R.drawable.visibility
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
                 if (passwordVisible) {
@@ -173,24 +153,6 @@ fun PasswordInput(
                         painter = painterResource(id = icon),
                         contentDescription = description
                     )
-                } else {
-
-                    GlideImage(
-                        model = R.drawable.output,
-                        contentDescription = "Glide image ",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                    /*
-                                    IconVideoPlayer(
-                                        context = context,
-                                        videoResId = icon,
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .aspectRatio(1f),
-                                        contentScale = ContentScale.Crop
-                                    )
-
-                     */
                 }
             }
         }

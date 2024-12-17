@@ -16,11 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.ui.components.LogoutButton
 import com.example.hospital_front_end.ui.components.LogoutConfirmationDialog
 import com.example.hospital_front_end.ui.components.PrimaryButton
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun HomeView(
     onConfirmLogout: () -> Unit, onViewNurseList: () -> Unit, onSearchByName: () -> Unit
@@ -41,9 +44,10 @@ fun HomeView(
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
         )
-        Image(
-            painter = painterResource(id = R.drawable.nurse_register),
-            contentDescription = "Home screen illustration of a nurse",
+
+        GlideImage(
+            model = R.drawable.pildora,
+            contentDescription = "Glide image ",
             modifier = Modifier
                 .size(200.dp)
                 .padding(bottom = 8.dp)
@@ -79,7 +83,7 @@ fun HomeView(
             text = "Update Nurse",
             contentDescription = "Update Nurse Button",
             modifier = Modifier.fillMaxWidth(),
-                    enabled = false
+            enabled = false
         )
 
         PrimaryButton(
