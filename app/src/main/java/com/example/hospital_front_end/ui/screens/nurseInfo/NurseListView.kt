@@ -30,10 +30,23 @@ import com.example.hospital_front_end.ui.navigation.NavigationViewModel
 fun NurseList(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
 
     MyAppBarWithDrawer(
+        content = { paddingValues ->
+            LazyColumn(
+                contentPadding = paddingValues
+            ) {
+                items(20) { index ->
+                    Text(
+                        text = "Item $index",
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        },
         navViewModel = navViewModel,
         pageTitle = "Nurse List",
         //imageResource = R.drawable.list
     )
+    /*
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -52,6 +65,8 @@ fun NurseList(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
             Text("No results found", style = MaterialTheme.typography.bodyLarge)
         }
     }
+    */
+
 
 }
 

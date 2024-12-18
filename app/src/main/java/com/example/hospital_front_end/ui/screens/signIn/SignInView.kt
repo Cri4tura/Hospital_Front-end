@@ -131,6 +131,7 @@ fun SignInView(
             //isError = viewModel.emailError.value
         )
         Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(value = selectedDate,
             onValueChange = { selectedDate = it },
             label = {

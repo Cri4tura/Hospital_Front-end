@@ -1,18 +1,16 @@
 package com.example.hospital_front_end.ui.components
 
 import android.content.Context
-import android.content.res.Resources.Theme
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,36 +18,57 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
+import androidx.compose.material.icons.automirrored.sharp.List
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.sharp.Home
+import androidx.compose.material.icons.sharp.List
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,15 +79,16 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -76,69 +96,170 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import androidx.navigation.NavController
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.ui.navigation.NavigationViewModel
-import com.example.hospital_front_end.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyAppBarWithDrawer(
+    content: @Composable (PaddingValues) -> Unit,
     navViewModel: NavigationViewModel,
     pageTitle: String,
     //imageResource: Int,
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+    var presses by remember { mutableIntStateOf(0) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
         drawerContent = {
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.66f) // 2/3 del ancho total
-                    .fillMaxHeight()
-                    .background(Color(0xFFBBDEFB))
+                    .background(color = MaterialTheme.colorScheme.background)
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
-                ) {
-                    DrawerContent(
-                        scope = scope,
-                        drawerState = drawerState,
-                        navViewModel = navViewModel
-                    )
-                }
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    "Drawer Title",
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                HorizontalDivider()
 
+                Text(
+                    "Section 1",
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                NavigationDrawerItem(
+                    label = {
+                        PrimaryButton(
+                            onClick = { navViewModel.navigateToNurseList() },
+                            imageResource = R.drawable.list,
+                            text = "View List",
+                            contentDescription = "View List Button",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    selected = false,
+                    onClick = {  }
+                )
+                NavigationDrawerItem(
+                    label = { PrimaryButton(
+                        onClick = { navViewModel.navigateToFindByName() },
+                        imageResource = R.drawable.search,
+                        text = "Find by Name",
+                        contentDescription = "Find by Name Button",
+                        modifier = Modifier.fillMaxWidth()
+                    ) },
+                    selected = false,
+                    onClick = { }
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                Text(
+                    "Section 2",
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                NavigationDrawerItem(
+                    label = { Text("Settings") },
+                    selected = false,
+                    icon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
+                    badge = { Text("20") }, // Placeholder
+                    onClick = { /* Handle click */ }
+                )
+                NavigationDrawerItem(
+                    label = { Text("Help and feedback") },
+                    selected = false,
+                    icon = {
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = null
+                        )
+                    },
+                    onClick = { /* Handle click */ },
+                )
+                NavigationDrawerItem(
+                    label = { Text("Help and feedback") },
+                    selected = false,
+                    icon = {
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ExitToApp,
+                            contentDescription = null
+                        )
+                    },
+                    onClick = { /* Handle click */ },
+                )
+                NavigationDrawerItem(
+                    label = { Text("Help and feedback") },
+                    selected = false,
+                    icon = {
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowForward,
+                            contentDescription = null
+                        )
+                    },
+                    onClick = { /* Handle click */ },
+                )
+
+                HorizontalDivider(modifier = Modifier.weight(1f))
+
+                NavigationDrawerItem(
+                    label = {
+                        LogoutButton(
+                            onClick = { showDialog = true },
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            enabled = true,
+                            text = "Log Out",
+                        )
+                        LogoutConfirmationDialog(
+                            showDialog = showDialog,
+                            onDismiss = { showDialog = false },
+                            onConfirm = { navViewModel.navigateToLogin() }
+                        )
+                    },
+                    selected = false,
+                    icon = {
+
+                    },
+                    onClick = { /* Handle click */ },
+                )
             }
         },
+        gesturesEnabled = true,
         drawerState = drawerState
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = {
-                        TitleMenu(
-                            title = pageTitle.uppercase(),
-                            //icon = ImageVector.vectorResource(id = imageResource)
-                        )
-                    },
+                    title = { Text("$pageTitle") },
                     navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                scope.launch { drawerState.open() }
-                            }) {
-                            Image(
-                                painter = painterResource(R.drawable.menu),
-                                contentDescription = "Menú"
+                        IconButton(onClick = {
+                            scope.launch {
+                                if (drawerState.isClosed) {
+                                    drawerState.open()
+                                } else {
+                                    drawerState.close()
+                                }
+                            }
+                        }) {
+                            Icon(
+                                modifier = Modifier.size(ButtonDefaults.MinWidth),
+                                imageVector = Icons.Filled.Menu,
+                                contentDescription = "Configuración"
                             )
                         }
                     },
                     actions = {
-                        // Botón de configuración
                         IconButton(
                             onClick = { navViewModel.navigateBack() }) {
                             Icon(
@@ -146,16 +267,108 @@ fun MyAppBarWithDrawer(
                                 contentDescription = "Configuración"
                             )
                         }
-                    }
+                    },
+                    colors = TopAppBarColors(
+
+                        //containerColor = Color.Black,
+                        containerColor = Color.Transparent,
+                        scrolledContainerColor = Color.Green,
+                        navigationIconContentColor = MaterialTheme.colorScheme.tertiary,
+                        titleContentColor = MaterialTheme.colorScheme.tertiary,
+                        actionIconContentColor = MaterialTheme.colorScheme.tertiary
+                    )
                 )
+            },
+            bottomBar = {
+                BottomAppBar(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        text = "Bottom app bar",
+                    )
+                }
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = { presses++ }) {
+                    Icon(Icons.Default.Add, contentDescription = "Add")
+                }
             }
         ) { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding)) {
-                // Contenido de la pantalla
+            //content(innerPadding)
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                SingleChoiceSegmentedButton(modifier = Modifier.padding(8.dp))
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text =
+                    """
+                    This is an example of a scaffold. It uses the Scaffold composable's parameters to create a screen with a simple top app bar, bottom app bar, and floating action button.
+
+                    It also contains some basic inner content, such as this text.
+
+                    You have pressed the floating action button $presses times.
+                """.trimIndent(),
+                )
             }
         }
     }
 }
+
+@Composable
+fun SingleChoiceSegmentedButton(modifier: Modifier = Modifier) {
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    val options = listOf("Day", "Month", "Week")
+
+    SingleChoiceSegmentedButtonRow {
+        options.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = options.size
+                ),
+                onClick = { selectedIndex = index },
+                selected = index == selectedIndex,
+                label = { Text(label) }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModalInput(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                onDateSelected(datePickerState.selectedDateMillis)
+                onDismiss()
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
 
 @Composable
 fun DrawerContent(
@@ -223,44 +436,23 @@ fun DrawerContent(
             color = MaterialTheme.colorScheme.background
         )
 
-        Spacer(modifier = Modifier.weight(1f))
 
-        LogoutButton(
-            onClick = { showDialog = true },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            enabled = true,
-            text = "Log Out",
-        )
-
-        LogoutConfirmationDialog(
-            showDialog = showDialog,
-            onDismiss = { showDialog = false },
-            onConfirm = { navViewModel.navigateToLogin() }
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
 @Composable
 fun TitleMenu(
     title: String,
-    //icon: ImageVector
+    icon: ImageVector
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-//        Icon(
-//            imageVector = icon,
-//            contentDescription = "Icon",
-//            modifier = Modifier.size(24.dp)
-//        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            title,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
+        Icon(
+            imageVector = icon,
+            contentDescription = "Icon",
+            modifier = Modifier.size(24.dp)
         )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text( title )
     }
 }
 

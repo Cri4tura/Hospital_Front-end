@@ -50,10 +50,12 @@ fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
         }
     }
     MyAppBarWithDrawer(
+        content = {},
         navViewModel = navViewModel,
         pageTitle = "Search",
         //imageResource = R.drawable.search
     )
+    /*
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -92,6 +94,7 @@ fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
             Text("No results found", style = MaterialTheme.typography.bodyLarge)
         }
     }
+    */
 }
 
 @Preview(showBackground = true)

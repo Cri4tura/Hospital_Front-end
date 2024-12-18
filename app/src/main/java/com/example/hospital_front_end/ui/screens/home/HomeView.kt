@@ -24,6 +24,7 @@ import com.example.hospital_front_end.ui.components.LogoutConfirmationDialog
 import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
 import com.example.hospital_front_end.ui.components.PrimaryButton
 import com.example.hospital_front_end.ui.navigation.NavigationViewModel
+import com.google.ai.client.generativeai.type.content
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -31,10 +32,11 @@ fun HomeView(
     navViewModel: NavigationViewModel
 ) {
 
-    MyAppBarWithDrawer(navViewModel = navViewModel,
-        pageTitle = "Home",
-        //imageResource = R.drawable.info
-        )
+   MyAppBarWithDrawer(
+       content = {},
+       navViewModel = navViewModel,
+       pageTitle = "Home"
+   )
 
 }
 
