@@ -35,7 +35,11 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.sharp.Home
 import androidx.compose.material.icons.sharp.List
@@ -50,6 +54,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -195,23 +200,41 @@ fun MyAppBarWithDrawer(
 
                 HorizontalDivider()
 
-                NavigationDrawerItem(
-                    label = { Text("Settings") },
-                    selected = false,
-                    icon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
-                    badge = { Text("20") }, // Placeholder
-                    onClick = { /* Handle click */ }
+                DropdownMenuItem(
+                    text = { Text("Profile") },
+                    leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null) },
+                    onClick = { /* Do something... */ }
                 )
-                NavigationDrawerItem(
-                    label = { Text("Help and feedback") },
-                    selected = false,
-                    icon = {
-                        Icon(
-                            Icons.Outlined.Info,
-                            contentDescription = null
-                        )
-                    },
-                    onClick = { /* Handle click */ },
+                DropdownMenuItem(
+                    text = { Text("Settings") },
+                    leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
+                    onClick = { /* Do something... */ }
+                )
+
+                HorizontalDivider()
+
+                // Second section
+                DropdownMenuItem(
+                    text = { Text("Send Feedback") },
+                    leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null) },
+                    trailingIcon = { Icon(Icons.Default.Send, contentDescription = null) },
+                    onClick = { /* Do something... */ }
+                )
+
+                HorizontalDivider()
+
+                DropdownMenuItem(
+                    text = { Text("Help") },
+                    leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
+                    trailingIcon = { Icon(Icons.AutoMirrored.Outlined.ExitToApp, contentDescription = null) },
+                    onClick = { /* Do something... */ }
+                )
+
+                // Third section
+                DropdownMenuItem(
+                    text = { Text("About") },
+                    leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
+                    onClick = { /* Do something... */ }
                 )
 
                 HorizontalDivider(modifier = Modifier.weight(1f))
@@ -221,7 +244,8 @@ fun MyAppBarWithDrawer(
                         LogoutButton(
                             onClick = { showDialog = true },
                             modifier = Modifier
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .weight(1f),
                             enabled = true,
                             text = "Log Out",
                         )
@@ -275,9 +299,9 @@ fun MyAppBarWithDrawer(
                     colors = TopAppBarColors(
                         containerColor = Color.Transparent,
                         scrolledContainerColor = Color.Transparent,
-                        navigationIconContentColor = MaterialTheme.colorScheme.tertiary,
-                        titleContentColor = MaterialTheme.colorScheme.tertiary,
-                        actionIconContentColor = MaterialTheme.colorScheme.tertiary
+                        navigationIconContentColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                        actionIconContentColor = MaterialTheme.colorScheme.primary
                     )
                 )
             },
@@ -737,7 +761,6 @@ fun NurseItem(
             Text(
                 text = nurse.email,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.DarkGray
             )
         }
     }
@@ -769,13 +792,11 @@ fun NurseExtendedItem(
             Text(
                 text = "Age: ",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
                 fontSize = 22.sp
             )
             Text(
                 text = nurse.age.toString(),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
                 fontSize = 22.sp
             )
         }
@@ -785,13 +806,11 @@ fun NurseExtendedItem(
             Text(
                 text = "Birth Date: ",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
                 fontSize = 22.sp
             )
             Text(
                 text = nurse.formatDate(nurse.birthDate),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
                 fontSize = 22.sp
             )
         }
@@ -800,13 +819,11 @@ fun NurseExtendedItem(
             Text(
                 text = "Email: ",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
                 fontSize = 22.sp
             )
             Text(
                 text = nurse.email,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
                 fontSize = 22.sp
             )
         }
@@ -816,13 +833,11 @@ fun NurseExtendedItem(
             Text(
                 text = "Register Date: ",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
                 fontSize = 22.sp
             )
             Text(
                 text = nurse.formatDate(nurse.registerDate),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
                 fontSize = 22.sp
             )
         }

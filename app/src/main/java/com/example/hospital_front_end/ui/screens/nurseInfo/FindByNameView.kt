@@ -3,15 +3,12 @@ package com.example.hospital_front_end.ui.screens.nurseInfo
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -19,13 +16,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
@@ -39,7 +33,6 @@ fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
 
-    nurseList.sortedBy { it.name }
 
     LaunchedEffect(searchQuery) {
         delay(300)
@@ -89,7 +82,7 @@ fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
-                        items(filteredNurses) { nurse ->
+                        items(filteredNurses.sortedBy { it.name }) { nurse ->
                             NurseItem(nurse, navViewModel)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
