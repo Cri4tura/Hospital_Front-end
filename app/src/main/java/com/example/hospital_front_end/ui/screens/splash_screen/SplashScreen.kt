@@ -57,7 +57,7 @@ fun Splash() {
             verticalArrangement = Arrangement.Center,
         ) {
             GlideImage(
-                model = R.drawable.intro,
+                model = R.drawable.pildora,
                 contentDescription = "Glide image ",
                 modifier = Modifier.fillMaxSize()
             )

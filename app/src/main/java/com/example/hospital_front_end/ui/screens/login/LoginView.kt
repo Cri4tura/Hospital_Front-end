@@ -71,7 +71,7 @@ fun LoginView(
 //                .size(300.dp)
 //        )
         GlideImage(
-            model = R.drawable.init_logo,
+            model = R.drawable.cardio_logo,
             contentDescription = "Glide image ",
             modifier = Modifier
                 .size(300.dp)
