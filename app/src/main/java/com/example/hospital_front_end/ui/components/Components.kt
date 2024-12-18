@@ -2,6 +2,7 @@ package com.example.hospital_front_end.ui.components
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
@@ -31,14 +33,18 @@ import androidx.compose.material.icons.automirrored.sharp.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.sharp.Home
 import androidx.compose.material.icons.sharp.List
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
@@ -56,6 +62,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -108,8 +115,8 @@ fun MyAppBarWithDrawer(
     content: @Composable (PaddingValues) -> Unit,
     navViewModel: NavigationViewModel,
     pageTitle: String,
-    //imageResource: Int,
-) {
+
+    ) {
     var showDialog by remember { mutableStateOf(false) }
     var presses by remember { mutableIntStateOf(0) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -121,54 +128,73 @@ fun MyAppBarWithDrawer(
                 modifier = Modifier
                     .background(color = MaterialTheme.colorScheme.background)
                     .padding(horizontal = 16.dp, vertical = 16.dp)
-                    .fillMaxSize()
+                    .fillMaxWidth(0.75f)
+                    .fillMaxHeight()
                     .verticalScroll(rememberScrollState())
             ) {
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    "Drawer Title",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.titleLarge
-                )
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        "User Name".uppercase(),
+                        modifier = Modifier.padding(16.dp),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.nurse_register),
+                        contentDescription = "User Image",
+                        modifier = Modifier.size(100.dp)
+                    )
+                    Spacer(Modifier.height(16.dp))
+                }
+
                 HorizontalDivider()
 
-                Text(
-                    "Section 1",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                NavigationDrawerItem(
-                    label = {
-                        PrimaryButton(
-                            onClick = { navViewModel.navigateToNurseList() },
-                            imageResource = R.drawable.list,
-                            text = "View List",
-                            contentDescription = "View List Button",
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    selected = false,
-                    onClick = {  }
-                )
-                NavigationDrawerItem(
-                    label = { PrimaryButton(
-                        onClick = { navViewModel.navigateToFindByName() },
-                        imageResource = R.drawable.search,
-                        text = "Find by Name",
-                        contentDescription = "Find by Name Button",
-                        modifier = Modifier.fillMaxWidth()
-                    ) },
-                    selected = false,
-                    onClick = { }
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally
 
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                ) {
+                    Spacer(Modifier.height(16.dp))
+                    NavigationDrawerItem(
+                        label = {
+                            PrimaryButton(
+                                onClick = { navViewModel.navigateToHome();navViewModel.navigateToFindByName() },
+                                imageResource = R.drawable.list,
+                                text = "Directory".uppercase(),
+                                contentDescription = "View List Button",
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = true
+                            )
+                        },
+                        selected = false,
+                        onClick = { }
+                    )
+                    NavigationDrawerItem(
+                        label = {
+                            PrimaryButton(
+                                onClick = { navViewModel.navigateToHome();navViewModel.navigateToNurseList() },
+                                imageResource = R.drawable.search,
+                                text = "Search".uppercase(),
+                                contentDescription = "Find by Name Button",
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = false
+                            )
+                        },
+                        selected = false,
+                        onClick = { }
+                    )
+                    Spacer(Modifier.height(16.dp))
+                }
 
-                Text(
-                    "Section 2",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
+                HorizontalDivider()
+
                 NavigationDrawerItem(
                     label = { Text("Settings") },
                     selected = false,
@@ -181,29 +207,7 @@ fun MyAppBarWithDrawer(
                     selected = false,
                     icon = {
                         Icon(
-                            Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = null
-                        )
-                    },
-                    onClick = { /* Handle click */ },
-                )
-                NavigationDrawerItem(
-                    label = { Text("Help and feedback") },
-                    selected = false,
-                    icon = {
-                        Icon(
-                            Icons.AutoMirrored.Outlined.ExitToApp,
-                            contentDescription = null
-                        )
-                    },
-                    onClick = { /* Handle click */ },
-                )
-                NavigationDrawerItem(
-                    label = { Text("Help and feedback") },
-                    selected = false,
-                    icon = {
-                        Icon(
-                            Icons.AutoMirrored.Outlined.ArrowForward,
+                            Icons.Outlined.Info,
                             contentDescription = null
                         )
                     },
@@ -240,7 +244,7 @@ fun MyAppBarWithDrawer(
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
+                CenterAlignedTopAppBar(
                     title = { Text("$pageTitle") },
                     navigationIcon = {
                         IconButton(onClick = {
@@ -255,7 +259,7 @@ fun MyAppBarWithDrawer(
                             Icon(
                                 modifier = Modifier.size(ButtonDefaults.MinWidth),
                                 imageVector = Icons.Filled.Menu,
-                                contentDescription = "Configuración"
+                                contentDescription = "Configuration"
                             )
                         }
                     },
@@ -264,15 +268,13 @@ fun MyAppBarWithDrawer(
                             onClick = { navViewModel.navigateBack() }) {
                             Icon(
                                 imageVector = Icons.Filled.Close,
-                                contentDescription = "Configuración"
+                                contentDescription = "Configuration"
                             )
                         }
                     },
                     colors = TopAppBarColors(
-
-                        //containerColor = Color.Black,
                         containerColor = Color.Transparent,
-                        scrolledContainerColor = Color.Green,
+                        scrolledContainerColor = Color.Transparent,
                         navigationIconContentColor = MaterialTheme.colorScheme.tertiary,
                         titleContentColor = MaterialTheme.colorScheme.tertiary,
                         actionIconContentColor = MaterialTheme.colorScheme.tertiary
@@ -281,61 +283,60 @@ fun MyAppBarWithDrawer(
             },
             bottomBar = {
                 BottomAppBar(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.height(70.dp),
+                    windowInsets = BottomAppBarDefaults.windowInsets,
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        text = "Bottom app bar",
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SingleChoiceSegmentedButton()
+                    }
                 }
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = { presses++ }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add")
+                FloatingActionButton(
+                    onClick = { presses++ },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                ) {
+                    if (presses == 0) {
+                        Icon(Icons.Default.Add, contentDescription = "Add")
+                    } else {
+                        Text("${presses}")
+                    }
                 }
-            }
-        ) { innerPadding ->
-            //content(innerPadding)
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                SingleChoiceSegmentedButton(modifier = Modifier.padding(8.dp))
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    text =
-                    """
-                    This is an example of a scaffold. It uses the Scaffold composable's parameters to create a screen with a simple top app bar, bottom app bar, and floating action button.
-
-                    It also contains some basic inner content, such as this text.
-
-                    You have pressed the floating action button $presses times.
-                """.trimIndent(),
-                )
-            }
-        }
+            },
+            content = content
+        )
     }
 }
 
 @Composable
 fun SingleChoiceSegmentedButton(modifier: Modifier = Modifier) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
-    val options = listOf("Day", "Month", "Week")
+    var selectedIndex by remember { mutableIntStateOf(2) }
+    val options = listOf("User", "Shop", "Home", "Game", "News")
 
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, label ->
             SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = options.size
-                ),
+                icon = { },
+                shape = ShapeDefaults.ExtraLarge,
                 onClick = { selectedIndex = index },
                 selected = index == selectedIndex,
-                label = { Text(label) }
+                label = { Text(label.uppercase()) },
+                colors = SegmentedButtonDefaults.colors(
+                    activeContainerColor = MaterialTheme.colorScheme.background,
+                    activeContentColor = MaterialTheme.colorScheme.primary,
+                    inactiveContainerColor = MaterialTheme.colorScheme.primary,
+                    inactiveContentColor = MaterialTheme.colorScheme.onSecondary
+                ),
+                border = BorderStroke(
+                    1.dp,
+                    if (index == selectedIndex) MaterialTheme.colorScheme.primary else Color.Transparent
+                )
             )
         }
     }
@@ -452,7 +453,7 @@ fun TitleMenu(
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text( title )
+        Text(title)
     }
 }
 

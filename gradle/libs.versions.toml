@@ -19,6 +19,7 @@ runtimeLivedata = "1.7.6"
 toolsCore = "1.0.0-alpha10"
 protoliteWellKnownTypes = "18.0.0"
 generativeai = "0.9.0"
+protoliteWellKnownTypesVersion = "18.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +47,7 @@ androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtim
 androidx-tools-core = { group = "androidx.privacysandbox.tools", name = "tools-core", version.ref = "toolsCore" }
 #protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
+protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypesVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

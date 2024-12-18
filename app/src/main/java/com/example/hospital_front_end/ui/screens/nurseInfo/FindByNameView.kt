@@ -39,6 +39,7 @@ fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
 
+    nurseList.sortedBy { it.name }
 
     LaunchedEffect(searchQuery) {
         delay(300)
@@ -49,52 +50,57 @@ fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
                     nurse.age.toString().contains(searchQuery)
         }
     }
+
     MyAppBarWithDrawer(
-        content = {},
+
         navViewModel = navViewModel,
-        pageTitle = "Search",
-        //imageResource = R.drawable.search
-    )
-    /*
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-    ) {
+        pageTitle = "Directory",
+        content = {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
 
-        Spacer(modifier = Modifier.height(100.dp))
+                Spacer(modifier = Modifier.height(100.dp))
 
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { query -> searchQuery = query },
-            label = { Text("Insert name", style = MaterialTheme.typography.bodyLarge) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            singleLine = true
-        )
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { query -> searchQuery = query },
+                    label = { Text("Search", style = MaterialTheme.typography.bodyLarge) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(15.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    leadingIcon = { Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search Icon"
+                    ) },
+                    singleLine = true
+                )
 
-        Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-        if (filteredNurses.isNotEmpty()) {
-            Text(
-                "Results:",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
-                items(filteredNurses) { nurse ->
-                    NurseItem(nurse, navViewModel)
-                    Spacer(modifier = Modifier.height(8.dp))
+                if (filteredNurses.isNotEmpty()) {
+                    Text(
+                        "Results:",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
+                        items(filteredNurses) { nurse ->
+                            NurseItem(nurse, navViewModel)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+                } else if (searchQuery.isNotEmpty()) {
+                    Text("No results found", style = MaterialTheme.typography.bodyLarge)
                 }
             }
-        } else if (searchQuery.isNotEmpty()) {
-            Text("No results found", style = MaterialTheme.typography.bodyLarge)
         }
-    }
-    */
+    )
+
 }
 
 @Preview(showBackground = true)

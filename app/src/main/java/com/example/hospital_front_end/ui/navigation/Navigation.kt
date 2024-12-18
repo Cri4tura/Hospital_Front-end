@@ -45,9 +45,6 @@ fun Navigation(
         composable(Constants.Screen.Home.route) {
             HomeView(
                 navViewModel = navViewModel,
-                //onConfirmLogout = { navController.popBackStack(); navViewModel.navigateToLogin() },
-                //onViewNurseList = { navViewModel.navigateToNurseList() },
-                //onSearchByName = { navViewModel.navigateToFindByName() }
             )
         }
         composable(Constants.Screen.Login.route) {

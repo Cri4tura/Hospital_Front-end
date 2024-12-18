@@ -29,45 +29,33 @@ import com.example.hospital_front_end.ui.navigation.NavigationViewModel
 @Composable
 fun NurseList(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
 
+
     MyAppBarWithDrawer(
-        content = { paddingValues ->
-            LazyColumn(
-                contentPadding = paddingValues
-            ) {
-                items(20) { index ->
-                    Text(
-                        text = "Item $index",
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        },
+
         navViewModel = navViewModel,
-        pageTitle = "Nurse List",
-        //imageResource = R.drawable.list
-    )
-    /*
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-    ) {
+        pageTitle = "Search",
+        content = {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
 
-        Spacer(modifier = Modifier.height(100.dp))
+                Spacer(modifier = Modifier.height(100.dp))
 
-        if (nurseList.isNotEmpty()) {
-            LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
-                items(nurseList) { nurse ->
-                    NurseItem(nurse, navViewModel)
-                    Spacer(modifier = Modifier.height(8.dp))
+                if (nurseList.isNotEmpty()) {
+                    LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
+
+                        items(nurseList.sortedBy { it.name }) { nurse ->
+                            NurseItem(nurse, navViewModel)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+                } else {
+                    Text("No results found", style = MaterialTheme.typography.bodyLarge)
                 }
             }
-        } else {
-            Text("No results found", style = MaterialTheme.typography.bodyLarge)
         }
-    }
-    */
-
-
+    )
 }
 
 @Preview()

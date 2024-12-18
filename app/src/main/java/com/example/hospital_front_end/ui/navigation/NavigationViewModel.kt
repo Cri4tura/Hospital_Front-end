@@ -19,7 +19,7 @@ class NavigationViewModel() : ViewModel() {
     private val nurseRepository = NurseRepository()
 
     private val _nurseList = MutableStateFlow<List<Nurse>>(emptyList())
-    val nurseList: StateFlow<List<Nurse>> = _nurseList.asStateFlow()
+    var nurseList: StateFlow<List<Nurse>> = _nurseList.asStateFlow()
 
     private val _navigationEvent = MutableSharedFlow<Constants.NavigationEvent>()
     val navigationEvent = _navigationEvent.asSharedFlow()
