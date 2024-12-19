@@ -54,6 +54,11 @@ fun LoginView(
     // TODO: Comment when DB connection done
     // email = Constants.DEFAULT_USERNAME
     // password = Constants.DEFAULT_PASSWORD
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated) {
+            onNavigateToHome()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -147,11 +152,7 @@ fun LoginView(
         Spacer(modifier = Modifier.height(32.dp))
     }
 
-    LaunchedEffect(isAuthenticated) {
-        if (isAuthenticated) {
-            onNavigateToHome()
-        }
-    }
+
 }
 
 @Preview

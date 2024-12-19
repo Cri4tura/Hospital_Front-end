@@ -35,8 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.ui.components.EmailInput
 import com.example.hospital_front_end.ui.components.PasswordInput
@@ -44,9 +42,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun SignInView(
+    viewModel: SignInViewModel,
     onRegister: (name: String, lastName: String, birdthDay: String, email: String) -> Unit,
     onBack: () -> Unit
 ) {
@@ -183,24 +181,22 @@ fun SignInView(
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
+
             onClick = {
 
-                if (name.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty() && selectedDate.isNotEmpty()) {
-                    if (password == confirmPassword) {
-                        Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT)
-                            .show()
+                viewModel.signIn(name,
+                    lastName,
+                    email,
+                    selectedDate,
+                    password,
+                    confirmPassword,
+                )
 
-                        onRegister(
-                            name, lastName, selectedDate, email
-                        )
-
-                    } else {
-                        Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(context, "Please complete all fields", Toast.LENGTH_SHORT).show()
-                }
-            }, modifier = Modifier.fillMaxWidth()
+                onRegister(
+                    name, lastName, selectedDate, email
+                )
+            },
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = "Create New Account",
@@ -215,9 +211,9 @@ fun SignInView(
 @Preview(showBackground = true)
 @Composable
 fun NurseRegisterScreenPreview() {
-    SignInView(onRegister = { name, lastName, age, email ->
-        println("Registered: $name $lastName, Age: $age, Email: $email")
-    }, onBack = {
-        println("Back action triggered")
-    })
+    SignInView(
+        viewModel = SignInViewModel(),
+        onRegister = { name, lastName, age, email -> println("Registered: $name $lastName, Age: $age, Email: $email") },
+        onBack = { /* Handle back button click */ }
+    )
 }
