@@ -22,49 +22,40 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
+import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
 import com.example.hospital_front_end.ui.components.NurseItem
+import com.example.hospital_front_end.ui.navigation.NavigationViewModel
 
 @Composable
-fun NurseList(nurseList: List<Nurse>, onBack: () -> Unit, navigateToProfile: (Nurse) -> Unit) {
+fun NurseList(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
 
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .padding(top = 20.dp)
-    ) {
 
-        IconButton(onClick = onBack, modifier = Modifier.align(Alignment.End)) {
-            Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
-        }
+    MyAppBarWithDrawer(
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        navViewModel = navViewModel,
+        pageTitle = "Search",
+        content = {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
 
-            Icon(
-                painter = painterResource(id = R.drawable.list),
-                contentDescription = "List Icon",
-                modifier = Modifier.size(24.dp)
-            )
-            Text(
-                "Nurses",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-        }
+                Spacer(modifier = Modifier.height(100.dp))
 
-        Spacer(modifier = Modifier.height(32.dp))
+                if (nurseList.isNotEmpty()) {
+                    LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
 
-        if (nurseList.isNotEmpty()) {
-            LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
-                items(nurseList) { nurse ->
-                    NurseItem(nurse, navigateToProfile)
-                    Spacer(modifier = Modifier.height(8.dp))
+                        items(nurseList.sortedBy { it.name }) { nurse ->
+                            NurseItem(nurse, navViewModel)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+                } else {
+                    Text("No results found", style = MaterialTheme.typography.bodyLarge)
                 }
             }
-        } else {
-            Text("No results found", style = MaterialTheme.typography.bodyLarge)
         }
-    }
-
+    )
 }
 
 @Preview()
@@ -74,7 +65,6 @@ fun MyNurseListPreview() {
     val nurseList = NurseRepository().getNurseList()
     NurseList(
         nurseList = nurseList,
-        onBack = { /* Simulated Back Action */ },
-        navigateToProfile = { /* Simulated Profile Action */ }
+        navViewModel = NavigationViewModel()
     )
 }

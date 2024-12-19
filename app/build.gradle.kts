@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.tools.core)
+    //implementation(libs.protolite.well.known.types)
+    implementation(libs.generativeai)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

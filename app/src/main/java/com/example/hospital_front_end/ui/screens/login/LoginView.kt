@@ -71,7 +71,7 @@ fun LoginView(
 //                .size(300.dp)
 //        )
         GlideImage(
-            model = R.drawable.init_logo,
+            model = R.drawable.cardio_logo,
             contentDescription = "Glide image ",
             modifier = Modifier
                 .size(300.dp)
@@ -92,8 +92,7 @@ fun LoginView(
             passwordVisible = passwordVisible,
             onPasswordChange = { password = it },
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
-            isError = viewModel.passwordError.value,
-            context = context,
+            isError = viewModel.passwordError.value
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -122,8 +121,7 @@ fun LoginView(
                             auth = isAuthenticated
                         }
                     }
-                },
-            context = context
+                }
         )
 
         Spacer(modifier = Modifier.weight(1f))

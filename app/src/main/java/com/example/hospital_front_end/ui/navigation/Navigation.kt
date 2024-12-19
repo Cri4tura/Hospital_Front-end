@@ -20,11 +20,11 @@ import com.example.hospital_front_end.utils.Constants
 @Composable
 fun Navigation(
     navController: NavHostController,
-    viewModel: NavigationViewModel
+    navViewModel: NavigationViewModel
 ) {
 
-    LaunchedEffect(key1 = viewModel) {
-        viewModel.navigationEvent.collect { event ->
+    LaunchedEffect(key1 = navViewModel) {
+        navViewModel.navigationEvent.collect { event ->
             when (event) {
                 Constants.NavigationEvent.NavigateToHome -> navController.navigate(Constants.Screen.Home.route)
                 Constants.NavigationEvent.NavigateToLogin -> navController.navigate(Constants.Screen.Login.route)
@@ -38,56 +38,48 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Constants.Screen.SplashScreen.route) {
+    NavHost(navController = navController, startDestination = Constants.Screen.SplashScreen.route) {  // startDestination = Constants.Screen.SplashScreen.route
         composable(Constants.Screen.SplashScreen.route) {
             SplashScreen(navController = navController)
         }
         composable(Constants.Screen.Home.route) {
             HomeView(
-                onConfirmLogout = { navController.popBackStack(); viewModel.navigateToLogin() },
-                onViewNurseList = { viewModel.navigateToNurseList() },
-                onSearchByName = { viewModel.navigateToFindByName() }
+                navViewModel = navViewModel,
             )
         }
         composable(Constants.Screen.Login.route) {
             LoginView(
                 viewModel = LoginViewModel(),
-                onNavigateToHome = { viewModel.navigateToHome() },
-                navigateToSignIn = { viewModel.navigateToSignIn() }
+                onNavigateToHome = { navViewModel.navigateToHome() },
+                navigateToSignIn = { navViewModel.navigateToSignIn() }
             )
         }
         composable(Constants.Screen.SignIn.route) {
             SignInView(
                 onRegister = { _, _, _, _ ->
-                    navController.popBackStack(); viewModel.navigateToHome( )
+                    navController.popBackStack(); navViewModel.navigateToHome( )
                 },
-                onBack = { viewModel.navigateBack() }
+                onBack = { navViewModel.navigateBack() }
             )
         }
         composable(Constants.Screen.NurseList.route) {
-            val nurseList by viewModel.nurseList.collectAsState()
+            val nurseList by navViewModel.nurseList.collectAsState()
             NurseList(
                 nurseList = nurseList,
-                onBack = { viewModel.navigateBack() },
-                navigateToProfile = { nurse ->
-                    viewModel.navigateToProfile(nurse)
-                }
+                navViewModel = navViewModel
             )
         }
         composable(Constants.Screen.FindByName.route) {
-            val nurseList by viewModel.nurseList.collectAsState()
+            val nurseList by navViewModel.nurseList.collectAsState()
             FindByNameView(
                 nurseList = nurseList,
-                onBack = { viewModel.navigateBack() },
-                navigateToProfile = { nurse ->
-                    viewModel.navigateToProfile(nurse)
-                }
+                navViewModel = navViewModel
             )
         }
         composable(Constants.Screen.Profile.route) {
             ProfileView(
-                nurse = viewModel.selectedNurse,
-                onBack = { viewModel.navigateBack() }
+                nurse = navViewModel.selectedNurse,
+                onBack = { navViewModel.navigateBack() }
             )
         }
     }

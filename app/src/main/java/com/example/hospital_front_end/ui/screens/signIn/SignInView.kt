@@ -40,7 +40,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.ui.components.EmailInput
 import com.example.hospital_front_end.ui.components.PasswordInput
-import com.example.hospital_front_end.ui.components.SquareIconVideoPlayer
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -132,6 +131,7 @@ fun SignInView(
             //isError = viewModel.emailError.value
         )
         Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(value = selectedDate,
             onValueChange = { selectedDate = it },
             label = {
@@ -151,7 +151,8 @@ fun SignInView(
                 IconButton(onClick = { onDateClick() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.calendar),
-                        contentDescription = "Calendar"
+                        contentDescription = "Calendar",
+                        modifier = Modifier.size(35.dp)
                     )
                 }
             }
@@ -166,7 +167,6 @@ fun SignInView(
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
             isError = null,
             //isError = viewModel.passwordError.value,
-            context = context,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -178,7 +178,6 @@ fun SignInView(
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
             isError = null,
             //isError = viewModel.passwordError.value,
-            context = context,
         )
 
         Spacer(modifier = Modifier.weight(1f))
