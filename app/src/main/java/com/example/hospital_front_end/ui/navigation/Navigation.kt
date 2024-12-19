@@ -20,9 +20,9 @@ import com.example.hospital_front_end.utils.Constants
 @Composable
 fun Navigation(
     navController: NavHostController,
-    navViewModel: NavigationViewModel
+    navViewModel: NavigationViewModel,
 ) {
-
+    
     LaunchedEffect(key1 = navViewModel) {
         navViewModel.navigationEvent.collect { event ->
             when (event) {
@@ -38,7 +38,7 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Constants.Screen.SplashScreen.route) {  // startDestination = Constants.Screen.SplashScreen.route
+    NavHost(navController = navController, startDestination = Constants.Screen.Home.route) {
         composable(Constants.Screen.SplashScreen.route) {
             SplashScreen(navController = navController)
         }
@@ -61,13 +61,12 @@ fun Navigation(
                 onRegister = { name, lastName, birdthDay, email ->
                     navViewModel.navigateToHome( )
                 },
+                navViewModel = navViewModel,
                 onBack = { navViewModel.navigateBack() }
             )
         }
         composable(Constants.Screen.NurseList.route) {
-            val nurseList by navViewModel.nurseList.collectAsState()
             NurseList(
-                nurseList = nurseList,
                 navViewModel = navViewModel
             )
         }

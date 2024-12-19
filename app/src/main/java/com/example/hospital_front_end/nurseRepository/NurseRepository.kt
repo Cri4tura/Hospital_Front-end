@@ -19,6 +19,7 @@ class NurseRepository {
                 registerDate = dateFormat.parse("2024-01-01")!!,
                 birthDate = dateFormat.parse("1994-12-15")!!
             ),
+            /*
             Nurse(
                 id = 2,
                 name = "María",
@@ -171,8 +172,48 @@ class NurseRepository {
                 registerDate = dateFormat.parse("2020-01-15")!!,
                 birthDate = dateFormat.parse("1986-05-03")!!
             )
+
+             */
         )
         return nurseList as ArrayList<Nurse>
     }
+
+    fun addNurse(nurse: Nurse) {
+        nurseList.add(nurse)
+    }
+
+    fun removeNurseByEmail(email: String): Boolean {
+        val nurseToRemove = nurseList.find { it.email == email }
+        return if (nurseToRemove != null) {
+            nurseList.remove(nurseToRemove)
+            true
+        } else {
+            false
+        }
+    }
+
+    fun updateNurseByEmail(email: String, updatedNurse: Nurse): Boolean {
+        val nurseIndex = nurseList.indexOfFirst { it.email == email }
+        if (nurseIndex == -1) return false // Enfermera no encontrada
+
+        val existingNurse = nurseList[nurseIndex]
+
+        // Actualizar los campos solo si no son nulos
+        nurseList[nurseIndex] = existingNurse.copy(
+            id = updatedNurse.id.takeIf { it != 0 } ?: existingNurse.id,
+            name = updatedNurse.name.takeIf { it.isNotBlank() } ?: existingNurse.name,
+            surname = updatedNurse.surname.takeIf { it.isNotBlank() } ?: existingNurse.surname,
+            email = updatedNurse.email.takeIf { it.isNotBlank() } ?: existingNurse.email,
+            registerDate = updatedNurse.registerDate,
+            birthDate = updatedNurse.birthDate
+        )
+        return true
+    }
+
+    fun getNurseByEmail(email: String): Nurse? {
+        return nurseList.find { it.email == email }
+    }
+
+
 
 }

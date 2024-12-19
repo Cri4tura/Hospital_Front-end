@@ -36,8 +36,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.hospital_front_end.R
+import com.example.hospital_front_end.models.nurse.Nurse
+import com.example.hospital_front_end.nurseRepository.NurseRepository
 import com.example.hospital_front_end.ui.components.EmailInput
 import com.example.hospital_front_end.ui.components.PasswordInput
+import com.example.hospital_front_end.ui.navigation.NavigationViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -45,6 +48,7 @@ import java.util.Locale
 @Composable
 fun SignInView(
     viewModel: SignInViewModel,
+    navViewModel: NavigationViewModel,
     onRegister: (name: String, lastName: String, birdthDay: String, email: String) -> Unit,
     onBack: () -> Unit
 ) {
@@ -100,11 +104,6 @@ fun SignInView(
             onValueChange = { name = it },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White,
-                unfocusedPlaceholderColor = Color.White
-            ),
             label = { Text("Name", style = MaterialTheme.typography.bodyLarge) },
             singleLine = true
         )
@@ -114,10 +113,6 @@ fun SignInView(
             onValueChange = { lastName = it },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White
-            ),
             label = { Text("Surname", style = MaterialTheme.typography.bodyLarge) },
             singleLine = true
         )
@@ -140,10 +135,6 @@ fun SignInView(
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White
-            ),
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { onDateClick() }) {
@@ -191,7 +182,9 @@ fun SignInView(
                     password,
                     confirmPassword,
                 )
-
+                var newNurse: Nurse = Nurse(99, name, lastName, email, calendar.time, calendar.time)
+                // Llamar a la función addNurseToRepository para agregar la nueva enfermera
+                navViewModel.addNurse(newNurse)
                 onRegister(
                     name, lastName, selectedDate, email
                 )
@@ -214,6 +207,7 @@ fun NurseRegisterScreenPreview() {
     SignInView(
         viewModel = SignInViewModel(),
         onRegister = { name, lastName, age, email -> println("Registered: $name $lastName, Age: $age, Email: $email") },
-        onBack = { /* Handle back button click */ }
+        onBack = { /* Handle back button click */ },
+        navViewModel = NavigationViewModel(NurseRepository())
     )
 }

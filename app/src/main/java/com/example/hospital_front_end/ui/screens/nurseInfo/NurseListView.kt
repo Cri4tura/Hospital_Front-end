@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,14 +31,24 @@ import com.example.hospital_front_end.ui.components.NurseItem
 import com.example.hospital_front_end.ui.navigation.NavigationViewModel
 
 @Composable
-fun NurseList(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
-
+fun NurseList(navViewModel: NavigationViewModel) {
+    val nurseList by navViewModel.nurseList.collectAsState()
 
     MyAppBarWithDrawer(
 
         navViewModel = navViewModel,
         pageTitle = "Search",
-        content = {
+        actionButton = {
+            FloatingActionButton(
+                onClick = {
+
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+            }
+        },
+        screenContent = {
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -64,7 +78,6 @@ fun NurseList(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
 fun MyNurseListPreview() {
     val nurseList = NurseRepository().getNurseList()
     NurseList(
-        nurseList = nurseList,
-        navViewModel = NavigationViewModel()
+        navViewModel = NavigationViewModel(NurseRepository())
     )
 }

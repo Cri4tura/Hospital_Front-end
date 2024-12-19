@@ -4,9 +4,13 @@ import android.util.Patterns
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.hospital_front_end.models.nurse.Nurse
+import com.example.hospital_front_end.nurseRepository.NurseRepository
 import java.util.Date
 
 class SignInViewModel : ViewModel() {
+    private val nurseRepository = NurseRepository()
+
     data class ValidationResult(val isValid: Boolean, val errorMessage: String)
 
     private val _nameError = mutableStateOf<String?>(null)
@@ -36,6 +40,19 @@ class SignInViewModel : ViewModel() {
 
 
 
+    }
+
+    // Función para agregar enfermera
+    fun addNurseToRepository(name: String, lastName: String, email: String, birthDate: Date) {
+        val newNurse = Nurse(
+            id = 99, // Asignar un ID automáticamente o dejar que el repositorio lo gestione
+            name = name,
+            surname = lastName,
+            email = email,
+            registerDate = Date(), // Fecha actual de registro
+            birthDate = birthDate
+        )
+        nurseRepository.addNurse(newNurse)
     }
 
     private fun validateName(name: String): ValidationResult {

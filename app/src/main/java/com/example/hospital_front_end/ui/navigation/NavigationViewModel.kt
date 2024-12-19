@@ -13,13 +13,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class NavigationViewModel() : ViewModel() {
+class NavigationViewModel(private val nurseRepository: NurseRepository) : ViewModel() {
 
     lateinit var selectedNurse: Nurse
-    private val nurseRepository = NurseRepository()
 
     private val _nurseList = MutableStateFlow<List<Nurse>>(emptyList())
-    var nurseList: StateFlow<List<Nurse>> = _nurseList.asStateFlow()
+    val nurseList: StateFlow<List<Nurse>> get() = _nurseList
 
     private val _navigationEvent = MutableSharedFlow<Constants.NavigationEvent>()
     val navigationEvent = _navigationEvent.asSharedFlow()
@@ -28,6 +27,11 @@ class NavigationViewModel() : ViewModel() {
         viewModelScope.launch {
             _nurseList.value = nurseRepository.getNurseList()
         }
+    }
+
+    fun addNurse(nurse: Nurse) {
+        nurseRepository.addNurse(nurse)
+        _nurseList.value = nurseRepository.getNurseList() // Actualiza la lista observada
     }
 
     fun navigateToHome() {
@@ -64,7 +68,6 @@ class NavigationViewModel() : ViewModel() {
         viewModelScope.launch {
             _navigationEvent.emit(Constants.NavigationEvent.NavigateBack)
         }
-
     }
 
     fun navigateToProfile(nurse: Nurse) {

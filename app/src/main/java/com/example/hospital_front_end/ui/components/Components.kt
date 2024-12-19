@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -117,13 +118,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyAppBarWithDrawer(
-    content: @Composable (PaddingValues) -> Unit,
     navViewModel: NavigationViewModel,
     pageTitle: String,
-
-    ) {
+    actionButton: @Composable () -> Unit,
+    screenContent: @Composable () -> Unit
+) {
     var showDialog by remember { mutableStateOf(false) }
-    var presses by remember { mutableIntStateOf(0) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -226,7 +226,12 @@ fun MyAppBarWithDrawer(
                 DropdownMenuItem(
                     text = { Text("Help") },
                     leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
-                    trailingIcon = { Icon(Icons.AutoMirrored.Outlined.ExitToApp, contentDescription = null) },
+                    trailingIcon = {
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ExitToApp,
+                            contentDescription = null
+                        )
+                    },
                     onClick = { /* Do something... */ }
                 )
 
@@ -321,19 +326,12 @@ fun MyAppBarWithDrawer(
                     }
                 }
             },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { presses++ },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                ) {
-                    if (presses == 0) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
-                    } else {
-                        Text("${presses}")
-                    }
+            floatingActionButton = { actionButton() },
+            content = { innerPadding ->
+                Box(modifier = Modifier.padding(innerPadding)) {
+                    screenContent()
                 }
-            },
-            content = content
+            }
         )
     }
 }
@@ -495,12 +493,6 @@ fun EmailInput(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
         isError = isError?.isNotEmpty() ?: false,
-        colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White,
-            unfocusedPlaceholderColor = Color.White,
-            focusedTextColor = Color.Black,
-        )
     )
     if (isError?.isNotEmpty() == true) {
         Text(
@@ -555,12 +547,6 @@ fun PasswordInput(
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         shape = RoundedCornerShape(15.dp),
         isError = isError?.isNotEmpty() ?: false,
-        colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White,
-            unfocusedPlaceholderColor = Color.White,
-            focusedTextColor = Color.Black,
-        ),
         trailingIcon = {
             IconButton(onClick = onPasswordVisibilityToggle) {
                 val icon =
