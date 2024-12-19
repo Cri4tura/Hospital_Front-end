@@ -13,8 +13,8 @@ import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
 import com.example.hospital_front_end.ui.screens.nurseInfo.NurseList
 import com.example.hospital_front_end.ui.screens.profile.ProfileView
 import com.example.hospital_front_end.ui.screens.signIn.SignInView
-
 import com.example.hospital_front_end.ui.screens.splash_screen.SplashScreen
+import com.example.hospital_front_end.ui.screens.signIn.SignInViewModel
 import com.example.hospital_front_end.utils.Constants
 
 @Composable
@@ -56,8 +56,10 @@ fun Navigation(
         }
         composable(Constants.Screen.SignIn.route) {
             SignInView(
-                onRegister = { _, _, _, _ ->
-                    navController.popBackStack(); navViewModel.navigateToHome( )
+
+                viewModel = SignInViewModel(),
+                onRegister = { name, lastName, birdthDay, email ->
+                    navViewModel.navigateToHome( )
                 },
                 onBack = { navViewModel.navigateBack() }
             )
