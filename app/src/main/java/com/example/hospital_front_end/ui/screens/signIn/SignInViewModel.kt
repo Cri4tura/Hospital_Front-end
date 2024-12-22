@@ -4,6 +4,9 @@ import android.util.Patterns
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 import java.util.Date
@@ -12,6 +15,9 @@ class SignInViewModel : ViewModel() {
     private val nurseRepository = NurseRepository()
 
     data class ValidationResult(val isValid: Boolean, val errorMessage: String)
+
+    private val _authenticationState = MutableStateFlow<Boolean>(false)
+    val authenticationState: StateFlow<Boolean> = _authenticationState.asStateFlow()
 
     private val _nameError = mutableStateOf<String?>(null)
     val nameError: State<String?> = _nameError
@@ -38,7 +44,16 @@ class SignInViewModel : ViewModel() {
         val birthDateValid = validateBirthDate(birthDate)
         val passwordsValid = validatePasswords(password1, password2)
 
-
+        _nameError.value = nameValid.errorMessage
+        _lastNameError.value = lastNameValid.errorMessage
+        _emailError.value = emailValid.errorMessage
+        _birthDateError.value = birthDateValid.errorMessage
+        _passwordError.value = passwordsValid.errorMessage
+        if (nameValid.isValid && lastNameValid.isValid && emailValid.isValid && birthDateValid.isValid && passwordsValid.isValid) {
+            _authenticationState.value = true
+        } else {
+            _authenticationState.value = false
+        }
 
     }
 
