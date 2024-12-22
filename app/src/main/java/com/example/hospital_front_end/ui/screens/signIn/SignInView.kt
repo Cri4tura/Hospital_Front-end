@@ -23,6 +23,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +65,13 @@ fun SignInView(
 
     val calendar = Calendar.getInstance()
 
+    val nameError by viewModel.nameError
+    val lastNameError by viewModel.lastNameError
+    val emailError by viewModel.emailError
+    val birthDateError by viewModel.birthDateError
+    val passwordError by viewModel.passwordError
+    val confirmPasswordError by viewModel.confirmPasswordError
+
     val onDateClick = {
         DatePickerDialog(
             context,
@@ -74,6 +83,13 @@ fun SignInView(
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         ).show()
+    }
+
+    val isAuthenticated by viewModel.authenticationState.collectAsState()
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated) {
+            onRegister(name, lastName, selectedDate, email)
+        }
     }
 
     Column(
@@ -108,6 +124,9 @@ fun SignInView(
             label = { Text("Name", style = MaterialTheme.typography.bodyLarge) },
             singleLine = true
         )
+        if (viewModel.nameError.value != null) {
+            Text(text = viewModel.nameError.value!!, color = Color.Red)
+        }
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = lastName,
@@ -121,15 +140,19 @@ fun SignInView(
             label = { Text("Surname", style = MaterialTheme.typography.bodyLarge) },
             singleLine = true
         )
+        if (viewModel.lastNameError.value != null) {
+            Text(text = viewModel.lastNameError.value!!, color = Color.Red)
+        }
         Spacer(modifier = Modifier.height(8.dp))
         EmailInput(
             email = email,
             onEmailChange = { email = it },
             isError = null
-            //isError = viewModel.emailError.value
         )
+        if (viewModel.emailError.value != null) {
+            Text(text = viewModel.emailError.value!!, color = Color.Red)
+        }
         Spacer(modifier = Modifier.height(8.dp))
-
         OutlinedTextField(value = selectedDate,
             onValueChange = { selectedDate = it },
             label = {
@@ -155,6 +178,9 @@ fun SignInView(
                 }
             }
         )
+        if (viewModel.birthDateError.value != null) {
+            Text(text = viewModel.birthDateError.value!!, color = Color.Red)
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -163,10 +189,11 @@ fun SignInView(
             passwordVisible = passwordVisible,
             onPasswordChange = { password = it },
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
-            isError = null,
-            //isError = viewModel.passwordError.value,
+            isError = null
         )
-
+        if (viewModel.passwordError.value != null) {
+            Text(text = viewModel.passwordError.value!!, color = Color.Red)
+        }
         Spacer(modifier = Modifier.height(8.dp))
 
         PasswordInput(
@@ -174,10 +201,11 @@ fun SignInView(
             passwordVisible = passwordVisible,
             onPasswordChange = { confirmPassword = it },
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
-            isError = null,
-            //isError = viewModel.passwordError.value,
+            isError = null
         )
-
+        if (viewModel.confirmPasswordError.value != null) {
+            Text(text = viewModel.confirmPasswordError.value!!, color = Color.Red)
+        }
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
@@ -192,9 +220,6 @@ fun SignInView(
                     confirmPassword,
                 )
 
-                onRegister(
-                    name, lastName, selectedDate, email
-                )
             },
             modifier = Modifier.fillMaxWidth()
         ) {
