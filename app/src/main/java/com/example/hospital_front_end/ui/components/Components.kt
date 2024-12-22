@@ -2,12 +2,14 @@ package com.example.hospital_front_end.ui.components
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -98,6 +101,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -110,20 +114,22 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
-import com.example.hospital_front_end.ui.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyAppBarWithDrawer(
-    content: @Composable (PaddingValues) -> Unit,
     navViewModel: NavigationViewModel,
     pageTitle: String,
-
-    ) {
+    actionButton: @Composable () -> Unit,
+    screenContent: @Composable () -> Unit
+) {
     var showDialog by remember { mutableStateOf(false) }
-    var presses by remember { mutableIntStateOf(0) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -226,7 +232,12 @@ fun MyAppBarWithDrawer(
                 DropdownMenuItem(
                     text = { Text("Help") },
                     leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
-                    trailingIcon = { Icon(Icons.AutoMirrored.Outlined.ExitToApp, contentDescription = null) },
+                    trailingIcon = {
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ExitToApp,
+                            contentDescription = null
+                        )
+                    },
                     onClick = { /* Do something... */ }
                 )
 
@@ -321,19 +332,12 @@ fun MyAppBarWithDrawer(
                     }
                 }
             },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { presses++ },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                ) {
-                    if (presses == 0) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
-                    } else {
-                        Text("${presses}")
-                    }
+            floatingActionButton = { actionButton() },
+            content = { innerPadding ->
+                Box(modifier = Modifier.padding(innerPadding)) {
+                    screenContent()
                 }
-            },
-            content = content
+            }
         )
     }
 }
@@ -495,22 +499,104 @@ fun EmailInput(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
         isError = isError?.isNotEmpty() ?: false,
-        colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White,
-            unfocusedPlaceholderColor = Color.White,
-            focusedTextColor = Color.Black,
-        )
     )
-    if (isError?.isNotEmpty() == true) {
-        Text(
-            text = isError,
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 4.dp)
-        )
+    Box(modifier = Modifier.height(16.dp)) {
+        AnimatedVisibility(visible = isError?.isNotEmpty() == true) {
+            Text(
+                text = isError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
     }
 }
+
+@Composable
+fun TextInput(
+    textInput: String,
+    label: String,
+    onTextChange: (String) -> Unit,
+    isError: String?
+) {
+    OutlinedTextField(
+        value = textInput,
+        onValueChange = onTextChange,
+        label = { Text(label) },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(15.dp),
+        singleLine = true,
+        isError = isError?.isNotEmpty() ?: false,
+    )
+    Box(modifier = Modifier.height(16.dp)) {
+        AnimatedVisibility(visible = isError?.isNotEmpty() == true) {
+            Text(
+                text = isError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+
+@Composable
+fun DateInput(
+    context: Context,
+    value: String,
+    label: String,
+    onValueChange: (String) -> Unit,
+    isError: String?
+) {
+    var selectedDate by remember { mutableStateOf("") }
+    val calendar = Calendar.getInstance()
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val onDateClick = {
+        android.app.DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                selectedDate = dateFormat.format(calendar.time)
+                onValueChange(selectedDate)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        shape = RoundedCornerShape(15.dp),
+        singleLine = true,
+        trailingIcon = {
+            IconButton(onClick = { onDateClick() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.calendar),
+                    contentDescription = "Calendar",
+                    modifier = Modifier.size(35.dp)
+                )
+            }
+        },
+        isError = isError?.isNotEmpty() ?: false,
+    )
+    Box(modifier = Modifier.height(16.dp)) {
+        AnimatedVisibility(visible = isError?.isNotEmpty() == true) {
+            Text(
+                text = isError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+
+
 
 @Composable
 fun FingerPrintAuth(
@@ -555,12 +641,6 @@ fun PasswordInput(
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         shape = RoundedCornerShape(15.dp),
         isError = isError?.isNotEmpty() ?: false,
-        colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White,
-            unfocusedPlaceholderColor = Color.White,
-            focusedTextColor = Color.Black,
-        ),
         trailingIcon = {
             IconButton(onClick = onPasswordVisibilityToggle) {
                 val icon =
@@ -579,13 +659,14 @@ fun PasswordInput(
             }
         }
     )
-    if (isError?.isNotEmpty() == true) {
-        Text(
-            text = isError,
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 4.dp)
-        )
+    Box(modifier = Modifier.height(16.dp)) {
+        AnimatedVisibility(visible = isError?.isNotEmpty() == true) {
+            Text(
+                text = isError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
     }
 }
 

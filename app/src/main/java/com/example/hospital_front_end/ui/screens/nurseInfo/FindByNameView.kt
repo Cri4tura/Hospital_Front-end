@@ -7,7 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -24,15 +26,18 @@ import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
 import com.example.hospital_front_end.ui.components.NurseItem
-import com.example.hospital_front_end.ui.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationViewModel
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import kotlin.text.contains
 
 @Composable
-fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
+fun FindByNameView( navViewModel: NavigationViewModel, findByNameViewModel: FindByNameViewModel = getViewModel()) {
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
 
+    val nurseList = findByNameViewModel.nurseList.collectAsState().value
 
     LaunchedEffect(searchQuery) {
         delay(300)
@@ -48,18 +53,26 @@ fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
 
         navViewModel = navViewModel,
         pageTitle = "Directory",
-        content = {
+        actionButton = {
+            FloatingActionButton(
+                onClick = {
+
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+            }
+        },
+        screenContent = {
             Column(
                 modifier = Modifier
                     .padding(16.dp)
             ) {
 
-                Spacer(modifier = Modifier.height(100.dp))
-
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { query -> searchQuery = query },
-                    label = { Text("Search", style = MaterialTheme.typography.bodyLarge) },
+                    placeholder = {Text("Search")},
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(15.dp),
                     colors = TextFieldDefaults.colors(
@@ -99,9 +112,8 @@ fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun FindByNameViewPreview() {
-    val nurseList = NurseRepository().getNurseList()
     FindByNameView(
-        nurseList = nurseList,
-        navViewModel = NavigationViewModel()
+        navViewModel = NavigationViewModel(NurseRepository()),
+        findByNameViewModel = FindByNameViewModel(NurseRepository())
     )
 }

@@ -50,7 +50,11 @@ android {
 }
 
 dependencies {
+    // Koin Core para Android
+    implementation(libs.koin.android)
 
+    // Koin para Jetpack Compose
+    implementation(libs.koin.androidx.compose)
     implementation(libs.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
