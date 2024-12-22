@@ -28,7 +28,7 @@ import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
 import com.example.hospital_front_end.ui.components.NurseItem
-import com.example.hospital_front_end.ui.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationViewModel
 
 @Composable
 fun NurseList(navViewModel: NavigationViewModel) {

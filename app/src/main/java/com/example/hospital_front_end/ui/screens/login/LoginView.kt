@@ -90,8 +90,6 @@ fun LoginView(
             isError = viewModel.emailError.value
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
         PasswordInput(
             password = password,
             passwordVisible = passwordVisible,
@@ -99,8 +97,6 @@ fun LoginView(
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
             isError = viewModel.passwordError.value
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = { viewModel.login(email, password) },

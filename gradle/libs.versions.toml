@@ -1,7 +1,8 @@
 [versions]
 agp = "8.6.1"
 compose = "1.0.0-alpha.1"
-coreSplashscreen = "1.0.1"
+koinAndroid = "3.5.0"
+koinAndroidxCompose = "3.5.0"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -10,16 +11,14 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.12.01"
-media3Exoplayer = "1.5.0"
+media3Exoplayer = "1.5.1"
 navigationCompose = "2.8.5"
 storage = "1.5.0"
 biometric = "1.1.0"
 appcompat = "1.7.0"
 runtimeLivedata = "1.7.6"
 toolsCore = "1.0.0-alpha10"
-protoliteWellKnownTypes = "18.0.0"
 generativeai = "0.9.0"
-protoliteWellKnownTypesVersion = "18.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,9 +44,9 @@ androidx-biometric = { group = "androidx.biometric", name = "biometric", version
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-tools-core = { group = "androidx.privacysandbox.tools", name = "tools-core", version.ref = "toolsCore" }
-#protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
-protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypesVersion" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

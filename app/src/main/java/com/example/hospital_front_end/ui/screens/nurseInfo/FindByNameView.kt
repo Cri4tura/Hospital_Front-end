@@ -26,15 +26,18 @@ import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
 import com.example.hospital_front_end.ui.components.NurseItem
-import com.example.hospital_front_end.ui.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationViewModel
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import kotlin.text.contains
 
 @Composable
-fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
+fun FindByNameView( navViewModel: NavigationViewModel, findByNameViewModel: FindByNameViewModel = getViewModel()) {
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
 
+    val nurseList = findByNameViewModel.nurseList.collectAsState().value
 
     LaunchedEffect(searchQuery) {
         delay(300)
@@ -109,9 +112,8 @@ fun FindByNameView(nurseList: List<Nurse>, navViewModel: NavigationViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun FindByNameViewPreview() {
-    val nurseList = NurseRepository().getNurseList()
     FindByNameView(
-        nurseList = nurseList,
-        navViewModel = NavigationViewModel(NurseRepository())
+        navViewModel = NavigationViewModel(NurseRepository()),
+        findByNameViewModel = FindByNameViewModel(NurseRepository())
     )
 }

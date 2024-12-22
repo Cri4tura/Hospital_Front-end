@@ -2,6 +2,7 @@ package com.example.hospital_front_end.ui.components
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -99,6 +101,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -111,9 +114,12 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
-import com.example.hospital_front_end.ui.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -494,15 +500,103 @@ fun EmailInput(
         shape = RoundedCornerShape(15.dp),
         isError = isError?.isNotEmpty() ?: false,
     )
-    if (isError?.isNotEmpty() == true) {
-        Text(
-            text = isError,
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 4.dp)
-        )
+    Box(modifier = Modifier.height(16.dp)) {
+        AnimatedVisibility(visible = isError?.isNotEmpty() == true) {
+            Text(
+                text = isError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
     }
 }
+
+@Composable
+fun TextInput(
+    textInput: String,
+    label: String,
+    onTextChange: (String) -> Unit,
+    isError: String?
+) {
+    OutlinedTextField(
+        value = textInput,
+        onValueChange = onTextChange,
+        label = { Text(label) },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(15.dp),
+        singleLine = true,
+        isError = isError?.isNotEmpty() ?: false,
+    )
+    Box(modifier = Modifier.height(16.dp)) {
+        AnimatedVisibility(visible = isError?.isNotEmpty() == true) {
+            Text(
+                text = isError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+
+@Composable
+fun DateInput(
+    context: Context,
+    value: String,
+    label: String,
+    onValueChange: (String) -> Unit,
+    isError: String?
+) {
+    var selectedDate by remember { mutableStateOf("") }
+    val calendar = Calendar.getInstance()
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val onDateClick = {
+        android.app.DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                selectedDate = dateFormat.format(calendar.time)
+                onValueChange(selectedDate)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        shape = RoundedCornerShape(15.dp),
+        singleLine = true,
+        trailingIcon = {
+            IconButton(onClick = { onDateClick() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.calendar),
+                    contentDescription = "Calendar",
+                    modifier = Modifier.size(35.dp)
+                )
+            }
+        },
+        isError = isError?.isNotEmpty() ?: false,
+    )
+    Box(modifier = Modifier.height(16.dp)) {
+        AnimatedVisibility(visible = isError?.isNotEmpty() == true) {
+            Text(
+                text = isError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+
+
 
 @Composable
 fun FingerPrintAuth(
@@ -565,13 +659,14 @@ fun PasswordInput(
             }
         }
     )
-    if (isError?.isNotEmpty() == true) {
-        Text(
-            text = isError,
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 4.dp)
-        )
+    Box(modifier = Modifier.height(16.dp)) {
+        AnimatedVisibility(visible = isError?.isNotEmpty() == true) {
+            Text(
+                text = isError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
     }
 }
 

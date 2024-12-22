@@ -1,4 +1,4 @@
-package com.example.hospital_front_end.ui.navigation
+package com.example.hospital_front_end.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

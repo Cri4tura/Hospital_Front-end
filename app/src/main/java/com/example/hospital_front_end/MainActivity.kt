@@ -11,8 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.navigation.compose.rememberNavController
 import com.example.hospital_front_end.nurseRepository.NurseRepository
-import com.example.hospital_front_end.ui.navigation.Navigation
-import com.example.hospital_front_end.ui.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.Navigation
+import com.example.hospital_front_end.navigation.NavigationViewModel
 import com.example.hospital_front_end.ui.theme.HospitalFrontendTheme
 
 class MainActivity : AppCompatActivity() {

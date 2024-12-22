@@ -7,8 +7,12 @@ import java.text.SimpleDateFormat
 class NurseRepository {
     private var nurseList = mutableListOf<Nurse>()
 
+    init {
+        loadInitialData()
+    }
+
     @SuppressLint("SimpleDateFormat")
-    fun getNurseList(): ArrayList<Nurse> {
+    private fun loadInitialData() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         nurseList = arrayListOf(
             Nurse(
@@ -19,7 +23,7 @@ class NurseRepository {
                 registerDate = dateFormat.parse("2024-01-01")!!,
                 birthDate = dateFormat.parse("1994-12-15")!!
             ),
-            /*
+
             Nurse(
                 id = 2,
                 name = "María",
@@ -172,13 +176,17 @@ class NurseRepository {
                 registerDate = dateFormat.parse("2020-01-15")!!,
                 birthDate = dateFormat.parse("1986-05-03")!!
             )
-
-             */
         )
-        return nurseList as ArrayList<Nurse>
+    }
+
+
+
+    fun getNurseList(): List<Nurse> {
+        return nurseList
     }
 
     fun addNurse(nurse: Nurse) {
+        println("Adding nurse to repository ${nurse.name} ${nurse.surname}")
         nurseList.add(nurse)
     }
 
@@ -198,7 +206,7 @@ class NurseRepository {
 
         val existingNurse = nurseList[nurseIndex]
 
-        // Actualizar los campos solo si no son nulos
+        // Actualizar los campos solo si no son nulos o vacíos
         nurseList[nurseIndex] = existingNurse.copy(
             id = updatedNurse.id.takeIf { it != 0 } ?: existingNurse.id,
             name = updatedNurse.name.takeIf { it.isNotBlank() } ?: existingNurse.name,
@@ -213,7 +221,4 @@ class NurseRepository {
     fun getNurseByEmail(email: String): Nurse? {
         return nurseList.find { it.email == email }
     }
-
-
-
 }
