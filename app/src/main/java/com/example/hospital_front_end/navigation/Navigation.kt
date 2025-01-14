@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.hospital_front_end.ui.screens.home.HomeView
+import com.example.hospital_front_end.ui.screens.home.HomeViewModel
 import com.example.hospital_front_end.ui.screens.login.LoginView
 import com.example.hospital_front_end.ui.screens.login.LoginViewModel
 import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
@@ -48,6 +49,7 @@ fun Navigation(
         composable(Constants.Screen.Home.route) {
             HomeView(
                 navViewModel = navViewModel,
+                vm = HomeViewModel()
             )
         }
         composable(Constants.Screen.Login.route) {

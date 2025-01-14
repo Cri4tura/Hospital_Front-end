@@ -52,10 +52,13 @@ android {
 dependencies {
     // Koin Core para Android
     implementation(libs.koin.android)
-    //new dependencies for async back end
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    //new ktor dependencies for async back end
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.core)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
     // Koin para Jetpack Compose
     implementation(libs.koin.androidx.compose)
     implementation(libs.compose)
