@@ -33,7 +33,7 @@ import com.example.hospital_front_end.R
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 import com.example.hospital_front_end.ui.components.EmailInput
 import com.example.hospital_front_end.ui.components.PasswordInput
-import com.example.hospital_front_end.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationController
 import com.example.hospital_front_end.ui.components.DateInput
 import com.example.hospital_front_end.ui.components.TextInput
 import org.koin.androidx.compose.get
@@ -42,7 +42,7 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun SignInView(
     viewModel: SignInViewModel = getViewModel(),
-    navViewModel: NavigationViewModel,
+    navViewModel: NavigationController,
     onRegister: (name: String, lastName: String, birdthDay: String, email: String) -> Unit,
     onBack: () -> Unit
 ) {
@@ -160,6 +160,6 @@ fun NurseRegisterScreenPreview() {
         viewModel = SignInViewModel(get()),
         onRegister = { name, lastName, age, email -> println("Registered: $name $lastName, Age: $age, Email: $email") },
         onBack = { /* Handle back button click */ },
-        navViewModel = NavigationViewModel(NurseRepository())
+        navViewModel = NavigationController(NurseRepository())
     )
 }

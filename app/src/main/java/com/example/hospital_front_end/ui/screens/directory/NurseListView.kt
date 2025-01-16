@@ -1,4 +1,4 @@
-package com.example.hospital_front_end.ui.screens.nurseInfo
+package com.example.hospital_front_end.ui.screens.directory
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -11,34 +11,28 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.hospital_front_end.R
-import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
-import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
+import com.example.hospital_front_end.ui.components.DrawerAppBar
 import com.example.hospital_front_end.ui.components.NurseItem
-import com.example.hospital_front_end.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationController
 
 @Composable
-fun NurseList(navViewModel: NavigationViewModel) {
-    val nurseList by navViewModel.nurseList.collectAsState()
+fun NurseList(nav: NavigationController) {
+    val nurseList by nav.nurseList.collectAsState()
 
-    MyAppBarWithDrawer(
+    DrawerAppBar(
 
-        navViewModel = navViewModel,
-        pageTitle = "Search",
-        actionButton = {
+        nav = nav,
+        index = 3,
+        pageTitle = { Text("Search") },
+        floatingActionButton = {
             FloatingActionButton(
                 onClick = {
 
@@ -60,7 +54,7 @@ fun NurseList(navViewModel: NavigationViewModel) {
                     LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
 
                         items(nurseList.sortedBy { it.name }) { nurse ->
-                            NurseItem(nurse, navViewModel)
+                            NurseItem(nurse, nav)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
@@ -78,6 +72,6 @@ fun NurseList(navViewModel: NavigationViewModel) {
 fun MyNurseListPreview() {
     val nurseList = NurseRepository().getNurseList()
     NurseList(
-        navViewModel = NavigationViewModel(NurseRepository())
+        nav = NavigationController(NurseRepository())
     )
 }

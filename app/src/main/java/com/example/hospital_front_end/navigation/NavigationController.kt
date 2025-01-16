@@ -9,11 +9,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class NavigationViewModel(private val nurseRepository: NurseRepository) : ViewModel() {
+class NavigationController(private val nurseRepository: NurseRepository) : ViewModel() {
 
     lateinit var selectedNurse: Nurse
 
@@ -58,9 +57,9 @@ class NavigationViewModel(private val nurseRepository: NurseRepository) : ViewMo
         }
     }
 
-    fun navigateToFindByName() {
+    fun navigateToDirectory() {
         viewModelScope.launch {
-            _navigationEvent.emit(Constants.NavigationEvent.NavigateToFindByName)
+            _navigationEvent.emit(Constants.NavigationEvent.NavigateToDirectory)
         }
     }
 
@@ -70,11 +69,35 @@ class NavigationViewModel(private val nurseRepository: NurseRepository) : ViewMo
         }
     }
 
-    fun navigateToProfile(nurse: Nurse) {
+    fun navigateToDetail(nurse: Nurse) {
         selectedNurse = nurse
+        viewModelScope.launch {
+            _navigationEvent.emit(Constants.NavigationEvent.NavigateToDetail)
+        }
+    }
+
+    fun navigateToProfile() {
         viewModelScope.launch {
             _navigationEvent.emit(Constants.NavigationEvent.NavigateToProfile)
         }
-
     }
+
+    fun navigateToDocuments(){
+        viewModelScope.launch {
+            _navigationEvent.emit(Constants.NavigationEvent.NavigateToDocuments)
+        }
+    }
+
+    fun navigateToNews(){
+        viewModelScope.launch {
+            _navigationEvent.emit(Constants.NavigationEvent.NavigateToNews)
+        }
+    }
+
+    fun navigateToHistory() {
+        viewModelScope.launch {
+            _navigationEvent.emit(Constants.NavigationEvent.NavigateToHistory)
+        }
+    }
+
 }

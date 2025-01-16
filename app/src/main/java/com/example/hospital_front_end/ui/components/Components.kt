@@ -11,7 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -27,25 +26,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.automirrored.sharp.List
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.sharp.Home
-import androidx.compose.material.icons.sharp.List
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
@@ -59,7 +47,6 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,10 +61,7 @@ import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -94,17 +78,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -114,7 +94,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.hospital_front_end.R
 import com.example.hospital_front_end.models.nurse.Nurse
-import com.example.hospital_front_end.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationController
+import com.example.hospital_front_end.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -123,10 +104,13 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyAppBarWithDrawer(
-    navViewModel: NavigationViewModel,
-    pageTitle: String,
-    actionButton: @Composable () -> Unit,
+fun DrawerAppBar(
+    nav: NavigationController,
+    index: Int,
+    pageTitle: @Composable () -> Unit,
+    leftActionIcon: @Composable (() -> Unit)? = null,
+    rightActionIcon: @Composable (() -> Unit)? = null,
+    floatingActionButton: @Composable (() -> Unit)? = null,
     screenContent: @Composable () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -165,51 +149,10 @@ fun MyAppBarWithDrawer(
 
                 HorizontalDivider()
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.SpaceAround,
-                    horizontalAlignment = Alignment.CenterHorizontally
-
-                ) {
-                    Spacer(Modifier.height(16.dp))
-                    NavigationDrawerItem(
-                        label = {
-                            PrimaryButton(
-                                onClick = { navViewModel.navigateToHome();navViewModel.navigateToFindByName() },
-                                imageResource = R.drawable.list,
-                                text = "Directory".uppercase(),
-                                contentDescription = "View List Button",
-                                modifier = Modifier.fillMaxWidth(),
-                                enabled = true
-                            )
-                        },
-                        selected = false,
-                        onClick = { }
-                    )
-                    NavigationDrawerItem(
-                        label = {
-                            PrimaryButton(
-                                onClick = { navViewModel.navigateToHome();navViewModel.navigateToNurseList() },
-                                imageResource = R.drawable.search,
-                                text = "Search".uppercase(),
-                                contentDescription = "Find by Name Button",
-                                modifier = Modifier.fillMaxWidth(),
-                                enabled = false
-                            )
-                        },
-                        selected = false,
-                        onClick = { }
-                    )
-                    Spacer(Modifier.height(16.dp))
-                }
-
-                HorizontalDivider()
-
                 DropdownMenuItem(
                     text = { Text("Profile") },
                     leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null) },
-                    onClick = { /* Do something... */ }
+                    onClick = { nav.navigateToProfile() }
                 )
                 DropdownMenuItem(
                     text = { Text("Settings") },
@@ -263,7 +206,7 @@ fun MyAppBarWithDrawer(
                         LogoutConfirmationDialog(
                             showDialog = showDialog,
                             onDismiss = { showDialog = false },
-                            onConfirm = { navViewModel.navigateToLogin() }
+                            onConfirm = { nav.navigateToLogin() }
                         )
                     },
                     selected = false,
@@ -280,7 +223,7 @@ fun MyAppBarWithDrawer(
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = { Text("$pageTitle") },
+                    title = pageTitle,
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch {
@@ -300,7 +243,7 @@ fun MyAppBarWithDrawer(
                     },
                     actions = {
                         IconButton(
-                            onClick = { navViewModel.navigateBack() }) {
+                            onClick = { nav.navigateBack() }) {
                             Icon(
                                 imageVector = Icons.Filled.Close,
                                 contentDescription = "Configuration"
@@ -328,11 +271,27 @@ fun MyAppBarWithDrawer(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        SingleChoiceSegmentedButton()
+                        SingleChoiceSegmentedButton(
+                            initialSelectedIndex = index,
+                            onOptionSelected = { selectedOption ->
+                                println("Selected: $selectedOption")
+                                when (selectedOption) {
+                                    Constants.MENU.OPTION_0.toString() -> nav.navigateToHistory()
+                                    Constants.MENU.OPTION_1.toString() -> nav.navigateToDirectory()
+                                    Constants.MENU.OPTION_2.toString() -> nav.navigateToHome()
+                                    Constants.MENU.OPTION_3.toString() -> nav.navigateToDocuments()
+                                    Constants.MENU.OPTION_4.toString() -> nav.navigateToNews()
+                                }
+                            }
+                        )
                     }
                 }
             },
-            floatingActionButton = { actionButton() },
+            floatingActionButton = {
+                if (floatingActionButton != null) {
+                    floatingActionButton()
+                }
+            },
             content = { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
                     screenContent()
@@ -343,18 +302,24 @@ fun MyAppBarWithDrawer(
 }
 
 @Composable
-fun SingleChoiceSegmentedButton(modifier: Modifier = Modifier) {
-    var selectedIndex by remember { mutableIntStateOf(2) }
-    val options = listOf("User", "Shop", "Home", "Game", "News")
+fun SingleChoiceSegmentedButton(
+    options: List<String> = listOf("history", "agenda", "home", "docs", "news"),
+    initialSelectedIndex: Int,
+    onOptionSelected: (String) -> Unit
+) {
+    var selectedIndex by remember { mutableIntStateOf(initialSelectedIndex) }
 
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, label ->
             SegmentedButton(
                 icon = { },
                 shape = ShapeDefaults.ExtraLarge,
-                onClick = { selectedIndex = index },
+                onClick = {
+                    selectedIndex = index
+                    onOptionSelected(index.toString())
+                },
                 selected = index == selectedIndex,
-                label = { Text(label.uppercase()) },
+                label = { Text(label.uppercase(), fontSize = 13.sp) },
                 colors = SegmentedButtonDefaults.colors(
                     activeContainerColor = MaterialTheme.colorScheme.background,
                     activeContentColor = MaterialTheme.colorScheme.primary,
@@ -403,7 +368,7 @@ fun DatePickerModalInput(
 fun DrawerContent(
     drawerState: DrawerState,
     scope: CoroutineScope,
-    navViewModel: NavigationViewModel
+    nav: NavigationController
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -422,7 +387,7 @@ fun DrawerContent(
                 .fillMaxWidth()
                 .clickable {
                     scope.launch { drawerState.close() }
-                    navViewModel.navigateToNurseList()
+                    nav.navigateToNurseList()
                 },
             enabled = true
 
@@ -439,7 +404,7 @@ fun DrawerContent(
                 .fillMaxWidth()
                 .clickable {
                     scope.launch { drawerState.close() }
-                    navViewModel.navigateToFindByName()
+                    nav.navigateToDirectory()
                 },
             enabled = true
         )
@@ -594,8 +559,6 @@ fun DateInput(
         }
     }
 }
-
-
 
 
 @Composable
@@ -821,13 +784,13 @@ fun LogoutConfirmationDialog(
 @Composable
 fun NurseItem(
     nurse: Nurse,
-    navViewModel: NavigationViewModel
+    nav: NavigationController
 ) {
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navViewModel.navigateToProfile(nurse)
+                nav.navigateToDetail(nurse)
             }) {
         Image(
             painter = painterResource(id = R.drawable.user),

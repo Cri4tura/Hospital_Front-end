@@ -10,56 +10,63 @@ import com.example.hospital_front_end.ui.screens.home.HomeView
 import com.example.hospital_front_end.ui.screens.home.HomeViewModel
 import com.example.hospital_front_end.ui.screens.login.LoginView
 import com.example.hospital_front_end.ui.screens.login.LoginViewModel
-import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameView
-import com.example.hospital_front_end.ui.screens.nurseInfo.FindByNameViewModel
-import com.example.hospital_front_end.ui.screens.nurseInfo.NurseList
+import com.example.hospital_front_end.ui.screens.directory.FindByNameView
+import com.example.hospital_front_end.ui.screens.directory.DirectoryViewModel
+import com.example.hospital_front_end.ui.screens.directory.NurseList
+import com.example.hospital_front_end.ui.screens.detail.DetailView
+import com.example.hospital_front_end.ui.screens.documents.DocsView
+import com.example.hospital_front_end.ui.screens.history.HistoryView
+import com.example.hospital_front_end.ui.screens.news.NewsView
 import com.example.hospital_front_end.ui.screens.profile.ProfileView
 import com.example.hospital_front_end.ui.screens.signIn.SignInView
 import com.example.hospital_front_end.ui.screens.splash_screen.SplashScreen
 import com.example.hospital_front_end.ui.screens.signIn.SignInViewModel
 import com.example.hospital_front_end.utils.Constants
-import org.koin.androidx.compose.get
 import org.koin.compose.koinInject
 
 @Composable
 fun Navigation(
     navController: NavHostController,
-    navViewModel: NavigationViewModel,
+    navViewModel: NavigationController,
 ) {
     
     LaunchedEffect(key1 = navViewModel) {
         navViewModel.navigationEvent.collect { event ->
             when (event) {
-                Constants.NavigationEvent.NavigateToHome -> navController.navigate(Constants.Screen.Home.route)
-                Constants.NavigationEvent.NavigateToLogin -> navController.navigate(Constants.Screen.Login.route)
-                Constants.NavigationEvent.NavigateToFindByName -> navController.navigate(Constants.Screen.FindByName.route)
-                Constants.NavigationEvent.NavigateToNurseList -> navController.navigate(Constants.Screen.NurseList.route)
-                Constants.NavigationEvent.NavigateToRegister -> navController.navigate(Constants.Screen.SignIn.route)
-                Constants.NavigationEvent.NavigateToProfile -> navController.navigate(Constants.Screen.Profile.route)
-                Constants.NavigationEvent.NavigateToSplashScreen -> navController.navigate(Constants.Screen.SplashScreen.route)
+                Constants.NavigationEvent.NavigateToHome -> navController.navigate(Constants.Screen.HOME.route)
+                Constants.NavigationEvent.NavigateToLogin -> navController.navigate(Constants.Screen.LOGIN.route)
+                Constants.NavigationEvent.NavigateToDirectory -> navController.navigate(Constants.Screen.DIRECTORY.route)
+                Constants.NavigationEvent.NavigateToNurseList -> navController.navigate(Constants.Screen.NURSELIST.route)
+                Constants.NavigationEvent.NavigateToRegister -> navController.navigate(Constants.Screen.SIGNING.route)
+                Constants.NavigationEvent.NavigateToDetail -> navController.navigate(Constants.Screen.DETAIL.route)
+                Constants.NavigationEvent.NavigateToSplashScreen -> navController.navigate(Constants.Screen.SPLASH.route)
+                Constants.NavigationEvent.NavigateToProfile -> navController.navigate(Constants.Screen.PROFILE.route)
+                Constants.NavigationEvent.NavigateToDocuments -> navController.navigate(Constants.Screen.DOCUMENTS.route)
+                Constants.NavigationEvent.NavigateToNews -> navController.navigate(Constants.Screen.NEWS.route)
+                Constants.NavigationEvent.NavigateToHistory -> navController.navigate(Constants.Screen.HISTORY.route)
                 Constants.NavigationEvent.NavigateBack -> navController.popBackStack()
             }
         }
     }
 
-    NavHost(navController = navController, startDestination = Constants.Screen.Home.route) {
-        composable(Constants.Screen.SplashScreen.route) {
+    NavHost(navController = navController, startDestination = Constants.Screen.HOME.route) {
+        composable(Constants.Screen.SPLASH.route) {
             SplashScreen(navController = navController)
         }
-        composable(Constants.Screen.Home.route) {
+        composable(Constants.Screen.HOME.route) {
             HomeView(
-                navViewModel = navViewModel,
+                nav = navViewModel,
                 vm = HomeViewModel()
             )
         }
-        composable(Constants.Screen.Login.route) {
+        composable(Constants.Screen.LOGIN.route) {
             LoginView(
                 viewModel = LoginViewModel(),
                 onNavigateToHome = { navViewModel.navigateToHome() },
                 navigateToSignIn = { navViewModel.navigateToSignIn() }
             )
         }
-        composable(Constants.Screen.SignIn.route) {
+        composable(Constants.Screen.SIGNING.route) {
             SignInView(
 
                 viewModel = SignInViewModel(koinInject()),
@@ -70,23 +77,35 @@ fun Navigation(
                 onBack = { navViewModel.navigateBack() }
             )
         }
-        composable(Constants.Screen.NurseList.route) {
+        composable(Constants.Screen.NURSELIST.route) {
             NurseList(
-                navViewModel = navViewModel
+                nav = navViewModel
             )
         }
-        composable(Constants.Screen.FindByName.route) {
+        composable(Constants.Screen.DIRECTORY.route) {
             val nurseList by navViewModel.nurseList.collectAsState()
             FindByNameView(
-                navViewModel = navViewModel,
-                findByNameViewModel = FindByNameViewModel(koinInject()),
+                nav = navViewModel,
+                vm = DirectoryViewModel(koinInject()),
             )
         }
-        composable(Constants.Screen.Profile.route) {
-            ProfileView(
+        composable(Constants.Screen.DETAIL.route) {
+            DetailView(
                 nurse = navViewModel.selectedNurse,
                 onBack = { navViewModel.navigateBack() }
             )
+        }
+        composable(Constants.Screen.PROFILE.route) {
+            ProfileView(nav = navViewModel)
+        }
+        composable(Constants.Screen.DOCUMENTS.route) {
+            DocsView(nav = navViewModel)
+        }
+        composable(Constants.Screen.NEWS.route) {
+            NewsView(nav = navViewModel)
+        }
+        composable(Constants.Screen.HISTORY.route) {
+            HistoryView(nav = navViewModel)
         }
     }
 }
