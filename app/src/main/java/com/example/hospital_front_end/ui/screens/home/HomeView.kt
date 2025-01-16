@@ -1,6 +1,5 @@
 package com.example.hospital_front_end.ui.screens.home
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,11 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -39,22 +35,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
-import com.example.hospital_front_end.navigation.NavigationViewModel
+import com.example.hospital_front_end.ui.components.DrawerAppBar
+import com.example.hospital_front_end.navigation.NavigationController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalContext
 import com.example.hospital_front_end.nurseRepository.NurseRepository
+import com.example.hospital_front_end.utils.Constants
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 import kotlin.random.Random
 
 
 @Composable
 fun HomeView(
-    navViewModel: NavigationViewModel, vm: HomeViewModel
+    nav: NavigationController, vm: HomeViewModel
 ) {
     val cards = remember { mutableStateListOf<Int>() }
 
@@ -63,13 +58,13 @@ fun HomeView(
         cards.addAll(0 until 2)
     }
 
-    MyAppBarWithDrawer(
-        navViewModel = navViewModel,
-        pageTitle = "Home",
-        actionButton = {
+    DrawerAppBar(
+        nav = nav,
+        index = Constants.MENU.OPTION_2.ordinal,
+        pageTitle = { Text("Home") },
+        floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    // Añade un nuevo elemento al final
                     cards.add(cards.size)
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -189,7 +184,7 @@ fun getRandomColor(): Color {
 @Composable
 fun HomeViewPreview() {
     HomeView(
-        navViewModel = NavigationViewModel(NurseRepository()),
+        nav = NavigationController(NurseRepository()),
         vm = HomeViewModel()
     )
 }

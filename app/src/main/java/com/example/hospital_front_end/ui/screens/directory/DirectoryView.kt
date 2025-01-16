@@ -1,4 +1,4 @@
-package com.example.hospital_front_end.ui.screens.nurseInfo
+package com.example.hospital_front_end.ui.screens.directory
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.height
@@ -24,20 +24,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.hospital_front_end.models.nurse.Nurse
 import com.example.hospital_front_end.nurseRepository.NurseRepository
-import com.example.hospital_front_end.ui.components.MyAppBarWithDrawer
+import com.example.hospital_front_end.ui.components.DrawerAppBar
 import com.example.hospital_front_end.ui.components.NurseItem
-import com.example.hospital_front_end.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationController
+import com.example.hospital_front_end.utils.Constants
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
-import org.koin.androidx.compose.koinViewModel
 import kotlin.text.contains
 
 @Composable
-fun FindByNameView( navViewModel: NavigationViewModel, findByNameViewModel: FindByNameViewModel = getViewModel()) {
+fun FindByNameView(nav: NavigationController, vm: DirectoryViewModel = getViewModel()) {
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
 
-    val nurseList = findByNameViewModel.nurseList.collectAsState().value
+    val nurseList = vm.nurseList.collectAsState().value
 
     LaunchedEffect(searchQuery) {
         delay(300)
@@ -49,20 +49,11 @@ fun FindByNameView( navViewModel: NavigationViewModel, findByNameViewModel: Find
         }
     }
 
-    MyAppBarWithDrawer(
+    DrawerAppBar(
 
-        navViewModel = navViewModel,
-        pageTitle = "Directory",
-        actionButton = {
-            FloatingActionButton(
-                onClick = {
-
-                },
-                containerColor = MaterialTheme.colorScheme.primary,
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
-            }
-        },
+        nav = nav,
+        index = Constants.MENU.OPTION_1.ordinal,
+        pageTitle = {Text("Directory")},
         screenContent = {
             Column(
                 modifier = Modifier
@@ -96,7 +87,7 @@ fun FindByNameView( navViewModel: NavigationViewModel, findByNameViewModel: Find
                     )
                     LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
                         items(filteredNurses.sortedBy { it.name }) { nurse ->
-                            NurseItem(nurse, navViewModel)
+                            NurseItem(nurse, nav)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
@@ -113,7 +104,7 @@ fun FindByNameView( navViewModel: NavigationViewModel, findByNameViewModel: Find
 @Composable
 fun FindByNameViewPreview() {
     FindByNameView(
-        navViewModel = NavigationViewModel(NurseRepository()),
-        findByNameViewModel = FindByNameViewModel(NurseRepository())
+        nav = NavigationController(NurseRepository()),
+        vm = DirectoryViewModel(NurseRepository())
     )
 }

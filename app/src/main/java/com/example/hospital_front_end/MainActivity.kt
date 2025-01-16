@@ -12,7 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.navigation.compose.rememberNavController
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 import com.example.hospital_front_end.navigation.Navigation
-import com.example.hospital_front_end.navigation.NavigationViewModel
+import com.example.hospital_front_end.navigation.NavigationController
 import com.example.hospital_front_end.ui.theme.HospitalFrontendTheme
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
                     modifier = androidx.compose.ui.Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val viewModel = NavigationViewModel(NurseRepository())
+                    val viewModel = NavigationController(NurseRepository())
                     Navigation(navController = rememberNavController(), navViewModel = viewModel)
                 }
             }
