@@ -9,6 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
 import com.example.hospital_front_end.nurseRepository.NurseRepository
 import com.example.hospital_front_end.navigation.Navigation
@@ -16,12 +21,13 @@ import com.example.hospital_front_end.navigation.NavigationViewModel
 import com.example.hospital_front_end.ui.theme.HospitalFrontendTheme
 
 class MainActivity : AppCompatActivity() {
-    
+
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            EnableAutoHideSystemBars()
             HospitalFrontendTheme {
                 Surface(
                     modifier = androidx.compose.ui.Modifier.fillMaxSize(),
@@ -31,6 +37,19 @@ class MainActivity : AppCompatActivity() {
                     Navigation(navController = rememberNavController(), navViewModel = viewModel)
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun EnableAutoHideSystemBars() {
+        val view = LocalView.current
+        if (!view.isInEditMode) {
+            val window = (view.context as AppCompatActivity).window
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            val windowInsetsController = WindowInsetsControllerCompat(window, window.decorView)
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+            windowInsetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 }
