@@ -55,23 +55,27 @@ android {
 
 dependencies {
 
+    // Room
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+
     implementation(libs.androidx.appcompat)
-    //Serialization JSON
+    // Serialization JSON
     implementation(libs.kotlinx.serialization.json)
 
-    // Koin Core para Android
+    // Koin
     implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
-    //new ktor dependencies for async back end
+    // Ktor
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
 
-    // coroutines
+    // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
-    // Koin para Jetpack Compose
-    implementation(libs.koin.androidx.compose)
+
     implementation(libs.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
@@ -91,7 +95,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.tools.core)
     implementation(libs.generativeai)
-    ksp(libs.androidx.room.compiler)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
