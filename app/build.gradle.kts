@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.hospital_front_end"
+    namespace = "com.example.panacea"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.hospital_front_end"
+        applicationId = "com.example.panacea"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -79,7 +79,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.tools.core)
-    //implementation(libs.protolite.well.known.types)
     implementation(libs.generativeai)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

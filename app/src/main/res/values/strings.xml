@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hospital-Front-end</string>
+    <string name="app_name">Panacea</string>
     <string name="log_in_button_text">Log In</string>
     <string name="log_out_button_text">Log Out</string>
     <string name="sign_in_button_text">Sign In</string>
