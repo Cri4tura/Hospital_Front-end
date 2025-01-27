@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.example.panacea.models.nurse.Nurse
 import com.example.panacea.nurseRepository.NurseRepository
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel() {
 
@@ -48,6 +50,7 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
         val lastNameValid = validateSurname(lastName)
         val emailValid = validateEmail(email)
         val birthDateValid = validateBirthDate(birthDate)
+        val birthDateParsed = parseBirthDate(birthDate)
         val passwordsValid = validatePasswords(password1, password2)
 
         _nameError.value = nameValid.errorMessage
@@ -57,8 +60,7 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
         _passwordError.value = passwordsValid.errorMessage
         _authenticationState.value = nameValid.isValid && lastNameValid.isValid && emailValid.isValid && birthDateValid.isValid && passwordsValid.isValid
         if(_authenticationState.value) {
-
-            addNurseToRepository(name, lastName, email, Date())
+            addNurseToRepository(name, lastName, email, birthDateParsed!!)
         }
     }
 
@@ -74,12 +76,11 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
         nurseRepository.addNurse(newNurse)
     }
 
-
     private fun validateName(name: String): ValidationResult {
         return when {
             name.isBlank() -> {
-                _nameError.value = "Name cannot be empty"
-                ValidationResult(false, "Name cannot be empty")
+                _nameError.value = "Name is empty"
+                ValidationResult(false, "Name is empty")
             }
 
             else -> {
@@ -92,8 +93,8 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
     private fun validateSurname(surname: String): ValidationResult {
         return when {
             surname.isBlank() -> {
-                _surnameError.value = "Name cannot be empty"
-                ValidationResult(false, "Name cannot be empty")
+                _surnameError.value = "Name is empty"
+                ValidationResult(false, "Name is empty")
             }
 
             else -> {
@@ -106,7 +107,7 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
     private fun validateEmail(email: String): ValidationResult {
         return when {
             email.isBlank() -> {
-                _emailError.value = "Email cannot be empty"
+                _emailError.value = "Email is empty"
                 ValidationResult(
                     false,
                     "Email is empty"
@@ -132,11 +133,11 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
     private fun validateBirthDate(birthDate: String): ValidationResult {
         return when {
             birthDate.isBlank() -> {
-                _birthDateError.value = "Birth date cannot be empty"
-                ValidationResult(false, "Birth date cannot be empty")
+                _birthDateError.value = "Birth date is empty"
+                ValidationResult(false, "Birth date is empty")
             }
             else -> {
-                _birthDateError.value = null
+                _birthDateError.value = birthDate
                 ValidationResult(true, "")
             }
         }
@@ -145,11 +146,11 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
     private fun validatePasswords(password1: String, password2: String): ValidationResult {
         return when {
             password1.isBlank() -> {
-                _passwordError.value = "Password cannot be empty"
+                _passwordError.value = "Password is empty"
                 ValidationResult(false, "Password is empty")
             }
             password2.isBlank() -> {
-                _confirmPasswordError.value = "Password cannot be empty"
+                _confirmPasswordError.value = "Password is empty"
                 ValidationResult(false, "Password is empty")
             }
             password1 != password2 -> {
@@ -162,6 +163,15 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
                 _confirmPasswordError.value = null
                 ValidationResult(true, "")
             }
+        }
+    }
+
+    private fun parseBirthDate(birthDate: String): Date? {
+        return try {
+            val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            format.parse(birthDate)
+        } catch (e: Exception) {
+            null
         }
     }
 }

@@ -42,6 +42,7 @@ fun NurseList(nav: NavigationController) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         },
+        userName = null,
         screenContent = {
             Column(
                 modifier = Modifier

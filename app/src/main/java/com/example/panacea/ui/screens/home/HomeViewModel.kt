@@ -8,11 +8,7 @@ class HomeViewModel {
     private val client = HttpClient()
 
     suspend fun greeting(): String {
-        println("RESPONSE")
-        val response = client.get("http://10.0.2.2:8080/nurse")
-
-
-        println(response.bodyAsText())
+        val response = client.get("http://localhost:8080/nurse")
 
         return response.bodyAsText()
     }

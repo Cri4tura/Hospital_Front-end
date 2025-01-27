@@ -64,6 +64,7 @@ fun FindByNameView(nav: NavigationController, vm: DirectoryViewModel = getViewMo
                 }
             )
         },
+        userName = null,
         screenContent = {
             Column(
                 modifier = Modifier

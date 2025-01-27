@@ -80,7 +80,7 @@ fun SignInView(
             contentDescription = "Glide image ",
             modifier = Modifier.size(150.dp)
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         TextInput(
             textInput = name,
@@ -103,12 +103,21 @@ fun SignInView(
         )
 
         DateInput(
-            context = context,
             value = selectedDate,
             onValueChange = { selectedDate = it },
             label = "Birth Date (DD/MM/YYYY)",
             isError = viewModel.birthDateError.value
         )
+
+
+
+//        DateInput(
+//            context = context,
+//            value = selectedDate,
+//            onValueChange = { selectedDate = it },
+//            label = "Birth Date (DD/MM/YYYY)",
+//            isError = viewModel.birthDateError.value
+//        )
 
         PasswordInput(
             password = password,

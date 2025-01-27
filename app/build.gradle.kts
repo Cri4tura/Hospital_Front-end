@@ -1,6 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidxRoom)
+    alias(libs.plugins.kotlinCompose)
 }
 
 android {
@@ -50,12 +54,19 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.androidx.appcompat)
+    //Serialization JSON
+    implementation(libs.kotlinx.serialization.json)
+
     // Koin Core para Android
     implementation(libs.koin.android)
+
     //new ktor dependencies for async back end
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.core)
+
+    // coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
@@ -80,6 +91,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.tools.core)
     implementation(libs.generativeai)
+    ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -87,4 +99,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

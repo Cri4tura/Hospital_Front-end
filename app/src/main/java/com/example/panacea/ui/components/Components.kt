@@ -7,6 +7,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +30,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.Email
@@ -57,6 +62,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarColors
@@ -74,9 +80,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -87,23 +95,27 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Popup
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.panacea.R
 import com.example.panacea.models.nurse.Nurse
 import com.example.panacea.navigation.NavigationController
-import com.example.panacea.utils.Constants
+import com.example.panacea.utils.Constants.MENU
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawerAppBar(
     nav: NavigationController,
+    userName: String?,
     index: Int,
     pageTitle: @Composable () -> Unit,
     leftActionIcon: @Composable (() -> Unit)? = null,
@@ -132,11 +144,13 @@ fun DrawerAppBar(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(Modifier.height(16.dp))
-                    Text(
-                        "User Name".uppercase(),
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    userName?.let {
+                        Text(
+                            it.uppercase(),
+                            modifier = Modifier.padding(16.dp),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                     Image(
                         painter = painterResource(id = R.drawable.nurse_register),
                         contentDescription = "User Image",
@@ -266,11 +280,11 @@ fun DrawerAppBar(
                             onOptionSelected = { selectedOption ->
                                 println("Selected: $selectedOption")
                                 when (selectedOption) {
-                                    Constants.MENU.OPTION_0.toString() -> nav.navigateToHistory()
-                                    Constants.MENU.OPTION_1.toString() -> nav.navigateToDirectory()
-                                    Constants.MENU.OPTION_2.toString() -> nav.navigateToHome()
-                                    Constants.MENU.OPTION_3.toString() -> nav.navigateToDocuments()
-                                    Constants.MENU.OPTION_4.toString() -> nav.navigateToNews()
+                                    MENU.OPTION_0.toString() -> nav.navigateToHistory()
+                                    MENU.OPTION_1.toString() -> nav.navigateToDirectory()
+                                    MENU.OPTION_2.toString() -> nav.navigateToHome()
+                                    MENU.OPTION_3.toString() -> nav.navigateToDocuments()
+                                    MENU.OPTION_4.toString() -> nav.navigateToNews()
                                 }
                             }
                         )
@@ -325,121 +339,6 @@ fun SingleChoiceSegmentedButton(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerModalInput(
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
-                onDismiss()
-            }) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
-    }
-}
-
-
-@Composable
-fun DrawerContent(
-    drawerState: DrawerState,
-    scope: CoroutineScope,
-    nav: NavigationController
-) {
-    var showDialog by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .background(color = MaterialTheme.colorScheme.secondary)
-
-    ) {
-        Spacer(modifier = Modifier.height(60.dp))
-
-        TextMenu(
-            imageResource = R.drawable.list,
-            text = "Directory",
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    scope.launch { drawerState.close() }
-                    nav.navigateToNurseList()
-                },
-            enabled = true
-
-        )
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.background
-        )
-        TextMenu(
-            imageResource = R.drawable.search,
-            text = "Search",
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    scope.launch { drawerState.close() }
-                    nav.navigateToDirectory()
-                },
-            enabled = true
-        )
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.background
-        )
-        TextMenu(
-            imageResource = R.drawable.search_id,
-            text = "Find by ID",
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    scope.launch { drawerState.close() }
-                    //TODO()
-                },
-            enabled = false
-        )
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.background
-        )
-
-
-    }
-}
-
-@Composable
-fun TitleMenu(
-    title: String,
-    icon: ImageVector
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            imageVector = icon,
-            contentDescription = "Icon",
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(title)
-    }
-}
-
 @Composable
 fun EmailInput(
     email: String,
@@ -457,7 +356,7 @@ fun EmailInput(
             Box (modifier = Modifier.height(16.dp)){
                 if (isError?.isNotEmpty() == true) {
                     Text(
-                        text = isError ?: "",
+                        text = isError,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -486,7 +385,7 @@ fun TextInput(
             Box (modifier = Modifier.height(16.dp)){
                 if (isError?.isNotEmpty() == true) {
                     Text(
-                        text = isError ?: "",
+                        text = isError,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -495,32 +394,15 @@ fun TextInput(
         },
     )
 }
-
-
 @Composable
 fun DateInput(
-    context: Context,
     value: String,
     label: String,
     onValueChange: (String) -> Unit,
     isError: String?
 ) {
-    var selectedDate by remember { mutableStateOf("") }
-    val calendar = Calendar.getInstance()
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    val onDateClick = {
-        android.app.DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                calendar.set(year, month, dayOfMonth)
-                selectedDate = dateFormat.format(calendar.time)
-                onValueChange(selectedDate)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
-    }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val dateFormatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
     OutlinedTextField(
         value = value,
@@ -531,7 +413,7 @@ fun DateInput(
         shape = RoundedCornerShape(15.dp),
         singleLine = true,
         trailingIcon = {
-            IconButton(onClick = { onDateClick() }) {
+            IconButton(onClick = { showDatePicker = true }) {
                 Icon(
                     painter = painterResource(id = R.drawable.calendar),
                     contentDescription = "Calendar",
@@ -542,10 +424,10 @@ fun DateInput(
         },
         isError = isError?.isNotEmpty() ?: false,
         supportingText = {
-            Box (modifier = Modifier.height(16.dp)){
+            Box(modifier = Modifier.height(16.dp)) {
                 if (isError?.isNotEmpty() == true) {
                     Text(
-                        text = isError ?: "",
+                        text = isError,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -553,6 +435,49 @@ fun DateInput(
             }
         },
     )
+
+    if (showDatePicker) {
+        DatePickerModal(
+            onDismiss = { showDatePicker = false },
+            onDateSelected = { date ->
+                onValueChange(dateFormatter.format(date))
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModal(
+    onDismiss: () -> Unit,
+    onDateSelected: (Date) -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+    val confirmEnabled = datePickerState.selectedDateMillis != null
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        onDateSelected(Date(it))
+                    }
+                    onDismiss()
+                },
+                enabled = confirmEnabled
+            ) {
+                Text("Aceptar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
 }
 
 @Composable
@@ -576,7 +501,7 @@ fun FingerPrintAuth(
         Icon(
             painter = painterResource(id = R.drawable.huella),
             contentDescription = "Fingerprint Icon",
-            modifier = Modifier.size(50.dp),
+            modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.primary
         )
     }
@@ -602,7 +527,7 @@ fun PasswordInput(
             Box (modifier = Modifier.height(16.dp)){
                 if (isError?.isNotEmpty() == true) {
                     Text(
-                        text = isError ?: "",
+                        text = isError,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -623,15 +548,6 @@ fun PasswordInput(
             }
         }
     )
-//    Box {
-//        AnimatedVisibility(visible = isError?.isNotEmpty() == true) {
-//            Text(
-//                text = isError ?: "",
-//                color = MaterialTheme.colorScheme.error,
-//                style = MaterialTheme.typography.bodySmall,
-//            )
-//        }
-//    }
 }
 
 @Composable
@@ -662,39 +578,6 @@ fun PrimaryButton(
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(text, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
     }
-}
-
-@Composable
-fun VideoPlayer(
-    context: Context,
-    videoResId: Int,
-    modifier: Modifier = Modifier,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
-    borderWidth: Dp = 2.dp
-) {
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
-            val mediaItem = MediaItem.fromUri(videoUri)
-            setMediaItem(mediaItem)
-            repeatMode = ExoPlayer.REPEAT_MODE_ALL
-            prepare()
-            playWhenReady = true
-        }
-    }
-
-    DisposableEffect(exoPlayer) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-
-    AndroidView(
-        factory = { PlayerView(it).apply { player = exoPlayer; useController = false } },
-        modifier = modifier
-            .clip(CircleShape)
-            .border(borderWidth, borderColor, CircleShape)
-    )
 }
 
 @Composable
@@ -895,3 +778,135 @@ fun NurseExtendedItem(
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModalInput(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                onDateSelected(datePickerState.selectedDateMillis)
+                onDismiss()
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+
+@Composable
+fun DrawerContent(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+    nav: NavigationController
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .background(color = MaterialTheme.colorScheme.secondary)
+
+    ) {
+        Spacer(modifier = Modifier.height(60.dp))
+
+        TextMenu(
+            imageResource = R.drawable.list,
+            text = "Directory",
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    scope.launch { drawerState.close() }
+                    nav.navigateToNurseList()
+                },
+            enabled = true
+
+        )
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.background
+        )
+        TextMenu(
+            imageResource = R.drawable.search,
+            text = "Search",
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    scope.launch { drawerState.close() }
+                    nav.navigateToDirectory()
+                },
+            enabled = true
+        )
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.background
+        )
+        TextMenu(
+            imageResource = R.drawable.search_id,
+            text = "Find by ID",
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    scope.launch { drawerState.close() }
+                    //TODO()
+                },
+            enabled = false
+        )
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.background
+        )
+
+
+    }
+}
+
+@Composable
+fun VideoPlayer(
+    context: Context,
+    videoResId: Int,
+    modifier: Modifier = Modifier,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    borderWidth: Dp = 2.dp
+) {
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
+            val mediaItem = MediaItem.fromUri(videoUri)
+            setMediaItem(mediaItem)
+            repeatMode = ExoPlayer.REPEAT_MODE_ALL
+            prepare()
+            playWhenReady = true
+        }
+    }
+
+    DisposableEffect(exoPlayer) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    AndroidView(
+        factory = { PlayerView(it).apply { player = exoPlayer; useController = false } },
+        modifier = modifier
+            .clip(CircleShape)
+            .border(borderWidth, borderColor, CircleShape)
+    )
+}

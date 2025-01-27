@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.panacea.R
+import com.example.panacea.models.user.User
 import com.example.panacea.navigation.NavigationController
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.utils.Constants.MENU
@@ -54,12 +55,13 @@ fun HomeView(
     val cards = remember { mutableStateListOf<Int>() }
 
     if (cards.isEmpty()) {
-        cards.addAll(0 until 10)
+        cards.addAll(0 until 2)
     }
 
     DrawerAppBar(
         nav = nav,
         index = MENU.OPTION_2.ordinal,
+        userName = "GUEST",
         pageTitle = {
             Image(
                 painter = painterResource(id = R.drawable.panacea),
@@ -98,14 +100,12 @@ fun HomeView(
             ) {
                 items(cards) { index ->
 
-                    // Recuerda el estado para cada Card
                     var isFilled by remember { mutableStateOf(false) }
 
                     Card(
                         modifier = Modifier
                             .padding(16.dp)
-                            .fillMaxWidth()
-                            .clickable { isFilled = !isFilled }, // Cambia el estado
+                            .fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(4.dp),
                     ) {
                         Column(
@@ -113,13 +113,12 @@ fun HomeView(
                         ) {
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            // Primera fila con íconos y título
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Ícono circular con texto
+
                                 Box(
                                     modifier = Modifier
                                         .size(40.dp)
@@ -134,9 +133,10 @@ fun HomeView(
                                     )
                                 }
 
-                                // Ícono de estrella que cambia
                                 Icon(
-                                    modifier = Modifier.size(25.dp),
+                                    modifier = Modifier.size(25.dp).clickable {
+                                        isFilled = !isFilled
+                                    },
                                     imageVector = if (isFilled) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     contentDescription = "Star Icon",
                                     tint = MaterialTheme.colorScheme.primary
@@ -145,7 +145,6 @@ fun HomeView(
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            // Título y subtítulo
                             Text(
                                 text = "Title ${index + 1}",
                                 style = MaterialTheme.typography.titleLarge
@@ -158,7 +157,6 @@ fun HomeView(
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            // Contenido del cuerpo
                             Text(
                                 text = "Material is a design system – backed by open source code – that helps teams build high-quality digital experiences.",
                                 style = MaterialTheme.typography.bodySmall

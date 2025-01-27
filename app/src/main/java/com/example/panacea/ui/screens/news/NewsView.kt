@@ -32,6 +32,7 @@ fun NewsView(nav: NavigationController) {
                 }
             )
         },
+        userName = null,
         screenContent = {
             Column (
                 modifier = Modifier.fillMaxSize(),
