@@ -9,7 +9,7 @@ import com.example.panacea.ui.screens.home.HomeView
 import com.example.panacea.ui.screens.home.HomeViewModel
 import com.example.panacea.ui.screens.login.LoginView
 import com.example.panacea.ui.screens.login.LoginViewModel
-import com.example.panacea.ui.screens.directory.FindByNameView
+import com.example.panacea.ui.screens.directory.DirectoryView
 import com.example.panacea.ui.screens.directory.DirectoryViewModel
 import com.example.panacea.ui.screens.detail.DetailView
 import com.example.panacea.ui.screens.detail.DetailViewModel
@@ -54,9 +54,9 @@ fun Navigation(
             )
         }
         composable<DIRECTORY> {
-            FindByNameView(
+            DirectoryView(
                 nav = nav,
-                vm = DirectoryViewModel(koinInject()),
+                vm = DirectoryViewModel(koinInject())
             )
         }
         composable<DETAIL> { backStackEntry ->

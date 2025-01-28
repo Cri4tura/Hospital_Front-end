@@ -34,10 +34,12 @@ import org.koin.androidx.compose.getViewModel
 import kotlin.text.contains
 
 @Composable
-fun FindByNameView(nav: NavHostController, vm: DirectoryViewModel = getViewModel()) {
+fun DirectoryView(
+    nav: NavHostController,
+    vm: DirectoryViewModel = getViewModel()
+) {
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
-
     val nurseList = vm.nurseList.collectAsState().value
 
     LaunchedEffect(searchQuery) {
@@ -51,16 +53,17 @@ fun FindByNameView(nav: NavHostController, vm: DirectoryViewModel = getViewModel
     }
 
     DrawerAppBar(
-
         nav = nav,
         index = MENU.OPTION_1,
         pageTitle = {
             Image(
                 painter = painterResource(id = R.drawable.panacea),
                 contentDescription = "Glide image ",
-                modifier = Modifier.height(40.dp).clickable {
-                    nav.navigate(HOME)
-                }
+                modifier = Modifier
+                    .height(40.dp)
+                    .clickable {
+                        nav.navigate(HOME)
+                    }
             )
         },
         userName = null,
@@ -73,17 +76,19 @@ fun FindByNameView(nav: NavHostController, vm: DirectoryViewModel = getViewModel
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { query -> searchQuery = query },
-                    placeholder = {Text("Search")},
+                    placeholder = { Text("Search") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(15.dp),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
                     ),
-                    leadingIcon = { Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Icon"
-                    ) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon"
+                        )
+                    },
                     singleLine = true
                 )
 
