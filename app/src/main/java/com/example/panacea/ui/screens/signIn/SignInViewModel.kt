@@ -53,6 +53,8 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
         val birthDateParsed = parseBirthDate(birthDate)
         val passwordsValid = validatePasswords(password1, password2)
 
+
+        println("DOB: $birthDateParsed")
         _nameError.value = nameValid.errorMessage
         _surnameError.value = lastNameValid.errorMessage
         _emailError.value = emailValid.errorMessage

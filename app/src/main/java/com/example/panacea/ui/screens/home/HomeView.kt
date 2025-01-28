@@ -40,22 +40,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.panacea.R
 import com.example.panacea.models.user.User
-import com.example.panacea.navigation.NavigationController
+
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.utils.Constants.MENU
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeView(
-    nav: NavigationController,
+    nav: NavHostController,
     vm: HomeViewModel
 ) {
     val cards = remember { mutableStateListOf<Int>() }
 
     if (cards.isEmpty()) {
-        cards.addAll(0 until 2)
+        cards.addAll(0 until 3)
     }
 
     DrawerAppBar(

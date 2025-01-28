@@ -179,7 +179,9 @@ class NurseRepository {
         )
     }
 
-
+    fun getNurseByID(nurseID: Int): Nurse? {
+        return nurseList.find { it.id == nurseID }
+    }
 
     fun getNurseList(): List<Nurse> {
         return nurseList

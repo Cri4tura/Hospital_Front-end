@@ -10,8 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-
-
+/*
 class NavigationController(private val nurseRepository: NurseRepository) : ViewModel() {
 
     lateinit var selectedNurse: Nurse
@@ -101,3 +100,5 @@ class NavigationController(private val nurseRepository: NurseRepository) : ViewM
     }
 
 }
+
+ */

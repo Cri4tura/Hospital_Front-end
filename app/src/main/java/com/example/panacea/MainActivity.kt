@@ -15,9 +15,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
-import com.example.panacea.nurseRepository.NurseRepository
 import com.example.panacea.navigation.Navigation
-import com.example.panacea.navigation.NavigationController
+
 import com.example.panacea.ui.theme.HospitalFrontendTheme
 
 class MainActivity : AppCompatActivity() {
@@ -33,8 +32,7 @@ class MainActivity : AppCompatActivity() {
                     modifier = androidx.compose.ui.Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val viewModel = NavigationController(NurseRepository())
-                    Navigation(navController = rememberNavController(), navViewModel = viewModel)
+                    Navigation(nav = rememberNavController())
                 }
             }
         }

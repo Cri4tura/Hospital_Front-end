@@ -23,19 +23,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.panacea.R
 import com.example.panacea.models.nurse.Nurse
+import com.example.panacea.navigation.HOME
 import com.example.panacea.nurseRepository.NurseRepository
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.ui.components.NurseItem
-import com.example.panacea.navigation.NavigationController
+
 import com.example.panacea.utils.Constants
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 import kotlin.text.contains
 
 @Composable
-fun FindByNameView(nav: NavigationController, vm: DirectoryViewModel = getViewModel()) {
+fun FindByNameView(nav: NavHostController, vm: DirectoryViewModel = getViewModel()) {
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
 
@@ -60,7 +62,7 @@ fun FindByNameView(nav: NavigationController, vm: DirectoryViewModel = getViewMo
                 painter = painterResource(id = R.drawable.panacea),
                 contentDescription = "Glide image ",
                 modifier = Modifier.height(40.dp).clickable {
-                    nav.navigateToHome()
+                    nav.navigate(HOME)
                 }
             )
         },
@@ -107,15 +109,5 @@ fun FindByNameView(nav: NavigationController, vm: DirectoryViewModel = getViewMo
                 }
             }
         }
-    )
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FindByNameViewPreview() {
-    FindByNameView(
-        nav = NavigationController(NurseRepository()),
-        vm = DirectoryViewModel(NurseRepository())
     )
 }

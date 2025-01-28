@@ -12,12 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.panacea.R
-import com.example.panacea.navigation.NavigationController
+import com.example.panacea.navigation.HOME
 import com.example.panacea.ui.components.DrawerAppBar
 
 @Composable
-fun ProfileView(nav: NavigationController) {
+fun ProfileView(nav: NavHostController) {
 
     DrawerAppBar(
         nav = nav,
@@ -27,7 +28,7 @@ fun ProfileView(nav: NavigationController) {
                 painter = painterResource(id = R.drawable.panacea),
                 contentDescription = "Glide image ",
                 modifier = Modifier.height(40.dp).clickable {
-                    nav.navigateToHome()
+                    nav.navigate(HOME)
                 }
             )
         },

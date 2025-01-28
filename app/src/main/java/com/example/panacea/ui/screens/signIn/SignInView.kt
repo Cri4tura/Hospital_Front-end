@@ -25,10 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
 import com.example.panacea.R
 import com.example.panacea.ui.components.EmailInput
 import com.example.panacea.ui.components.PasswordInput
-import com.example.panacea.navigation.NavigationController
 import com.example.panacea.ui.components.DateInput
 import com.example.panacea.ui.components.PrimaryButton
 import com.example.panacea.ui.components.TextInput
@@ -37,7 +37,6 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun SignInView(
     viewModel: SignInViewModel = getViewModel(),
-    navViewModel: NavigationController,
     onRegister: (name: String, lastName: String, birdthDay: String, email: String) -> Unit,
     onBack: () -> Unit
 ) {

@@ -1,4 +1,4 @@
-package com.example.panacea.ui.screens.splash_screen
+package com.example.panacea.ui.screens.splash
 
 import android.content.Context
 import android.net.Uri
@@ -26,15 +26,16 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.panacea.R
+import com.example.panacea.navigation.LOGIN
 import com.example.panacea.utils.Constants
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController) {
     LaunchedEffect(key1 = true) {
-        delay(4300)
+        delay(1500)
         navController.popBackStack()
-        navController.navigate(Constants.Screen.LOGIN.route)
+        navController.navigate(LOGIN)
     }
     Splash()
 }

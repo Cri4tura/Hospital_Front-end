@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
@@ -100,9 +101,18 @@ import androidx.compose.ui.window.Popup
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import androidx.navigation.NavHostController
 import com.example.panacea.R
 import com.example.panacea.models.nurse.Nurse
-import com.example.panacea.navigation.NavigationController
+import com.example.panacea.navigation.DETAIL
+import com.example.panacea.navigation.DIRECTORY
+import com.example.panacea.navigation.DOCUMENTS
+import com.example.panacea.navigation.HISTORY
+import com.example.panacea.navigation.HOME
+import com.example.panacea.navigation.LOGIN
+import com.example.panacea.navigation.NEWS
+import com.example.panacea.navigation.NURSELIST
+import com.example.panacea.navigation.PROFILE
 import com.example.panacea.utils.Constants.MENU
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -114,7 +124,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawerAppBar(
-    nav: NavigationController,
+    nav: NavHostController,
     userName: String?,
     index: Int,
     pageTitle: @Composable () -> Unit,
@@ -164,7 +174,7 @@ fun DrawerAppBar(
                 DropdownMenuItem(
                     text = { Text("Profile") },
                     leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null) },
-                    onClick = { nav.navigateToProfile() }
+                    onClick = { nav.navigate(PROFILE) }
                 )
                 DropdownMenuItem(
                     text = { Text("Settings") },
@@ -178,7 +188,7 @@ fun DrawerAppBar(
                 DropdownMenuItem(
                     text = { Text("Send Feedback") },
                     leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null) },
-                    trailingIcon = { Icon(Icons.Default.Send, contentDescription = null) },
+                    trailingIcon = { Icon(Icons.AutoMirrored.Default.Send, contentDescription = null) },
                     onClick = { /* Do something... */ }
                 )
 
@@ -218,7 +228,7 @@ fun DrawerAppBar(
                         LogoutConfirmationDialog(
                             showDialog = showDialog,
                             onDismiss = { showDialog = false },
-                            onConfirm = { nav.navigateToLogin() }
+                            onConfirm = { nav.navigate(LOGIN) }
                         )
                     },
                     selected = false,
@@ -267,7 +277,7 @@ fun DrawerAppBar(
                 BottomAppBar(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.height(55.dp),
+                    modifier = Modifier.height(60.dp),
                     windowInsets = BottomAppBarDefaults.windowInsets,
                 ) {
                     Row(
@@ -280,11 +290,11 @@ fun DrawerAppBar(
                             onOptionSelected = { selectedOption ->
                                 println("Selected: $selectedOption")
                                 when (selectedOption) {
-                                    MENU.OPTION_0.toString() -> nav.navigateToHistory()
-                                    MENU.OPTION_1.toString() -> nav.navigateToDirectory()
-                                    MENU.OPTION_2.toString() -> nav.navigateToHome()
-                                    MENU.OPTION_3.toString() -> nav.navigateToDocuments()
-                                    MENU.OPTION_4.toString() -> nav.navigateToNews()
+                                    MENU.OPTION_0.toString() -> nav.navigate(HISTORY)
+                                    MENU.OPTION_1.toString() -> nav.navigate(DIRECTORY)
+                                    MENU.OPTION_2.toString() -> nav.navigate(HOME)
+                                    MENU.OPTION_3.toString() -> nav.navigate(DOCUMENTS)
+                                    MENU.OPTION_4.toString() -> nav.navigate(NEWS)
                                 }
                             }
                         )
@@ -674,13 +684,13 @@ fun LogoutConfirmationDialog(
 @Composable
 fun NurseItem(
     nurse: Nurse,
-    nav: NavigationController
+    nav: NavHostController
 ) {
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                nav.navigateToDetail(nurse)
+                nav.navigate(DETAIL(nurse.id))
             }) {
         Image(
             painter = painterResource(id = R.drawable.user),
@@ -812,7 +822,7 @@ fun DatePickerModalInput(
 fun DrawerContent(
     drawerState: DrawerState,
     scope: CoroutineScope,
-    nav: NavigationController
+    nav: NavHostController
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -831,7 +841,7 @@ fun DrawerContent(
                 .fillMaxWidth()
                 .clickable {
                     scope.launch { drawerState.close() }
-                    nav.navigateToNurseList()
+                    nav.navigate(NURSELIST)
                 },
             enabled = true
 
@@ -848,7 +858,7 @@ fun DrawerContent(
                 .fillMaxWidth()
                 .clickable {
                     scope.launch { drawerState.close() }
-                    nav.navigateToDirectory()
+                    nav.navigate(DIRECTORY)
                 },
             enabled = true
         )

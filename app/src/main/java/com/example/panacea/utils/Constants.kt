@@ -2,21 +2,6 @@ package com.example.panacea.utils
 
 object Constants {
 
-    // SCREENS
-    sealed class Screen(val route: String) {
-        data object HOME : Screen("home")
-        data object LOGIN : Screen("login")
-        data object SIGNING : Screen("signIn")
-        data object NURSELIST : Screen("nurseList")
-        data object DIRECTORY : Screen("agenda")
-        data object DETAIL : Screen("detail")
-        data object SPLASH : Screen("splashScreen")
-        data object PROFILE : Screen("user")
-        data object DOCUMENTS : Screen("documents")
-        data object NEWS : Screen("news")
-        data object HISTORY : Screen("history")
-    }
-
     // NAVIGATION
     sealed class NavigationEvent {
         data object NavigateToHome : NavigationEvent()
@@ -31,7 +16,6 @@ object Constants {
         data object NavigateToDocuments : NavigationEvent()
         data object NavigateToNews : NavigationEvent()
         data object NavigateToHistory : NavigationEvent()
-
     }
 
     enum class MENU(private val value: String) {
@@ -45,7 +29,6 @@ object Constants {
             return value
         }
     }
-
 
     // VARIABLES
     const val DEFAULT_USERNAME = "admin@gmail.com"
