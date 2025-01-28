@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.example.panacea.models.nurse.Nurse
-import com.example.panacea.nurseRepository.NurseRepository
+import com.example.panacea.data.models.nurse.Nurse
+import com.example.panacea.data.repositories.NurseRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

@@ -15,9 +15,6 @@ object LOGIN
 object SIGNING
 
 @Serializable
-object NURSELIST
-
-@Serializable
 object DIRECTORY
 
 @Serializable

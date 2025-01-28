@@ -12,7 +12,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.panacea.models.user.User
+import com.example.panacea.data.models.user.User
 import com.example.panacea.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get

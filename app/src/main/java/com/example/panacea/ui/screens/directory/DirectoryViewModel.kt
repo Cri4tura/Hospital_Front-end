@@ -2,8 +2,8 @@ package com.example.panacea.ui.screens.directory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.panacea.models.nurse.Nurse
-import com.example.panacea.nurseRepository.NurseRepository
+import com.example.panacea.data.models.nurse.Nurse
+import com.example.panacea.data.repositories.NurseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

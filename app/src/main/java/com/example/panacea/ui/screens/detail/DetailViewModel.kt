@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.panacea.models.nurse.Nurse
-import com.example.panacea.nurseRepository.NurseRepository
+import com.example.panacea.data.models.nurse.Nurse
+import com.example.panacea.data.repositories.NurseRepository
 import kotlinx.coroutines.launch
 
 class DetailViewModel (

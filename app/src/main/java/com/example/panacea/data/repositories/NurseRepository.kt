@@ -1,7 +1,7 @@
-package com.example.panacea.nurseRepository
+package com.example.panacea.data.repositories
 
 import android.annotation.SuppressLint
-import com.example.panacea.models.nurse.Nurse
+import com.example.panacea.data.models.nurse.Nurse
 import java.text.SimpleDateFormat
 
 class NurseRepository {

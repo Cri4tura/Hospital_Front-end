@@ -7,9 +7,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,9 +27,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
@@ -46,8 +40,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DisplayMode
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,7 +55,6 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarColors
@@ -81,11 +72,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -96,14 +84,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.Popup
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavHostController
 import com.example.panacea.R
-import com.example.panacea.models.nurse.Nurse
+import com.example.panacea.data.models.nurse.Nurse
 import com.example.panacea.navigation.DETAIL
 import com.example.panacea.navigation.DIRECTORY
 import com.example.panacea.navigation.DOCUMENTS
@@ -111,13 +97,10 @@ import com.example.panacea.navigation.HISTORY
 import com.example.panacea.navigation.HOME
 import com.example.panacea.navigation.LOGIN
 import com.example.panacea.navigation.NEWS
-import com.example.panacea.navigation.NURSELIST
 import com.example.panacea.navigation.PROFILE
 import com.example.panacea.utils.Constants.MENU
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -290,11 +273,11 @@ fun DrawerAppBar(
                             onOptionSelected = { selectedOption ->
                                 println("Selected: $selectedOption")
                                 when (selectedOption) {
-                                    MENU.OPTION_0.toString() -> nav.navigate(HISTORY)
-                                    MENU.OPTION_1.toString() -> nav.navigate(DIRECTORY)
-                                    MENU.OPTION_2.toString() -> nav.navigate(HOME)
-                                    MENU.OPTION_3.toString() -> nav.navigate(DOCUMENTS)
-                                    MENU.OPTION_4.toString() -> nav.navigate(NEWS)
+                                    "${MENU.OPTION_0}" -> nav.navigate(HISTORY)
+                                    "${MENU.OPTION_1}" -> nav.navigate(DIRECTORY)
+                                    "${MENU.OPTION_2}" -> nav.navigate(HOME)
+                                    "${MENU.OPTION_3}" -> nav.navigate(DOCUMENTS)
+                                    "${MENU.OPTION_4}" -> nav.navigate(NEWS)
                                 }
                             }
                         )
@@ -785,106 +768,6 @@ fun NurseExtendedItem(
                 fontSize = 22.sp
             )
         }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerModalInput(
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
-                onDismiss()
-            }) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
-    }
-}
-
-
-@Composable
-fun DrawerContent(
-    drawerState: DrawerState,
-    scope: CoroutineScope,
-    nav: NavHostController
-) {
-    var showDialog by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .background(color = MaterialTheme.colorScheme.secondary)
-
-    ) {
-        Spacer(modifier = Modifier.height(60.dp))
-
-        TextMenu(
-            imageResource = R.drawable.list,
-            text = "Directory",
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    scope.launch { drawerState.close() }
-                    nav.navigate(NURSELIST)
-                },
-            enabled = true
-
-        )
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.background
-        )
-        TextMenu(
-            imageResource = R.drawable.search,
-            text = "Search",
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    scope.launch { drawerState.close() }
-                    nav.navigate(DIRECTORY)
-                },
-            enabled = true
-        )
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.background
-        )
-        TextMenu(
-            imageResource = R.drawable.search_id,
-            text = "Find by ID",
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    scope.launch { drawerState.close() }
-                    //TODO()
-                },
-            enabled = false
-        )
-        HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.background
-        )
-
-
     }
 }
 

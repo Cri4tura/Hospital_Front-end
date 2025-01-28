@@ -42,8 +42,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.panacea.R
-import com.example.panacea.models.user.User
-
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.utils.Constants.MENU
 import kotlinx.coroutines.launch
@@ -61,7 +59,7 @@ fun HomeView(
 
     DrawerAppBar(
         nav = nav,
-        index = MENU.OPTION_2.ordinal,
+        index = MENU.OPTION_2,
         userName = "GUEST",
         pageTitle = {
             Image(

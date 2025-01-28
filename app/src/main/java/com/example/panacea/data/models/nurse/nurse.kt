@@ -1,4 +1,4 @@
-package com.example.panacea.models.nurse
+package com.example.panacea.data.models.nurse
 
 import java.text.SimpleDateFormat
 import java.time.LocalDate

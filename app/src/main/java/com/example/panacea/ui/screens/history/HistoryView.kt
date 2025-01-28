@@ -15,16 +15,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.panacea.R
 import com.example.panacea.navigation.HOME
-
 import com.example.panacea.ui.components.DrawerAppBar
-import com.example.panacea.utils.Constants
+import com.example.panacea.utils.Constants.MENU
 
 @Composable
 fun HistoryView(nav: NavHostController) {
 
     DrawerAppBar(
         nav = nav,
-        index = Constants.MENU.OPTION_0.ordinal,
+        index = MENU.OPTION_0,
         pageTitle = {
             Image(
                 painter = painterResource(id = R.drawable.panacea),

@@ -21,17 +21,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.panacea.R
-import com.example.panacea.models.nurse.Nurse
+import com.example.panacea.data.models.nurse.Nurse
 import com.example.panacea.navigation.HOME
-import com.example.panacea.nurseRepository.NurseRepository
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.ui.components.NurseItem
-
-import com.example.panacea.utils.Constants
+import com.example.panacea.utils.Constants.MENU
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 import kotlin.text.contains
@@ -56,7 +53,7 @@ fun FindByNameView(nav: NavHostController, vm: DirectoryViewModel = getViewModel
     DrawerAppBar(
 
         nav = nav,
-        index = Constants.MENU.OPTION_1.ordinal,
+        index = MENU.OPTION_1,
         pageTitle = {
             Image(
                 painter = painterResource(id = R.drawable.panacea),

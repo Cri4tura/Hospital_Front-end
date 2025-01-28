@@ -1,4 +1,4 @@
-package com.example.panacea.models.user
+package com.example.panacea.data.models.user
 
 import kotlinx.serialization.Serializable
 
