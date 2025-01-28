@@ -1,14 +1,18 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidxRoom)
+    alias(libs.plugins.kotlinCompose)
 }
 
 android {
-    namespace = "com.example.hospital_front_end"
+    namespace = "com.example.panacea"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.hospital_front_end"
+        applicationId = "com.example.panacea"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -50,19 +54,27 @@ android {
 }
 
 dependencies {
-    // Koin Core para Android
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+
+    // Serialization JSON
+    implementation(libs.kotlinx.serialization.json)
+
+    // Koin
     implementation(libs.koin.android)
-    //new ktor dependencies for async back end
+    implementation(libs.koin.androidx.compose)
+
+    // Ktor
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.core)
+
+    // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
-    // Koin para Jetpack Compose
-    implementation(libs.koin.androidx.compose)
     implementation(libs.compose)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -79,8 +91,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.tools.core)
-    //implementation(libs.protolite.well.known.types)
     implementation(libs.generativeai)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -88,4 +101,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
