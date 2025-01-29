@@ -1,15 +1,35 @@
 package com.example.panacea.ui.screens.home
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.panacea.data.repositories.NurseRepository
+import kotlinx.coroutines.launch
+import com.example.panacea.data.models.nurse.Nurse
 
-class HomeViewModel {
-    private val client = HttpClient()
+class HomeViewModel (
+    private val repository: NurseRepository
+) : ViewModel() {
 
-    suspend fun greeting(): String {
-        val response = client.get("http://localhost:8080/nurse")
+    var state by mutableStateOf(UiState())
+        private set
 
-        return response.bodyAsText()
+    init {
+        viewModelScope.launch {
+            state = UiState(isLoading = true)
+            repository.remoteNurses.collect {
+                if (it.isNotEmpty()) {
+                    state = UiState(isLoading = false, nurseList = it)
+                }
+            }
+        }
     }
+
+    data class UiState(
+        val isLoading: Boolean = false,
+        val nurseList: List<Nurse> = emptyList()
+    )
+
 }

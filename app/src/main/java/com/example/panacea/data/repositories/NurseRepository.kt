@@ -2,10 +2,20 @@ package com.example.panacea.data.repositories
 
 import android.annotation.SuppressLint
 import com.example.panacea.data.models.nurse.Nurse
+import com.example.panacea.data.network.NetworkServices
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 
-class NurseRepository {
+class NurseRepository (
+    private val conn: NetworkServices
+){
     private var nurseList = mutableListOf<Nurse>()
+
+    val remoteNurses: Flow<List<Nurse>> = flow {
+        val nurses = conn.getNurses()
+        emit(nurses)
+    }
 
     init {
         loadInitialData()
@@ -14,7 +24,9 @@ class NurseRepository {
     @SuppressLint("SimpleDateFormat")
     private fun loadInitialData() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        /*
         nurseList = arrayListOf(
+
             Nurse(
                 id = 1,
                 name = "Juan",
@@ -177,6 +189,8 @@ class NurseRepository {
                 birthDate = dateFormat.parse("1986-05-03")!!
             )
         )
+
+         */
     }
 
     fun getNurseByID(nurseID: Int): Nurse? {

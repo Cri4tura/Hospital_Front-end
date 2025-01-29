@@ -27,14 +27,14 @@ fun Navigation(
     nav: NavHostController
 ) {
 
-    NavHost(navController = nav, startDestination = SPLASH) {
+    NavHost(navController = nav, startDestination = HOME) {
         composable<SPLASH> {
             SplashScreen(navController = nav)
         }
         composable<HOME> {
             HomeView(
                 nav = nav,
-                vm = HomeViewModel()
+                vm = HomeViewModel(koinInject())
             )
         }
         composable<LOGIN> {

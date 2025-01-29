@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidxRoom)
     alias(libs.plugins.kotlinCompose)
+    alias(libs.plugins.gradleBuildConfig)
 }
 
 android {

@@ -62,18 +62,19 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
         _passwordError.value = passwordsValid.errorMessage
         _authenticationState.value = nameValid.isValid && lastNameValid.isValid && emailValid.isValid && birthDateValid.isValid && passwordsValid.isValid
         if(_authenticationState.value) {
-            addNurseToRepository(name, lastName, email, birthDateParsed!!)
+            addNurseToRepository(name, lastName, email, birthDateParsed!!, password1)
         }
     }
 
-    private fun addNurseToRepository(name: String, lastName: String, email: String, birthDate: Date) {
+    private fun addNurseToRepository(name: String, lastName: String, email: String, birthDate: Date, password1: String) {
         val newNurse = Nurse(
             id = 99,
             name = name,
             surname = lastName,
             email = email,
             registerDate = Date(),
-            birthDate = birthDate
+            birthDate = birthDate,
+            password = password1
         )
         nurseRepository.addNurse(newNurse)
     }
