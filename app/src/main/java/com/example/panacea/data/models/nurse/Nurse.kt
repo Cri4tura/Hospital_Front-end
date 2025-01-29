@@ -1,19 +1,26 @@
 package com.example.panacea.data.models.nurse
 
+import com.example.panacea.data.DateSerializer
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.ZoneId
 import java.util.Date
 
-
+@Serializable
 data class Nurse(
     val id: Int,
     val name: String,
     val surname: String,
     val email: String,
-    val registerDate: Date,
-    val birthDate: Date
+    val password: String,
+    @Serializable(with = DateSerializer::class)
+    @SerialName("birth_date") val birthDate: Date,
+    @Serializable(with = DateSerializer::class)
+    @SerialName("register_date") val registerDate: Date,
 ) {
     val age: Int
         get() {

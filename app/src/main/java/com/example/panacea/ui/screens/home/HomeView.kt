@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.panacea.R
+import com.example.panacea.data.models.nurse.Nurse
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.utils.Constants.MENU
 import kotlinx.coroutines.launch
@@ -51,7 +53,19 @@ fun HomeView(
     nav: NavHostController,
     vm: HomeViewModel
 ) {
+    var nurseList by remember { mutableStateOf<List<Nurse>>(emptyList()) }
+    val scope = rememberCoroutineScope()
     val cards = remember { mutableStateListOf<Int>() }
+
+    LaunchedEffect(true) {
+        scope.launch {
+            try {
+                nurseList = vm.state.nurseList
+            } catch (e: Exception) {
+                println("Error: ${e.message}")
+            }
+        }
+    }
 
     if (cards.isEmpty()) {
         cards.addAll(0 until 3)
@@ -79,89 +93,82 @@ fun HomeView(
             }
         },
         screenContent = {
-            val scope = rememberCoroutineScope()
-            var text by remember { mutableStateOf("Loading") }
-            LaunchedEffect(true) {
-                scope.launch {
-                    text = try {
-                        vm.greeting()
-                    } catch (e: Exception) {
-                        e.localizedMessage ?: "error"
-                    }
-                }
-            }
-            Text(text)
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                items(cards) { index ->
 
-                    var isFilled by remember { mutableStateOf(false) }
+            if(vm.state.isLoading){
+                CircularProgressIndicator()
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    items(vm.state.nurseList) { nurse ->
 
-                    Card(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(4.dp),
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp)
+                        var isFilled by remember { mutableStateOf(false) }
+
+                        Card(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            elevation = CardDefaults.cardElevation(4.dp),
                         ) {
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                            Column(
+                                modifier = Modifier.padding(16.dp)
                             ) {
+                                Spacer(modifier = Modifier.height(16.dp))
 
-                                Box(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clip(CircleShape)
-                                        .background(MaterialTheme.colorScheme.primary),
-                                    contentAlignment = Alignment.Center
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(
-                                        text = "A",
-                                        color = Color.White,
-                                        style = MaterialTheme.typography.titleMedium
+
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.primary),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "A",
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                    }
+
+                                    Icon(
+                                        modifier = Modifier.size(25.dp).clickable {
+                                            isFilled = !isFilled
+                                        },
+                                        imageVector = if (isFilled) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = "Star Icon",
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
 
-                                Icon(
-                                    modifier = Modifier.size(25.dp).clickable {
-                                        isFilled = !isFilled
-                                    },
-                                    imageVector = if (isFilled) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    contentDescription = "Star Icon",
-                                    tint = MaterialTheme.colorScheme.primary
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Text(
+                                    text = "${nurse.name} ${nurse.surname}",
+                                    style = MaterialTheme.typography.titleLarge
                                 )
+                                Text(
+                                    text = nurse.email,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Text(
+                                    text = "Material is a design system – backed by open source code – that helps teams build high-quality digital experiences.",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+
+                                Spacer(modifier = Modifier.height(16.dp))
                             }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                text = "Title ${index + 1}",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            Text(
-                                text = "Subhead",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                text = "Material is a design system – backed by open source code – that helps teams build high-quality digital experiences.",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
                 }
