@@ -18,9 +18,9 @@ data class Nurse(
     val email: String,
     val password: String,
     @Serializable(with = DateSerializer::class)
-    @SerialName("birth_date") val birthDate: Date,
+    val birthDate: Date,
     @Serializable(with = DateSerializer::class)
-    @SerialName("register_date") val registerDate: Date,
+    val registerDate: Date,
 ) {
     val age: Int
         get() {

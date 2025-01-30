@@ -18,8 +18,8 @@ class NetworkServices() {
 
         // TODO : Descomentar segun el PC
         //val response = client.get("http://10.118.4.237:8080/nurse")           // MARTINA
-        //val response = client.get("http://10.118.3.254:8080/nurse")           // JIAHAO
-        val response = client.get("http://10.118.3.210:8080/nurse")    // ENRIC
+        val response = client.get("http://10.241.97.197:8080/nurse")           // JIAHAO
+        //val response = client.get("http://10.118.3.210:8080/nurse")    // ENRIC
 
         val nurseResponse: NurseResponse = jsonData.decodeFromString(response.bodyAsText())
 

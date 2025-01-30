@@ -2,6 +2,7 @@ package com.example.panacea.ui.components
 
 import android.content.Context
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -55,13 +56,16 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -84,6 +88,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -803,3 +808,130 @@ fun VideoPlayer(
             .border(borderWidth, borderColor, CircleShape)
     )
 }
+
+@Composable
+fun PasswordResetComponent(
+    onPasswordChange: (String) -> Unit,
+    onConfirmChange: (String) -> Unit,
+    onSubmit: () -> Unit,
+    isError: String?
+) {
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Reset Password",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = {
+                password = it
+                onPasswordChange(it)
+            },
+            label = { Text("New Password") },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(15.dp),
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            isError = isError?.isNotEmpty() ?: false,
+            supportingText = {
+                if (isError?.isNotEmpty() == true) {
+                    Text(
+                        text = isError,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = {
+                confirmPassword = it
+                onConfirmChange(it)
+            },
+            label = { Text("Confirm Password") },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(15.dp),
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            isError = confirmPassword.isNotEmpty() && confirmPassword != password,
+            supportingText = {
+                if (confirmPassword.isNotEmpty() && confirmPassword != password) {
+                    Text(
+                        text = "Passwords do not match",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                if (password == confirmPassword && password.isNotEmpty()) {
+                    onSubmit()
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = password.isNotEmpty() && confirmPassword.isNotEmpty()
+        ) {
+            Text("Change Password")
+        }
+    }
+}
+
+
+@Composable
+fun ResetPasswordDialog(
+    showPasswordResetDialog: MutableState<Boolean>,
+    newPassword: MutableState<String>,
+    confirmPassword: MutableState<String>,
+    context: Context,
+    passwordError: MutableState<String?>
+) {
+    if (showPasswordResetDialog.value) {
+        Dialog(onDismissRequest = { showPasswordResetDialog.value = false }) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                PasswordResetComponent(
+                    onPasswordChange = { newPassword.value = it },
+                    onConfirmChange = { confirmPassword.value = it },
+                    onSubmit = {
+                        if (newPassword.value == confirmPassword.value && newPassword.value.isNotEmpty()) {
+                            Toast.makeText(
+                                context,
+                                "Password changed successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            showPasswordResetDialog.value = false
+                        } else {
+                            passwordError.value = "Passwords do not match"
+                        }
+                    },
+                    isError = passwordError.value
+                )
+            }
+        }
+    }
+}
+
+
