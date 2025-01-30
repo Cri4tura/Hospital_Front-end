@@ -26,12 +26,12 @@ fun DetailView(
     nav: NavHostController,
     vm: DetailViewModel = koinViewModel { parametersOf(nurseId) }
 ) {
+
     Column(
         modifier = Modifier
             .padding(16.dp)
             .padding(top = 20.dp)
     ) {
-
         IconButton(
             onClick = { nav.popBackStack() },
             modifier = Modifier.align(Alignment.End)
@@ -46,15 +46,14 @@ fun DetailView(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            vm.state.nurse?.let {
-                NurseExtendedItem(
-                    nurse = it
-                )
-            }
-
             if (vm.state.isLoading) {
                 CircularProgressIndicator()
+            } else {
+                vm.state.nurse?.let {
+                    NurseExtendedItem(
+                        nurse = it
+                    )
+                }
             }
         }
     }

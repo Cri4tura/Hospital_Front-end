@@ -7,9 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.panacea.data.models.nurse.Nurse
 import com.example.panacea.data.repositories.NurseRepository
+import com.example.panacea.ui.screens.home.HomeViewModel.UiState
 import kotlinx.coroutines.launch
 
-class DetailViewModel (
+class DetailViewModel(
     private val nurseId: Int,
     private val repository: NurseRepository
 ) : ViewModel() {
@@ -20,10 +21,9 @@ class DetailViewModel (
     init {
         viewModelScope.launch {
             state = UiState(isLoading = true)
-//            repository.getMovieById(movieId).collect {
-//                it?.let { state = UiState(isLoading = false, movie = it)}
-//            }
-            state = UiState(isLoading = false, nurse = repository.getNurseByID(nurseId))
+            repository.getNurseById(nurseId).collect {
+                state = UiState(isLoading = false, nurse = it)
+            }
         }
     }
 

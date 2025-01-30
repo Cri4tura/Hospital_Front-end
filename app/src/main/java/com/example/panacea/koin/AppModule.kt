@@ -14,8 +14,8 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
-
 
 // Define el módulo de Koin
 val appModule = module {
@@ -27,8 +27,8 @@ val appModule = module {
 }
 
 val dataModule = module {
-    factoryOf(::NurseRepository)
-    factoryOf(::NetworkServices)
+    singleOf(::NurseRepository)
+    singleOf(::NetworkServices)
 }
 
 val viewModelsModule = module {

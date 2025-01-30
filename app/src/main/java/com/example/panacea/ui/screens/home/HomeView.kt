@@ -25,6 +25,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -132,20 +133,25 @@ fun HomeView(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = "A",
+                                            text = nurse.name[0].uppercase(),
                                             color = Color.White,
-                                            style = MaterialTheme.typography.titleMedium
+                                            style = MaterialTheme.typography.titleMedium,
+                                        )
+                                    }
+                                    IconButton(
+                                        onClick = {
+                                            isFilled = !isFilled
+                                        },
+                                        modifier = Modifier.size(45.dp).padding(4.dp)
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier.fillMaxSize(),
+                                            imageVector = if (isFilled) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                            contentDescription = "Star Icon",
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
 
-                                    Icon(
-                                        modifier = Modifier.size(25.dp).clickable {
-                                            isFilled = !isFilled
-                                        },
-                                        imageVector = if (isFilled) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                        contentDescription = "Star Icon",
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
                                 }
 
                                 Spacer(modifier = Modifier.height(16.dp))

@@ -37,4 +37,12 @@ class NetworkServices() {
         return allNurses
     }
 
+    suspend fun getNurseById(nurseId: Int): Nurse {
+        val response = client.get("http://10.0.2.2:8080/nurse/id/$nurseId")
+        val nurseResponse: Nurse = jsonData.decodeFromString<Nurse>(response.bodyAsText())
+
+        println("Nurse: $nurseResponse")
+        return nurseResponse
+    }
+
 }

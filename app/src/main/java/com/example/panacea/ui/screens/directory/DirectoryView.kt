@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -30,20 +31,45 @@ import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.ui.components.NurseItem
 import com.example.panacea.utils.Constants.MENU
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import kotlin.text.contains
 
 @Composable
 fun DirectoryView(
     nav: NavHostController,
-    vm: DirectoryViewModel = getViewModel()
+    vm: DirectoryViewModel
 ) {
+    var nurseList by remember { mutableStateOf<List<Nurse>>(emptyList()) }
+    val scope = rememberCoroutineScope()
+
     var searchQuery by remember { mutableStateOf("") }
     var filteredNurses by remember { mutableStateOf(listOf<Nurse>()) }
-    val nurseList = vm.nurseList.collectAsState().value
 
+//    LaunchedEffect(vm.state.nurseList) {
+//        scope.launch {
+//            try {
+//                nurseList = vm.state.nurseList
+//            } catch (e: Exception) {
+//                println("Error: ${e.message}")
+//            }
+//        }
+//    }
+
+// Este efecto se dispara cuando se recibe la lista de enfermeros de VM
+    LaunchedEffect(vm.state.nurseList) {
+        nurseList = vm.state.nurseList  // Cargar la lista completa de enfermeros
+        // Filtramos inmediatamente con la búsqueda vacía
+        filteredNurses = nurseList.filter { nurse ->
+            nurse.name.contains(searchQuery, ignoreCase = true) ||
+                    nurse.surname.contains(searchQuery, ignoreCase = true) ||
+                    nurse.email.contains(searchQuery, ignoreCase = true) ||
+                    nurse.age.toString().contains(searchQuery)
+        }
+    }
+
+    // Filtrar la lista cada vez que cambia el `searchQuery`
     LaunchedEffect(searchQuery) {
-        delay(300)
         filteredNurses = nurseList.filter { nurse ->
             nurse.name.contains(searchQuery, ignoreCase = true) ||
                     nurse.surname.contains(searchQuery, ignoreCase = true) ||
@@ -94,20 +120,24 @@ fun DirectoryView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (filteredNurses.isNotEmpty()) {
-                    Text(
-                        "Results:",
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
-                        items(filteredNurses.sortedBy { it.name }) { nurse ->
-                            NurseItem(nurse, nav)
-                            Spacer(modifier = Modifier.height(8.dp))
+                if (vm.state.isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    if (filteredNurses.isNotEmpty()) {
+                        Text(
+                            "Results:",
+                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        LazyColumn(contentPadding = PaddingValues(bottom = 8.dp)) {
+                            items(filteredNurses.sortedBy { it.name }) { nurse ->
+                                NurseItem(nurse, nav)
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
                         }
+                    } else if (searchQuery.isNotEmpty()) {
+                        Text("No results found", style = MaterialTheme.typography.bodyLarge)
                     }
-                } else if (searchQuery.isNotEmpty()) {
-                    Text("No results found", style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }
