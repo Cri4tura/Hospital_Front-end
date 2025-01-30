@@ -5,17 +5,11 @@ import com.example.panacea.data.repositories.NurseRepository
 import com.example.panacea.ui.screens.directory.DirectoryViewModel
 import com.example.panacea.ui.screens.home.HomeViewModel
 import com.example.panacea.ui.screens.signIn.SignInViewModel
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.DefaultRequest
-import io.ktor.http.URLProtocol
-import kotlinx.serialization.json.Json
-import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
+import org.koin.dsl.module
 
 // Define el módulo de Koin
 val appModule = module {
@@ -23,21 +17,16 @@ val appModule = module {
     // Proveer el ViewModel e inyectar el repositorio
     viewModel { SignInViewModel(get()) }
     viewModel { DirectoryViewModel(get()) }
+    viewModel { HomeViewModel(get()) }
 
-}
-
-val dataModule = module {
+    // Repositorios
     singleOf(::NurseRepository)
     singleOf(::NetworkServices)
-}
-
-val viewModelsModule = module {
-    viewModelOf(::HomeViewModel)
 }
 
 fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {
         config?.invoke(this)
-        modules( dataModule, appModule, viewModelsModule)
+        modules(appModule)
     }
 }
