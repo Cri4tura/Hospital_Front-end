@@ -81,6 +81,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -561,7 +562,7 @@ fun PasswordInput(
 @Composable
 fun PrimaryButton(
     onClick: () -> Unit,
-    icon: Int?,
+    icon: ImageVector?,
     text: String,
     description: String,
     modifier: Modifier = Modifier,
@@ -575,10 +576,8 @@ fun PrimaryButton(
     ) {
         if (icon != null) {
             Image(
-                modifier = Modifier
-                    .width(35.dp)
-                    .height(35.dp),
-                painter = painterResource(icon),
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+                imageVector = icon,
                 contentDescription = description
             )
         }

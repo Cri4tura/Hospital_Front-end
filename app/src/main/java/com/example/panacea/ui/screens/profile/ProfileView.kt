@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -92,7 +93,7 @@ fun ProfileView(nav: NavHostController) {
                 onClick = {
                     Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
                 },
-                icon = null,
+                icon = Icons.Outlined.Create,
                 text = "Save",
                 enabled = true,
                 description = "Save changes"
@@ -145,6 +146,9 @@ fun ProfileView(nav: NavHostController) {
 
         Text(
             text = "Reset Password",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.clickable {
                 showPasswordResetDialog.value = true
             }
