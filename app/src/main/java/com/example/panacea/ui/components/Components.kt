@@ -28,7 +28,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
@@ -89,6 +92,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -176,7 +180,12 @@ fun DrawerAppBar(
                 DropdownMenuItem(
                     text = { Text("Send Feedback") },
                     leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null) },
-                    trailingIcon = { Icon(Icons.AutoMirrored.Default.Send, contentDescription = null) },
+                    trailingIcon = {
+                        Icon(
+                            Icons.AutoMirrored.Default.Send,
+                            contentDescription = null
+                        )
+                    },
                     onClick = { /* Do something... */ }
                 )
 
@@ -351,7 +360,7 @@ fun EmailInput(
         shape = RoundedCornerShape(15.dp),
         isError = isError?.isNotEmpty() ?: false,
         supportingText = {
-            Box (modifier = Modifier.height(16.dp)){
+            Box(modifier = Modifier.height(16.dp)) {
                 if (isError?.isNotEmpty() == true) {
                     Text(
                         text = isError,
@@ -380,7 +389,7 @@ fun TextInput(
         singleLine = true,
         isError = isError?.isNotEmpty() ?: false,
         supportingText = {
-            Box (modifier = Modifier.height(16.dp)){
+            Box(modifier = Modifier.height(16.dp)) {
                 if (isError?.isNotEmpty() == true) {
                     Text(
                         text = isError,
@@ -392,6 +401,7 @@ fun TextInput(
         },
     )
 }
+
 @Composable
 fun DateInput(
     value: String,
@@ -522,7 +532,7 @@ fun PasswordInput(
         shape = RoundedCornerShape(15.dp),
         isError = isError?.isNotEmpty() ?: false,
         supportingText = {
-            Box (modifier = Modifier.height(16.dp)){
+            Box(modifier = Modifier.height(16.dp)) {
                 if (isError?.isNotEmpty() == true) {
                     Text(
                         text = isError,
@@ -629,6 +639,32 @@ fun LogoutButton(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.log_out),
+            contentDescription = "Log Out",
+            modifier = Modifier.size(ButtonDefaults.IconSize)
+        )
+        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        Text(text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+fun DeleteAccountButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean,
+    text: String,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Red.copy(alpha = 0.7f),
+            contentColor = Color.Black
+        )
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Delete,
             contentDescription = "Log Out",
             modifier = Modifier.size(ButtonDefaults.IconSize)
         )
@@ -818,6 +854,7 @@ fun PasswordResetComponent(
 ) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -833,52 +870,24 @@ fun PasswordResetComponent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = {
-                password = it
-                onPasswordChange(it)
-            },
-            label = { Text("New Password") },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(15.dp),
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            isError = isError?.isNotEmpty() ?: false,
-            supportingText = {
-                if (isError?.isNotEmpty() == true) {
-                    Text(
-                        text = isError,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
+        PasswordInput(
+            password = password,
+            passwordVisible = passwordVisible,
+            onPasswordChange = { password = it },
+            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
+            isError = null
+            //isError = vm.passwordError.value
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = {
-                confirmPassword = it
-                onConfirmChange(it)
-            },
-            label = { Text("Confirm Password") },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(15.dp),
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            isError = confirmPassword.isNotEmpty() && confirmPassword != password,
-            supportingText = {
-                if (confirmPassword.isNotEmpty() && confirmPassword != password) {
-                    Text(
-                        text = "Passwords do not match",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
+        PasswordInput(
+            password = confirmPassword,
+            passwordVisible = passwordVisible,
+            onPasswordChange = { confirmPassword = it },
+            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
+            isError = null
+            //isError = vm.passwordError.value
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -934,4 +943,58 @@ fun ResetPasswordDialog(
     }
 }
 
-
+@Composable
+fun RoundedImagePicker(
+    imageUri: Boolean,
+    onImageChange: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(150.dp) // Tamaño del círculo
+            .clip(CircleShape) // Hace el Box completamente redondeado
+            .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape) // Borde de color azul
+            .background(Color.Transparent) // Color de fondo por defecto
+    ) {
+        if (imageUri) {
+            Icon(
+                imageVector = Icons.Outlined.Person,
+                contentDescription = "Selected Image",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape) // Asegura que la imagen también sea redonda
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Default Avatar",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(80.dp).clip(CircleShape)
+            )
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .zIndex(1f) // Asegura que esté adelante
+        ) {
+            IconButton(
+                onClick = onImageChange,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.Transparent)
+                    .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Change Image",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
+}
