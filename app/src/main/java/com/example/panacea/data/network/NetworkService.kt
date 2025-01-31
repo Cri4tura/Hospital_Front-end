@@ -9,9 +9,11 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
 import kotlinx.serialization.json.Json
 
-class NetworkServices() {
-
-    private val client = HttpClient()
+class NetworkServices( private val client: HttpClient ) {
+    private val clientlocal = HttpClient()
+    init {
+        println("NetworkServices inicializado con HttpClient: $client".uppercase())
+    }
 
     suspend fun getNurses(): List<Nurse> {
         val allNurses = mutableListOf<Nurse>()
