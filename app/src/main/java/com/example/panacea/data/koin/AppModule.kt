@@ -1,9 +1,10 @@
-package com.example.panacea.koin
+package com.example.panacea.data.koin
 
 import com.example.panacea.data.network.NetworkServices
 import com.example.panacea.data.repositories.NurseRepository
 import com.example.panacea.ui.screens.directory.DirectoryViewModel
 import com.example.panacea.ui.screens.home.HomeViewModel
+import com.example.panacea.ui.screens.login.LoginViewModel
 import com.example.panacea.ui.screens.signIn.SignInViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -18,6 +19,7 @@ val appModule = module {
     viewModel { SignInViewModel(get()) }
     viewModel { DirectoryViewModel(get()) }
     viewModel { HomeViewModel(get()) }
+    viewModel { LoginViewModel(get()) }
 
     // Repositorios
     singleOf(::NurseRepository)

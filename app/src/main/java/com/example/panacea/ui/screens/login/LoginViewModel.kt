@@ -13,7 +13,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.panacea.data.models.user.User
-import com.example.panacea.utils.Constants
+import com.example.panacea.data.repositories.NurseRepository
+import com.example.panacea.data.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
@@ -24,20 +25,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
-class LoginViewModel() : ViewModel() {
+class LoginViewModel(
+    private val repository: NurseRepository
+) : ViewModel() {
 
-    private val client = HttpClient()
-
-    private val _userState = MutableStateFlow<User?>(null)
-    val userState: StateFlow<User?> = _userState
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
     private val _isLoginSuccessful = MutableStateFlow<Boolean?>(null) // null = no se ha intentado
     val isLoginSuccessful: StateFlow<Boolean?> = _isLoginSuccessful
-
-    data class ValidationResult(val isValid: Boolean, val errorMessage: String)
 
     private var isBiometricAuthAvailable = false
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
@@ -61,7 +58,6 @@ class LoginViewModel() : ViewModel() {
                 .setTitle("Biometric Authentication")
                 .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
                 .build()
-
         }
     }
 
@@ -79,6 +75,7 @@ class LoginViewModel() : ViewModel() {
                     super.onAuthenticationSucceeded(result)
                     onAuthenticationResult(true)
                     _authenticationState.value = true
+                    _isLoginSuccessful.value = true
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -99,27 +96,32 @@ class LoginViewModel() : ViewModel() {
     }
 
     fun login(email: String, password: String) {
-        var user: User? = null
-        val validationEmail = validateEmail(email = email)
-        val validationPassword = validatePassword(password = password)
+        val validationEmail = validateEmail(email)
+        val validationPassword = validatePassword(password)
+
+        println("Validando email: $email -> isValid: ${validationEmail.isValid}, error: ${validationEmail.errorMessage}")
+        println("Validando password -> isValid: ${validationPassword.isValid}, error: ${validationPassword.errorMessage}")
 
         when {
             !validationEmail.isValid && !validationPassword.isValid -> {
                 _emailError.value = validationEmail.errorMessage
                 _passwordError.value = validationPassword.errorMessage
                 _authenticationState.value = false
+                println("Ambos son inválidos. _authenticationState: ${_authenticationState.value}")
             }
 
             validationEmail.isValid && !validationPassword.isValid -> {
                 _passwordError.value = validationPassword.errorMessage
-                _authenticationState.value = false
                 _emailError.value = null
+                _authenticationState.value = false
+                println("Email válido pero password inválido. _authenticationState: ${_authenticationState.value}")
             }
 
             !validationEmail.isValid && validationPassword.isValid -> {
                 _emailError.value = validationEmail.errorMessage
-                _authenticationState.value = false
                 _passwordError.value = null
+                _authenticationState.value = false
+                println("Password válido pero email inválido. _authenticationState: ${_authenticationState.value}")
             }
 
             else -> {
@@ -128,42 +130,34 @@ class LoginViewModel() : ViewModel() {
                 _passwordError.value = null
                 _authenticationState.value = true
 
+                println("Email y password válidos. Iniciando login...")
+
                 viewModelScope.launch {
                     _isLoading.value = true
                     _isLoginSuccessful.value = null
-                    try {
-                        val response =
-                            client.get("https://6764320b52b2a7619f5bc6d6.mockapi.io/garmindata")
-                        val body = response.bodyAsText()
 
-                        println("--> ${response.request.method.value}  ${response.request.url} ")
-                        println(body)
-                        println("<-- END ${response.request.method.value}  ${response.request.url}")
-                        println("<-- RESPONSE CODE ${response.status}")
+                    println("Llamando a validateLogin()... _isLoading: ${_isLoading.value}")
 
-                        val users: List<User> = Json.decodeFromString(body)
-
-                        user = users.find { it.email == email && it.password == password }
-
-                        if (user != null) {
-                            _userState.value = user
+                    repository.validateLogin(email, password).collect { nurse ->
+                        if(nurse != null){
+                            _authenticationState.value = true
                             _isLoginSuccessful.value = true
-                            println("--> Login exitoso!")
-                            println("Email: $email")
-                            println("Password: $password")
                         } else {
+                            _authenticationState.value = false
                             _isLoginSuccessful.value = false
-                            println("Login fallido: Usuario no encontrado o credenciales inválidas.")
+                            _emailError.value = " "
+                            _passwordError.value = "Incorrect email or password"
                         }
-                    } catch (e: Exception) {
-                        _isLoginSuccessful.value = false // Maneja errores de red o de lógica
-                    } finally {
+
                         _isLoading.value = false
+
+                        println("Respuesta de validateLogin -> _authenticationState: ${_authenticationState.value}, _isLoginSuccessful: ${_isLoginSuccessful.value}, _isLoading: ${_isLoading.value}")
                     }
                 }
             }
         }
     }
+
 
     private fun validateEmail(email: String): ValidationResult {
         return when {
@@ -209,5 +203,6 @@ class LoginViewModel() : ViewModel() {
         }
     }
 
+    data class ValidationResult(val isValid: Boolean, val errorMessage: String)
 
 }

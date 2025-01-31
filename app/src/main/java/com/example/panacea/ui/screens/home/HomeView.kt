@@ -46,7 +46,7 @@ import androidx.navigation.NavHostController
 import com.example.panacea.R
 import com.example.panacea.data.models.nurse.Nurse
 import com.example.panacea.ui.components.DrawerAppBar
-import com.example.panacea.utils.Constants.MENU
+import com.example.panacea.data.utils.Constants.MENU
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,12 +55,13 @@ fun HomeView(
     vm: HomeViewModel
 ) {
     var nurseList by remember { mutableStateOf<List<Nurse>>(emptyList()) }
+    var currentNurse by remember { mutableStateOf<Nurse?>(null) }
     val scope = rememberCoroutineScope()
-    val cards = remember { mutableStateListOf<Int>() }
 
     LaunchedEffect(true) {
         scope.launch {
             try {
+                currentNurse = vm.currentNurse.value
                 nurseList = vm.state.nurseList
             } catch (e: Exception) {
                 println("Error: ${e.message}")
@@ -68,14 +69,10 @@ fun HomeView(
         }
     }
 
-    if (cards.isEmpty()) {
-        cards.addAll(0 until 3)
-    }
-
     DrawerAppBar(
         nav = nav,
         index = MENU.OPTION_2,
-        userName = "GUEST",
+        userName = "${currentNurse?.name} ${currentNurse?.surname}",
         pageTitle = {
             Image(
                 painter = painterResource(id = R.drawable.panacea),
@@ -85,9 +82,7 @@ fun HomeView(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    cards.add(cards.size)
-                },
+                onClick = { },
                 containerColor = MaterialTheme.colorScheme.primary,
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
@@ -96,7 +91,12 @@ fun HomeView(
         screenContent = {
 
             if(vm.state.isLoading){
-                CircularProgressIndicator()
+                Box (
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ){
+                    CircularProgressIndicator()
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier

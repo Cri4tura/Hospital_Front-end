@@ -26,8 +26,8 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.panacea.R
-import com.example.panacea.navigation.LOGIN
-import com.example.panacea.utils.Constants
+import com.example.panacea.ui.navigation.LOGIN
+import com.example.panacea.data.utils.Constants
 import kotlinx.coroutines.delay
 
 @Composable

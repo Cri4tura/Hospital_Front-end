@@ -1,4 +1,4 @@
-package com.example.panacea.navigation
+package com.example.panacea.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -27,7 +27,7 @@ fun Navigation(
     nav: NavHostController
 ) {
 
-    NavHost(navController = nav, startDestination = HOME) {
+    NavHost(navController = nav, startDestination = LOGIN) {
         composable<SPLASH> {
             SplashScreen(navController = nav)
         }
@@ -39,9 +39,9 @@ fun Navigation(
         }
         composable<LOGIN> {
             LoginView(
-                viewModel = LoginViewModel(),
-                onNavigateToHome = { nav.navigate(HOME) },
-                navigateToSignIn = { nav.navigate(SIGNING) }
+                vm = LoginViewModel(koinInject()),
+                onLogIn = { nav.navigate(HOME) },
+                onSignIn = { nav.navigate(SIGNING) }
             )
         }
         composable<SIGNING> {

@@ -1,4 +1,4 @@
-package com.example.panacea.navigation
+package com.example.panacea.ui.navigation
 
 import kotlinx.serialization.Serializable
 

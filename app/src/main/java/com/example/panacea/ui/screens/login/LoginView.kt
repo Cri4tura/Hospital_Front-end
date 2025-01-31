@@ -33,22 +33,22 @@ import com.example.panacea.ui.components.PrimaryButton
 
 @Composable
 fun LoginView(
-    viewModel: LoginViewModel,
-    onNavigateToHome: () -> Unit,
-    navigateToSignIn: () -> Unit
+    vm: LoginViewModel,
+    onLogIn: () -> Unit,
+    onSignIn: () -> Unit
 ) {
-    val context =  LocalActivity.current as FragmentActivity
-    val isAuthenticated by viewModel.authenticationState.collectAsState()
+    val context = LocalActivity.current as FragmentActivity
+    val isAuthenticated by vm.authenticationState.collectAsState()
     var auth by remember { mutableStateOf(false) }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("test@gmail.com") }
+    var password by remember { mutableStateOf("1234") }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    viewModel.setupAuth(context)
+    vm.setupAuth(context)
 
-    LaunchedEffect(isAuthenticated) {
-        if (isAuthenticated) {
-            onNavigateToHome()
+    LaunchedEffect(vm.isLoginSuccessful.collectAsState().value) {
+        if (vm.isLoginSuccessful.value == true) {
+            onLogIn()
         }
     }
 
@@ -69,7 +69,7 @@ fun LoginView(
         EmailInput(
             email = email,
             onEmailChange = { email = it },
-            isError = viewModel.emailError.value
+            isError = vm.emailError.value
         )
 
         PasswordInput(
@@ -77,12 +77,14 @@ fun LoginView(
             passwordVisible = passwordVisible,
             onPasswordChange = { password = it },
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
-            isError = viewModel.passwordError.value
+            isError = vm.passwordError.value
         )
 
         PrimaryButton(
             text = stringResource(R.string.log_in_button_text),
-            onClick = { viewModel.login(email, password) },
+            onClick = {
+                vm.login(email, password)
+            },
             modifier = Modifier.fillMaxWidth(),
             description = "Log In Button",
             enabled = true,
@@ -92,17 +94,16 @@ fun LoginView(
         Spacer(modifier = Modifier.height(16.dp))
 
         FingerPrintAuth(
-            modifier = Modifier
-                .clickable {
-                    viewModel.setupAuth(context)
-                    if (auth) {
-                        onNavigateToHome()
-                    } else {
-                        viewModel.authenticate(context) { isAuthenticated ->
-                            auth = isAuthenticated
-                        }
+            modifier = Modifier.clickable {
+                vm.setupAuth(context)
+                if (auth) {
+                    onLogIn()
+                } else {
+                    vm.authenticate(context) {
+                        auth = it
                     }
                 }
+            }
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -116,7 +117,7 @@ fun LoginView(
         )
 
         PrimaryButton(
-            onClick = { navigateToSignIn() },
+            onClick = { onSignIn() },
             modifier = Modifier.fillMaxWidth(),
             icon = null,
             text = stringResource(R.string.sign_in_button_text),

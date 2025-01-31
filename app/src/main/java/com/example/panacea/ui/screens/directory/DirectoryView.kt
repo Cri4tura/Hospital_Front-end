@@ -19,6 +19,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -26,10 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.panacea.R
 import com.example.panacea.data.models.nurse.Nurse
-import com.example.panacea.navigation.HOME
+import com.example.panacea.ui.navigation.HOME
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.ui.components.NurseItem
-import com.example.panacea.utils.Constants.MENU
+import com.example.panacea.data.utils.Constants.MENU
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -121,7 +122,12 @@ fun DirectoryView(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (vm.state.isLoading) {
-                    CircularProgressIndicator()
+                    Box (
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ){
+                        CircularProgressIndicator()
+                    }
                 } else {
                     if (filteredNurses.isNotEmpty()) {
                         Text(

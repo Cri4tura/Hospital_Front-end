@@ -11,6 +11,7 @@ class NurseRepository (
     private val conn: NetworkServices
 ){
     private var nurseList = mutableListOf<Nurse>()
+    private var currentNurse: Nurse? = null
 
     val remoteNurses: Flow<List<Nurse>> = flow {
         val nurses = conn.getNurses()
@@ -20,6 +21,15 @@ class NurseRepository (
     fun getNurseById(nurseID: Int): Flow<Nurse> = flow {
         val nurse = conn.getNurseById(nurseID)
         emit(nurse)
+    }
+
+    fun validateLogin(email: String, password: String): Flow<Nurse?> = flow {
+        currentNurse = conn.validateLogin(email, password)
+        emit(currentNurse)
+    }
+
+    fun getCurrentNurse(): Nurse? {
+        return currentNurse
     }
 
     fun addNurse(nurse: Nurse) {
