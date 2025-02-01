@@ -108,16 +108,6 @@ fun SignInView(
             isError = viewModel.birthDateError.value
         )
 
-
-
-//        DateInput(
-//            context = context,
-//            value = selectedDate,
-//            onValueChange = { selectedDate = it },
-//            label = "Birth Date (DD/MM/YYYY)",
-//            isError = viewModel.birthDateError.value
-//        )
-
         PasswordInput(
             password = password,
             passwordVisible = passwordVisible,

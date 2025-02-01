@@ -206,6 +206,16 @@ class NurseRepository (
         nurseList.add(nurse)
     }
 
+    fun signinNurse(nurse: Nurse): Flow<Boolean> = flow {
+        val success = conn.register(nurse)
+
+        emit(success)
+    }
+
+    suspend fun getAllNurses(): List<Nurse> {
+        return conn.getNurses()
+    }
+
     fun removeNurseByEmail(email: String): Boolean {
         val nurseToRemove = nurseList.find { it.email == email }
         return if (nurseToRemove != null) {
