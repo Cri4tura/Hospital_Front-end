@@ -1,8 +1,6 @@
 package com.example.panacea.data.models.nurse
 
-import com.example.panacea.data.DateSerializer
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
+import com.example.panacea.data.utils.DateSerializer
 import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -29,9 +27,10 @@ data class Nurse(
             return Period.between(birthLocalDate, today).years
         }
 
-    fun formatDate(date: Date): String {
+    fun formatDate(date: Date?): String {
         return SimpleDateFormat("dd/MM/yyyy").format(date)
     }
+
 }
 
 

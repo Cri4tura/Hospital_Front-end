@@ -6,6 +6,7 @@ import com.example.panacea.data.repositories.NurseRepository
 import com.example.panacea.ui.screens.directory.DirectoryViewModel
 import com.example.panacea.ui.screens.home.HomeViewModel
 import com.example.panacea.ui.screens.login.LoginViewModel
+import com.example.panacea.ui.screens.profile.ProfileViewModel
 import com.example.panacea.ui.screens.signIn.SignInViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -48,6 +49,7 @@ val appModule = module {
 
     // Proveer el ViewModel e inyectar el repositorio
     viewModel { SignInViewModel(get()) }
+    viewModel { ProfileViewModel(get()) }
     viewModel { DirectoryViewModel(get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { LoginViewModel(get()) }
@@ -60,5 +62,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
     }
 
     val networkServices: NetworkServices = getKoin().get()
-    Log.i("NETWORK","CLIENTE HTTP inyectado en NetworkServices: $networkServices")
+    Log.i("NETWORK", "CLIENTE HTTP inyectado en NetworkServices: $networkServices")
+
+    val viewModelProfile: ProfileViewModel = getKoin().get()
+    Log.i("VIEWMODEL", "VM inyectado en ProfileViewModel: $viewModelProfile")
 }

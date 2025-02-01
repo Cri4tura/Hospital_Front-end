@@ -30,13 +30,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Info
@@ -68,7 +67,6 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberDatePickerState
@@ -86,11 +84,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -361,15 +357,26 @@ fun SingleChoiceSegmentedButton(
 @Composable
 fun EmailInput(
     email: String,
+    label: String?,
     onEmailChange: (String) -> Unit,
-    isError: String?
+    isError: String?,
+    placeholder: String?
 ) {
     OutlinedTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = { Text(stringResource(R.string.email_placeholder_text)) },
+        label = {
+            if (label != null) {
+                Text(label)
+            }
+        },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
+        placeholder = {
+            if (placeholder != null) {
+                Text(placeholder)
+            }
+        },
         isError = isError?.isNotEmpty() ?: false,
         supportingText = {
             Box(modifier = Modifier.height(16.dp)) {
@@ -423,14 +430,22 @@ fun searchInput(initialQuery: String): String {
 @Composable
 fun TextInput(
     textInput: String,
-    label: String,
+    label: String?,
+    placeholder: String?,
     onTextChange: (String) -> Unit,
     isError: String?
 ) {
     OutlinedTextField(
         value = textInput,
         onValueChange = onTextChange,
-        label = { Text(label) },
+        placeholder = {
+            if (placeholder != null) Text(placeholder)
+        },
+        label = {
+            if (label != null) {
+                Text(label)
+            }
+        },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
         singleLine = true,
@@ -452,9 +467,10 @@ fun TextInput(
 @Composable
 fun DateInput(
     value: String,
-    label: String,
+    label: String?,
     onValueChange: (String) -> Unit,
-    isError: String?
+    isError: String?,
+    placeholder: String?
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     val dateFormatter = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
@@ -462,7 +478,16 @@ fun DateInput(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
+        label = {
+            if (label != null) {
+                Text(label)
+            }
+        },
+        placeholder = {
+            if (placeholder != null) {
+                Text(placeholder)
+            }
+        },
         modifier = Modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         shape = RoundedCornerShape(15.dp),
@@ -621,10 +646,11 @@ fun PrimaryButton(
         shape = RoundedCornerShape(15.dp),
     ) {
         if (icon != null) {
-            Image(
+            Icon(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
                 imageVector = icon,
-                contentDescription = description
+                contentDescription = description,
+                tint = MaterialTheme.colorScheme.onPrimary
             )
         }
 
@@ -1067,18 +1093,18 @@ fun RoundedImagePicker(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .size(150.dp) // Tamaño del círculo
-            .clip(CircleShape) // Hace el Box completamente redondeado
+            .zIndex(0.1f)
+            .size(240.dp)
             .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape) // Borde de color azul
             .background(Color.Transparent) // Color de fondo por defecto
     ) {
         if (imageUri) {
             Icon(
-                imageVector = Icons.Outlined.Person,
+                imageVector = Icons.Default.Person,
                 contentDescription = "Selected Image",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .size(80.dp)
+                    .fillMaxSize()
                     .clip(CircleShape) // Asegura que la imagen también sea redonda
             )
         } else {
@@ -1087,14 +1113,14 @@ fun RoundedImagePicker(
                 contentDescription = "Default Avatar",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .size(80.dp)
+                    .fillMaxSize()
                     .clip(CircleShape)
+                    .background(Color.White)
             )
         }
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
                 .zIndex(1f) // Asegura que esté adelante
         ) {
             IconButton(
@@ -1107,7 +1133,7 @@ fun RoundedImagePicker(
                     .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Edit,
+                    imageVector = Icons.Outlined.Edit,
                     contentDescription = "Change Image",
                     tint = MaterialTheme.colorScheme.primary
                 )

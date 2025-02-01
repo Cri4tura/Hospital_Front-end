@@ -87,7 +87,9 @@ fun LoginView(
             EmailInput(
                 email = email,
                 onEmailChange = { email = it },
-                isError = vm.emailError.value
+                isError = vm.emailError.value,
+                label = "Email",
+                placeholder = null
             )
 
             PasswordInput(

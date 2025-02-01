@@ -17,6 +17,7 @@ import com.example.panacea.ui.screens.documents.DocsView
 import com.example.panacea.ui.screens.history.HistoryView
 import com.example.panacea.ui.screens.news.NewsView
 import com.example.panacea.ui.screens.profile.ProfileView
+import com.example.panacea.ui.screens.profile.ProfileViewModel
 import com.example.panacea.ui.screens.signIn.SignInView
 import com.example.panacea.ui.screens.splash.SplashScreen
 import com.example.panacea.ui.screens.signIn.SignInViewModel
@@ -71,7 +72,10 @@ fun Navigation(
             )
         }
         composable<PROFILE> {
-            ProfileView(nav = nav)
+            ProfileView(
+                nav = nav,
+                vm = ProfileViewModel(koinInject())
+            )
         }
         composable<DOCUMENTS> {
             DocsView(nav = nav)

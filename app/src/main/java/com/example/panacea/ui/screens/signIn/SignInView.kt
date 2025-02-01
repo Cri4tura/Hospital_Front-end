@@ -85,6 +85,7 @@ fun SignInView(
             textInput = name,
             onTextChange = { name = it },
             label = "Name",
+            placeholder = null,
             isError = viewModel.nameError.value
         )
 
@@ -92,12 +93,15 @@ fun SignInView(
             textInput = lastName,
             onTextChange = { lastName = it },
             label = "Surname",
+            placeholder = null,
             isError = viewModel.surnameError.value
         )
 
         EmailInput(
             email = email,
             onEmailChange = { email = it },
+            label = "Email",
+            placeholder = null,
             isError = viewModel.emailError.value
         )
 
@@ -105,6 +109,7 @@ fun SignInView(
             value = selectedDate,
             onValueChange = { selectedDate = it },
             label = "Birth Date (DD/MM/YYYY)",
+            placeholder = null,
             isError = viewModel.birthDateError.value
         )
 
