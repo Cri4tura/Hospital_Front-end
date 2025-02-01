@@ -8,34 +8,44 @@ import androidx.lifecycle.viewModelScope
 import com.example.panacea.data.repositories.NurseRepository
 import kotlinx.coroutines.launch
 import com.example.panacea.data.models.nurse.Nurse
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.delay
 
-class HomeViewModel (
+class HomeViewModel(
     private val repository: NurseRepository
 ) : ViewModel() {
-
-    private val _currentNurse = MutableStateFlow<Nurse?>(null)
-    val currentNurse: StateFlow<Nurse?> = _currentNurse
 
     var state by mutableStateOf(UiState())
         private set
 
+    var data by mutableStateOf(UiData())
+        private set
+
     init {
         viewModelScope.launch {
-            _currentNurse.value = repository.getCurrentNurse()
             state = UiState(isLoading = true)
+            delay(50)
+            val user = repository.getCurrentNurse()
             repository.remoteNurses.collect {
-                if (it.isNotEmpty()) {
-                    state = UiState(isLoading = false, nurseList = it)
+                if (it.isEmpty()) {
+                    state = UiState(onError = true)
+                } else {
+                    state = UiState(onSuccess = true)
+                    data = UiData(nurseList = it, currentUser = user)
                 }
             }
+            state = UiState(isLoading = false)
         }
     }
 
     data class UiState(
         val isLoading: Boolean = false,
-        val nurseList: List<Nurse> = emptyList()
+        val onError: Boolean = false,
+        val onSuccess: Boolean = false
+    )
+
+    data class UiData(
+        val nurseList: List<Nurse> = emptyList(),
+        val currentUser: Nurse? = null
     )
 
 }

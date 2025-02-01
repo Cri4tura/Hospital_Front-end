@@ -75,6 +75,17 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
+    // Coil
+    implementation(libs.coil.compose.core)
+    implementation(libs.coil.compose)
+    implementation(libs.coil)
+
+
+    implementation(libs.bundles.ktor.common)
+    implementation(libs.coil.network.ktor)
+
+
+
     implementation(libs.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

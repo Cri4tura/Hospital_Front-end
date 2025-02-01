@@ -23,16 +23,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
@@ -63,6 +69,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDrawerState
@@ -79,12 +86,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -140,13 +150,20 @@ fun DrawerAppBar(
                     .fillMaxHeight()
                     .verticalScroll(rememberScrollState())
             ) {
-
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(Modifier.height(16.dp))
+
+                    Image(
+                        painter = painterResource(id = R.drawable.nurse_register),
+                        contentDescription = "User Image",
+                        modifier = Modifier.size(100.dp)
+                    )
+                    Spacer(Modifier.height(16.dp))
+
                     userName?.let {
                         Text(
                             it.uppercase(),
@@ -154,12 +171,6 @@ fun DrawerAppBar(
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
-                    Image(
-                        painter = painterResource(id = R.drawable.nurse_register),
-                        contentDescription = "User Image",
-                        modifier = Modifier.size(100.dp)
-                    )
-                    Spacer(Modifier.height(16.dp))
                 }
 
                 HorizontalDivider()
@@ -372,6 +383,41 @@ fun EmailInput(
             }
         },
     )
+}
+
+
+@Composable
+fun searchInput(initialQuery: String): String {
+    var searchQuery  by remember { mutableStateOf(initialQuery) }
+
+    OutlinedTextField(
+        value = searchQuery,
+        onValueChange = { query -> searchQuery = query },
+        label = { Text("Search") },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(15.dp),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                return@KeyboardActions
+            }
+        ),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.primary
+        ),
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search Icon"
+            )
+        },
+        singleLine = true
+    )
+
+    return searchQuery
 }
 
 @Composable
@@ -706,19 +752,44 @@ fun LogoutConfirmationDialog(
 
 @Composable
 fun NurseItem(
+    context: Context,
     nurse: Nurse,
     nav: NavHostController
 ) {
+    var isFavorite by remember { mutableStateOf(false) }
+
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
                 nav.navigate(DETAIL(nurse.id))
-            }) {
-        Image(
-            painter = painterResource(id = R.drawable.user),
-            contentDescription = "Nurse Icon", modifier = Modifier.size(60.dp)
+            }
+    ) {
+
+        Icon(
+            modifier = Modifier
+                .padding(4.dp)
+                .size(25.dp)
+                .clip(CircleShape)
+                .clickable {
+                    Toast.makeText(context, "Like +1", Toast.LENGTH_SHORT).show()
+                    isFavorite = !isFavorite
+                },
+            imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Filled.FavoriteBorder,
+            contentDescription = null,
+            tint = lerp(Color.Red, Color.Black, 0.35f)
         )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Image(
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(60.dp),
+            painter = painterResource(id = R.drawable.user),
+            contentDescription = "Nurse Icon"
+        )
+
         Column(modifier = Modifier.padding(start = 16.dp)) {
             Text(
                 text = "${nurse.name} ${nurse.surname}",
@@ -730,6 +801,51 @@ fun NurseItem(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
+
+//        Icon(
+//            modifier = Modifier
+//                .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)
+//                .padding(4.dp)
+//                .size(ButtonDefaults.IconSize)
+//                .clip(CircleShape)
+//                .clickable { Toast.makeText(context, "Calling...", Toast.LENGTH_SHORT).show() },
+//            imageVector = Icons.Outlined.Call,
+//            contentDescription = null,
+//            tint = MaterialTheme.colorScheme.primary
+//        )
+//
+//        Spacer(modifier = Modifier.width(8.dp))
+
+        Icon(
+            modifier = Modifier
+                .padding(4.dp)
+                .size(25.dp)
+                .clip(CircleShape)
+                .clickable {
+                    Toast.makeText(context, "Sending Email...", Toast.LENGTH_SHORT).show()
+                },
+            imageVector = Icons.Outlined.Email,
+            contentDescription = null,
+            tint = lerp(Color.Yellow, Color.Black, 0.35f)
+        )
+
+//        Spacer(modifier = Modifier.width(8.dp))
+//
+//        Icon(
+//            modifier = Modifier
+//                .border(1.dp, MaterialTheme.colorScheme.onError, ButtonDefaults.shape)
+//                .padding(4.dp)
+//                .size(ButtonDefaults.IconSize)
+//                .clip(CircleShape)
+//                .clickable {
+//                    Toast.makeText(context, "Deleting Contact...", Toast.LENGTH_SHORT).show()
+//                },
+//            imageVector = Icons.Outlined.Delete,
+//            contentDescription = null,
+//            tint = MaterialTheme.colorScheme.onError
+//        )
+
     }
 }
 
@@ -970,7 +1086,9 @@ fun RoundedImagePicker(
                 imageVector = Icons.Default.Person,
                 contentDescription = "Default Avatar",
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(80.dp).clip(CircleShape)
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
             )
         }
         Box(

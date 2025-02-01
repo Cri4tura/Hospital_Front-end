@@ -2,7 +2,6 @@ package com.example.panacea.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -54,25 +52,11 @@ fun HomeView(
     nav: NavHostController,
     vm: HomeViewModel
 ) {
-    var nurseList by remember { mutableStateOf<List<Nurse>>(emptyList()) }
-    var currentNurse by remember { mutableStateOf<Nurse?>(null) }
-    val scope = rememberCoroutineScope()
-
-    LaunchedEffect(true) {
-        scope.launch {
-            try {
-                currentNurse = vm.currentNurse.value
-                nurseList = vm.state.nurseList
-            } catch (e: Exception) {
-                println("Error: ${e.message}")
-            }
-        }
-    }
 
     DrawerAppBar(
         nav = nav,
         index = MENU.OPTION_2,
-        userName = "${currentNurse?.name} ${currentNurse?.surname}",
+        userName = "${vm.data.currentUser?.name} ${vm.data.currentUser?.surname}",
         pageTitle = {
             Image(
                 painter = painterResource(id = R.drawable.panacea),
@@ -90,95 +74,96 @@ fun HomeView(
         },
         screenContent = {
 
-            if(vm.state.isLoading){
-                Box (
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ){
+            Box (
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ){
+                if(vm.state.isLoading){
                     CircularProgressIndicator()
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    items(vm.state.nurseList) { nurse ->
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        items(vm.data.nurseList) { nurse ->
 
-                        var isFilled by remember { mutableStateOf(false) }
+                            var isFilled by remember { mutableStateOf(false) }
 
-                        Card(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(4.dp),
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp)
+                            Card(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
+                                elevation = CardDefaults.cardElevation(4.dp),
                             ) {
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
                                 ) {
+                                    Spacer(modifier = Modifier.height(16.dp))
 
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.primary),
-                                        contentAlignment = Alignment.Center
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(
-                                            text = nurse.name[0].uppercase(),
-                                            color = Color.White,
-                                            style = MaterialTheme.typography.titleMedium,
-                                        )
-                                    }
-                                    IconButton(
-                                        onClick = {
-                                            isFilled = !isFilled
-                                        },
-                                        modifier = Modifier.size(45.dp).padding(4.dp)
-                                    ) {
-                                        Icon(
-                                            modifier = Modifier.fillMaxSize(),
-                                            imageVector = if (isFilled) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                            contentDescription = "Star Icon",
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
+
+                                        Box(
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.primary),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = nurse.name[0].uppercase(),
+                                                color = Color.White,
+                                                style = MaterialTheme.typography.titleMedium,
+                                            )
+                                        }
+                                        IconButton(
+                                            onClick = {
+                                                isFilled = !isFilled
+                                            },
+                                            modifier = Modifier.size(45.dp).padding(4.dp)
+                                        ) {
+                                            Icon(
+                                                modifier = Modifier.fillMaxSize(),
+                                                imageVector = if (isFilled) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                                contentDescription = "Star Icon",
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+
                                     }
 
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    Text(
+                                        text = "${nurse.name} ${nurse.surname}",
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
+                                    Text(
+                                        text = nurse.email,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    Text(
+                                        text = "Material is a design system – backed by open source code – that helps teams build high-quality digital experiences.",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+
+                                    Spacer(modifier = Modifier.height(16.dp))
                                 }
-
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Text(
-                                    text = "${nurse.name} ${nurse.surname}",
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                                Text(
-                                    text = nurse.email,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Text(
-                                    text = "Material is a design system – backed by open source code – that helps teams build high-quality digital experiences.",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-
-                                Spacer(modifier = Modifier.height(16.dp))
                             }
                         }
                     }
                 }
             }
+
         }
     )
 }
