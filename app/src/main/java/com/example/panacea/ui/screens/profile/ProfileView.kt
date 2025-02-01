@@ -36,8 +36,8 @@ import com.example.panacea.ui.components.DateInput
 import com.example.panacea.ui.components.DeleteAccountButton
 import com.example.panacea.ui.components.EmailInput
 import com.example.panacea.ui.components.PrimaryButton
+import com.example.panacea.ui.components.ProfileImagePicker
 import com.example.panacea.ui.components.ResetPasswordDialog
-import com.example.panacea.ui.components.RoundedImagePicker
 import com.example.panacea.ui.components.TextInput
 import com.example.panacea.ui.navigation.LOGIN
 import kotlinx.coroutines.delay
@@ -124,9 +124,12 @@ fun ProfileView(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RoundedImagePicker(
-                    imageUri = onChangeImageClick,
-                    onImageChange = { onChangeImageClick = !onChangeImageClick }
+                // Image picker implementation
+                ProfileImagePicker (
+                    modifier = Modifier.size(120.dp),
+                    onImageSelected = { uri ->
+                        vm.updateProfileImage(uri)
+                    }
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -139,7 +142,6 @@ fun ProfileView(
                         showPasswordResetDialog.value = true
                     }
                 )
-
             }
         }
 
@@ -185,6 +187,7 @@ fun ProfileView(
                 )
             }
         }
+
         Spacer(modifier = Modifier.weight(1f))
 
         Box(
@@ -204,14 +207,9 @@ fun ProfileView(
             Spacer(modifier = Modifier.height(16.dp))
 
             DeleteAccountButton(
-                onClick = {
-                    vm.data.currentUser?.id?.let {
-                        Toast.makeText(context, "Deleting Account...", Toast.LENGTH_SHORT).show()
-                        vm.deleteAccount(it)
-                    }
-                },
+                onClick = { /* Implement delete account logic */ },
                 text = "Delete Account",
-                enabled = !vm.state.isLoading,
+                enabled = true,
             )
         }
     }

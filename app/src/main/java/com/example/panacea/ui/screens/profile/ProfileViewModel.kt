@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.data.repositories.NurseRepositoryImpl
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
@@ -36,6 +35,10 @@ class ProfileViewModel(
                 state = state.copy(isLoading = false, isDeleted = true)
             }
         }
+    }
+
+    fun updateProfileImage(uri: android.net.Uri) {
+
     }
 
     data class UiState(
