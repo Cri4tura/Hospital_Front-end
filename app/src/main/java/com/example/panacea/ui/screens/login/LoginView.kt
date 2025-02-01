@@ -41,8 +41,8 @@ fun LoginView(
     val context = LocalActivity.current as FragmentActivity
 
     var auth by remember { mutableStateOf(false) }
-    var email by remember { mutableStateOf("test@gmail.com") }
-    var password by remember { mutableStateOf("1234") }
+    var email by remember { mutableStateOf("marta.hernandez@example.com") }
+    var password by remember { mutableStateOf("password123") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     // setup biometrics

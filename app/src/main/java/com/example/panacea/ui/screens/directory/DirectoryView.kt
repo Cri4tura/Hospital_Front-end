@@ -29,7 +29,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.panacea.R
-import com.example.panacea.data.models.nurse.Nurse
+import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.navigation.HOME
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.ui.components.NurseItem

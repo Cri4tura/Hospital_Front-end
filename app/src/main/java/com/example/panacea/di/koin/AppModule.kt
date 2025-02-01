@@ -1,8 +1,8 @@
-package com.example.panacea.data.koin
+package com.example.panacea.di.koin
 
 import android.util.Log
-import com.example.panacea.data.network.NetworkServices
-import com.example.panacea.data.repositories.NurseRepository
+import com.example.panacea.data.network.NetworkServicesImpl
+import com.example.panacea.data.repositories.NurseRepositoryImpl
 import com.example.panacea.ui.screens.directory.DirectoryViewModel
 import com.example.panacea.ui.screens.home.HomeViewModel
 import com.example.panacea.ui.screens.login.LoginViewModel
@@ -42,10 +42,10 @@ val appModule = module {
     }
 
     // APIs
-    single { NetworkServices(get()) }
+    single { NetworkServicesImpl(get()) }
 
     // Repositorios
-    singleOf(::NurseRepository)
+    singleOf(::NurseRepositoryImpl)
 
     // Proveer el ViewModel e inyectar el repositorio
     viewModel { SignInViewModel(get()) }
@@ -61,7 +61,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
         modules(appModule)
     }
 
-    val networkServices: NetworkServices = getKoin().get()
+    val networkServices: NetworkServicesImpl = getKoin().get()
     Log.i("NETWORK", "CLIENTE HTTP inyectado en NetworkServices: $networkServices")
 
     val viewModelProfile: ProfileViewModel = getKoin().get()

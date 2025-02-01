@@ -42,7 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.panacea.R
-import com.example.panacea.data.models.nurse.Nurse
+import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.data.utils.Constants.MENU
 import kotlinx.coroutines.launch

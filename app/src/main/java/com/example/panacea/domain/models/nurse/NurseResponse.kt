@@ -1,4 +1,4 @@
-package com.example.panacea.data.models.nurse
+package com.example.panacea.domain.models.nurse
 
 import kotlinx.serialization.Serializable
 

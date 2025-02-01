@@ -105,7 +105,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavHostController
 import com.example.panacea.R
-import com.example.panacea.data.models.nurse.Nurse
+import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.navigation.DETAIL
 import com.example.panacea.ui.navigation.DIRECTORY
 import com.example.panacea.ui.navigation.DOCUMENTS

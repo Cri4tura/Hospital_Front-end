@@ -11,18 +11,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Create
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +39,8 @@ import com.example.panacea.ui.components.PrimaryButton
 import com.example.panacea.ui.components.ResetPasswordDialog
 import com.example.panacea.ui.components.RoundedImagePicker
 import com.example.panacea.ui.components.TextInput
-
+import com.example.panacea.ui.navigation.LOGIN
+import kotlinx.coroutines.delay
 
 @Composable
 fun ProfileView(
@@ -49,9 +48,9 @@ fun ProfileView(
     vm: ProfileViewModel
 ) {
     val context = LocalContext.current
-    var name by remember { mutableStateOf(vm.data.currentUser?.name ?: "") }
-    var surname by remember { mutableStateOf(vm.data.currentUser?.surname ?: "") }
-    var email by remember { mutableStateOf(vm.data.currentUser?.email ?: "") }
+    var name by remember { mutableStateOf("") }
+    var surname by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf("") }
 
     // Estados para el diálogo de reset de contraseña
@@ -61,6 +60,14 @@ fun ProfileView(
     val passwordError = remember { mutableStateOf<String?>(null) }
     var onChangeImageClick by remember { mutableStateOf(true) }
 
+    // Usar LaunchedEffect para observar cambios en el estado
+    LaunchedEffect(vm.state.isDeleted) {
+        if (vm.state.isDeleted) {
+            Toast.makeText(context, "Account Deleted...", Toast.LENGTH_SHORT).show()
+            delay(2000)
+            nav.navigate(LOGIN)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -103,7 +110,7 @@ fun ProfileView(
                 },
                 icon = Icons.Outlined.Create,
                 text = "Save",
-                enabled = true,
+                enabled = !vm.state.isLoading,
                 description = "Save changes"
             )
         }
@@ -114,9 +121,9 @@ fun ProfileView(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Column (
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 RoundedImagePicker(
                     imageUri = onChangeImageClick,
                     onImageChange = { onChangeImageClick = !onChangeImageClick }
@@ -132,6 +139,7 @@ fun ProfileView(
                         showPasswordResetDialog.value = true
                     }
                 )
+
             }
         }
 
@@ -141,9 +149,9 @@ fun ProfileView(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Column (
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 TextInput(
                     textInput = name,
                     onTextChange = { name = it },
@@ -175,16 +183,16 @@ fun ProfileView(
                     placeholder = null,
                     isError = null
                 )
-
-
             }
         }
         Spacer(modifier = Modifier.weight(1f))
 
-        Box (
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
             contentAlignment = Alignment.BottomCenter
-        ){
+        ) {
             ResetPasswordDialog(
                 showPasswordResetDialog = showPasswordResetDialog,
                 newPassword = newPassword,
@@ -196,12 +204,15 @@ fun ProfileView(
             Spacer(modifier = Modifier.height(16.dp))
 
             DeleteAccountButton(
-                onClick = { /* Implement logout */ },
+                onClick = {
+                    vm.data.currentUser?.id?.let {
+                        Toast.makeText(context, "Deleting Account...", Toast.LENGTH_SHORT).show()
+                        vm.deleteAccount(it)
+                    }
+                },
                 text = "Delete Account",
-                enabled = true,
+                enabled = !vm.state.isLoading,
             )
-
         }
     }
 }
-

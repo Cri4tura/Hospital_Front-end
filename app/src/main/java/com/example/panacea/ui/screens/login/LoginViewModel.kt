@@ -10,12 +10,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.panacea.data.repositories.NurseRepository
+import com.example.panacea.data.repositories.NurseRepositoryImpl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val repository: NurseRepository
+    private val repository: NurseRepositoryImpl
 ) : ViewModel() {
 
     private var isBiometricAuthAvailable = false
