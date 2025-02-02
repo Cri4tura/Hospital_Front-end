@@ -10,6 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.data.repositories.NurseRepositoryImpl
 import java.text.SimpleDateFormat
+import androidx.compose.runtime.State
+import android.util.Patterns
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.Locale
 
@@ -17,7 +21,7 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
 
     data class ValidationResult(val isValid: Boolean, val errorMessage: String)
 
-    private val _authenticationState = MutableStateFlow<Boolean>(false)
+    private val _authenticationState = MutableStateFlow(false)
     val authenticationState: StateFlow<Boolean> = _authenticationState.asStateFlow()
 
     private val _nameError = mutableStateOf<String?>(null)
@@ -36,7 +40,7 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
     val passwordError: State<String?> = _passwordError
 
     private val _confirmPasswordError = mutableStateOf<String?>(null)
-    val confirmPasswordError: State<String?> = _confirmPasswordError
+
 
     fun signIn(
         name: String,
@@ -53,6 +57,11 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
         val birthDateParsed = parseBirthDate(birthDate)
         val passwordsValid = validatePasswords(password1, password2)
 
+        println("Validando nombre: $name -> isValid: ${nameValid.isValid}, error: ${nameValid.errorMessage}")
+        println("Validando apellido(s): $lastName -> isValid: ${lastNameValid.isValid}, error: ${lastNameValid.errorMessage}")
+        println("Validando email: $email -> isValid: ${emailValid.isValid}, error: ${emailValid.errorMessage}")
+        println("Validando birth date: $birthDate -> isValid: ${birthDateValid.isValid}, error: ${birthDateValid.errorMessage}")
+        println("Validando password: $password1 -> isValid: ${passwordsValid.isValid}, error: ${passwordsValid.errorMessage}")
 
         println("DOB: $birthDateParsed")
         _nameError.value = nameValid.errorMessage
@@ -61,23 +70,29 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
         _birthDateError.value = birthDateValid.errorMessage
         _passwordError.value = passwordsValid.errorMessage
         _authenticationState.value = nameValid.isValid && lastNameValid.isValid && emailValid.isValid && birthDateValid.isValid && passwordsValid.isValid
-        if(_authenticationState.value) {
-            addNurseToRepository(name, lastName, email, birthDateParsed!!, password1)
-        }
-    }
 
-    private fun addNurseToRepository(name: String, lastName: String, email: String, birthDate: Date, password1: String) {
-        val newNurse = Nurse(
-            id = 99,
-            name = name,
-            surname = lastName,
-            email = email,
-            registerDate = Date(),
-            birthDate = birthDate,
-            password = password1
-        )
-        nurseRepository.addNurse(newNurse)
-    }
+            if (_authenticationState.value) {
+                val newNurse = Nurse(
+                    id = 99,
+                    name = name,
+                    surname = lastName,
+                    email = email,
+                    registerDate = Date(),
+                    birthDate = birthDateParsed!!,
+                    password = password1
+                )
+
+
+                viewModelScope.launch {
+                    val result = nurseRepository.signinNurse(newNurse)
+                    when (result) {
+                        is Flow<Boolean> -> result.collect { success -> _authenticationState.value = success }
+
+                        else -> throw IllegalStateException("signinNurse debe devolver Flow<Boolean>")
+                    }
+                }
+            }
+        }
 
     private fun validateName(name: String): ValidationResult {
         return when {
@@ -85,7 +100,6 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
                 _nameError.value = "Name is empty"
                 ValidationResult(false, "Name is empty")
             }
-
             else -> {
                 _nameError.value = null
                 ValidationResult(true, "")
@@ -101,7 +115,6 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
             }
 
             else -> {
-                _surnameError.value = null
                 ValidationResult(true, "")
             }
         }
