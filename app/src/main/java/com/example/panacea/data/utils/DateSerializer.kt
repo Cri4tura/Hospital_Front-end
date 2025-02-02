@@ -1,4 +1,4 @@
-package com.example.panacea.data
+package com.example.panacea.data.utils
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer

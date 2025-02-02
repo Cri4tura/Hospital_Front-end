@@ -1,4 +1,4 @@
-package com.example.panacea.utils
+package com.example.panacea.data.utils
 
 object Constants {
 

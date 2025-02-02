@@ -1,35 +1,49 @@
 package com.example.panacea.ui.screens.home
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.panacea.data.repositories.NurseRepository
+import com.example.panacea.data.repositories.NurseRepositoryImpl
 import kotlinx.coroutines.launch
-import com.example.panacea.data.models.nurse.Nurse
+import com.example.panacea.domain.models.nurse.Nurse
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class HomeViewModel (
-    private val repository: NurseRepository
+
+class HomeViewModel(
+    private val repository: NurseRepositoryImpl
 ) : ViewModel() {
 
-    var state by mutableStateOf(UiState())
-        private set
+    private val _state = MutableStateFlow(UiState())
+    val state: StateFlow<UiState> = _state
 
-    init {
+    private val _data = MutableStateFlow(UiData())
+    val data: StateFlow<UiData> = _data
+
+
+    fun fetchHomeData() {
         viewModelScope.launch {
-            state = UiState(isLoading = true)
-            repository.remoteNurses.collect {
-                if (it.isNotEmpty()) {
-                    state = UiState(isLoading = false, nurseList = it)
-                }
-            }
+            _state.value.isLoading = true
+            println("GETTING HOME DATA....")
+            _data.value = UiData(
+                nurseList = repository.getNurseList(),
+                currentUser = repository.getCurrentNurse()
+            )
+            Log.d("HomeViewModel", "Nurse list: ${_data.value.nurseList}")
+            _state.value = UiState(isLoading = false, onSuccess = true)
         }
     }
 
     data class UiState(
-        val isLoading: Boolean = false,
-        val nurseList: List<Nurse> = emptyList()
+        var isLoading: Boolean = false,
+        val onError: Boolean = false,
+        var onSuccess: Boolean = false
+    )
+
+    data class UiData(
+        val nurseList: List<Nurse> = emptyList(),
+        val currentUser: Nurse? = null
     )
 
 }

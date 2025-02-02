@@ -7,13 +7,13 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.example.panacea.data.models.nurse.Nurse
-import com.example.panacea.data.repositories.NurseRepository
+import com.example.panacea.domain.models.nurse.Nurse
+import com.example.panacea.data.repositories.NurseRepositoryImpl
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel() {
+class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewModel() {
 
     data class ValidationResult(val isValid: Boolean, val errorMessage: String)
 

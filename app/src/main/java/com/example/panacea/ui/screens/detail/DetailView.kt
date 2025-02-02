@@ -1,16 +1,20 @@
 package com.example.panacea.ui.screens.detail
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,35 +30,46 @@ fun DetailView(
     nav: NavHostController,
     vm: DetailViewModel = koinViewModel { parametersOf(nurseId) }
 ) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .padding(top = 20.dp)
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
+        if (vm.state.isLoading) {
+            CircularProgressIndicator()
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                IconButton(
+                    onClick = { nav.popBackStack() },
+                    modifier = Modifier.align(Alignment.Start)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier.size(35.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
 
-        IconButton(
-            onClick = { nav.popBackStack() },
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Icon(imageVector = Icons.Filled.Close, contentDescription = "Back")
-        }
+                Spacer(modifier = Modifier.height(32.dp))
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            vm.state.nurse?.let {
-                NurseExtendedItem(
-                    nurse = it
-                )
-            }
-
-            if (vm.state.isLoading) {
-                CircularProgressIndicator()
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    vm.state.nurse?.let {
+                        Spacer(modifier = Modifier.weight(0.25f))
+                        NurseExtendedItem(
+                            nurse = it
+                        )
+                        Spacer(modifier = Modifier.weight(0.75f))
+                    }
+                }
             }
         }
     }

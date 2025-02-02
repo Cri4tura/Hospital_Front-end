@@ -1,4 +1,4 @@
-package com.example.panacea.navigation
+package com.example.panacea.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -17,9 +17,11 @@ import com.example.panacea.ui.screens.documents.DocsView
 import com.example.panacea.ui.screens.history.HistoryView
 import com.example.panacea.ui.screens.news.NewsView
 import com.example.panacea.ui.screens.profile.ProfileView
+import com.example.panacea.ui.screens.profile.ProfileViewModel
 import com.example.panacea.ui.screens.signIn.SignInView
-import com.example.panacea.ui.screens.splash.SplashScreen
+import com.example.panacea.ui.screens.splash.SplashView
 import com.example.panacea.ui.screens.signIn.SignInViewModel
+import com.example.panacea.ui.screens.splash.NetworkViewModel
 import org.koin.compose.koinInject
 
 @Composable
@@ -27,9 +29,9 @@ fun Navigation(
     nav: NavHostController
 ) {
 
-    NavHost(navController = nav, startDestination = HOME) {
+    NavHost(navController = nav, startDestination = SPLASH) {
         composable<SPLASH> {
-            SplashScreen(navController = nav)
+            SplashView(nav = nav, NetworkViewModel(koinInject()))
         }
         composable<HOME> {
             HomeView(
@@ -39,9 +41,10 @@ fun Navigation(
         }
         composable<LOGIN> {
             LoginView(
-                viewModel = LoginViewModel(),
-                onNavigateToHome = { nav.navigate(HOME) },
-                navigateToSignIn = { nav.navigate(SIGNING) }
+                vm = LoginViewModel(koinInject()),
+                onLogIn = { nav.navigate(HOME) },
+                onSignIn = { nav.navigate(SIGNING) },
+                onConectionError = { nav.navigate(SPLASH) }
             )
         }
         composable<SIGNING> {
@@ -71,7 +74,10 @@ fun Navigation(
             )
         }
         composable<PROFILE> {
-            ProfileView(nav = nav)
+            ProfileView(
+                nav = nav,
+                vm = ProfileViewModel(koinInject())
+            )
         }
         composable<DOCUMENTS> {
             DocsView(nav = nav)

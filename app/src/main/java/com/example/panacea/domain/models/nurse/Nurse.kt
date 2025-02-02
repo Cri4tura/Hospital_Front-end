@@ -1,14 +1,13 @@
-package com.example.panacea.data.models.nurse
+package com.example.panacea.domain.models.nurse
 
-import com.example.panacea.data.DateSerializer
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
+import com.example.panacea.data.utils.DateSerializer
 import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.ZoneId
 import java.util.Date
+import java.util.Locale
 
 @Serializable
 data class Nurse(
@@ -18,9 +17,9 @@ data class Nurse(
     val email: String,
     val password: String,
     @Serializable(with = DateSerializer::class)
-    @SerialName("birth_date") val birthDate: Date,
+    val birthDate: Date,
     @Serializable(with = DateSerializer::class)
-    @SerialName("register_date") val registerDate: Date,
+    val registerDate: Date,
 ) {
     val age: Int
         get() {
@@ -29,9 +28,20 @@ data class Nurse(
             return Period.between(birthLocalDate, today).years
         }
 
-    fun formatDate(date: Date): String {
+    fun dateToString(date: Date?): String {
         return SimpleDateFormat("dd/MM/yyyy").format(date)
     }
+
+    fun stringToDate(dateString: String): Date? {
+        return try {
+            val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            format.parse(dateString)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    
 }
 
 

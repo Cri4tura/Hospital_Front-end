@@ -16,7 +16,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
-import com.example.panacea.navigation.Navigation
+import com.example.panacea.ui.navigation.Navigation
 import com.example.panacea.ui.theme.HospitalFrontendTheme
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    println("INICIANDO NAVEGACION..........................!")
                     Navigation(nav = rememberNavController())
                 }
             }

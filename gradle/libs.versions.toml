@@ -1,6 +1,7 @@
 [versions]
 agp = "8.6.1"
 compose = "1.0.0-alpha.1"
+glide = "4.13.0"
 koinAndroid = "3.5.0"
 koinAndroidxCompose = "3.5.0"
 kotlin = "2.1.0"
@@ -25,8 +26,11 @@ kotlinxSerializationJson = "1.7.3"
 androidx-room = "2.7.0-alpha12"
 ksp = "2.1.0-1.0.29"
 buildConfig = "5.3.5"
+coilComposeCore = "3.0.0-alpha06"
 
 [libraries]
+compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
@@ -55,11 +59,29 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-tools-core = { group = "androidx.privacysandbox.tools", name = "tools-core", version.ref = "toolsCore" }
 generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
+
+# Koin
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
+
+# Ktor
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-json = { group = "io.ktor", name = "ktor-client-json", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-client-serialization = { group = "io.ktor", name = "ktor-client-serialization", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+
+# Coil
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coilComposeCore" }
+coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coilComposeCore" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilComposeCore" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coilComposeCore" }
+
+[bundles]
+ktor-common = ["ktor-client-core", "ktor-client-json", "ktor-client-logging", "ktor-client-serialization", "ktor-client-content-negotiation", "ktor-serialization-kotlinx-json"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

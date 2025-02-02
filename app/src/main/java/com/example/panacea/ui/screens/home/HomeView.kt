@@ -1,5 +1,7 @@
 package com.example.panacea.ui.screens.home
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,17 +22,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,13 +44,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.panacea.R
-import com.example.panacea.data.models.nurse.Nurse
+import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.components.DrawerAppBar
-import com.example.panacea.utils.Constants.MENU
+import com.example.panacea.data.utils.Constants.MENU
+import com.example.panacea.ui.navigation.SPLASH
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -53,28 +62,23 @@ fun HomeView(
     nav: NavHostController,
     vm: HomeViewModel
 ) {
-    var nurseList by remember { mutableStateOf<List<Nurse>>(emptyList()) }
-    val scope = rememberCoroutineScope()
-    val cards = remember { mutableStateListOf<Int>() }
 
-    LaunchedEffect(true) {
-        scope.launch {
-            try {
-                nurseList = vm.state.nurseList
-            } catch (e: Exception) {
-                println("Error: ${e.message}")
-            }
-        }
+    // Observa el estado usando collectAsState
+    val state by vm.state.collectAsState()
+    val data by vm.data.collectAsState()
+
+
+    LaunchedEffect(vm.state) {
+        vm.fetchHomeData()
+        Log.e("HomeView", "Fetching data... ${state}")
     }
 
-    if (cards.isEmpty()) {
-        cards.addAll(0 until 3)
-    }
+    val context = LocalContext.current
 
     DrawerAppBar(
         nav = nav,
         index = MENU.OPTION_2,
-        userName = "GUEST",
+        userName = "${data.currentUser?.name} ${data.currentUser?.surname}",
         pageTitle = {
             Image(
                 painter = painterResource(id = R.drawable.panacea),
@@ -84,92 +88,104 @@ fun HomeView(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    cards.add(cards.size)
-                },
+                onClick = { },
                 containerColor = MaterialTheme.colorScheme.primary,
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         },
         screenContent = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
 
-            if(vm.state.isLoading){
-                CircularProgressIndicator()
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    items(vm.state.nurseList) { nurse ->
-
-                        var isFilled by remember { mutableStateOf(false) }
-
-                        Card(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(4.dp),
+                when {
+                    state.isLoading -> {
+                        Log.e("HomeView", "Cargando datos... ${state.isLoading}")
+                        CircularProgressIndicator()
+                    }
+                    state.onSuccess -> {
+                        Log.e("HomeView", "Datos cargados exitosamente")
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
                         ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                Spacer(modifier = Modifier.height(16.dp))
+                            items(data.nurseList) { nurse ->
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                var isFavorite by remember { mutableStateOf(false) }
+
+                                Card(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
+                                    elevation = CardDefaults.cardElevation(4.dp),
                                 ) {
-
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.primary),
-                                        contentAlignment = Alignment.Center
+                                    Column(
+                                        modifier = Modifier.padding(16.dp)
                                     ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(40.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.primary),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = nurse.name[0].uppercase(),
+                                                    color = Color.White,
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                )
+                                            }
+                                            Icon(
+                                                modifier = Modifier
+                                                    .padding(4.dp)
+                                                    .size(25.dp)
+                                                    .clip(CircleShape)
+                                                    .clickable { isFavorite = !isFavorite },
+                                                imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Filled.FavoriteBorder,
+                                                contentDescription = null,
+                                                tint = lerp(Color.Red, Color.Black, 0.2f)
+                                            )
+
+                                        }
+
+                                        Spacer(modifier = Modifier.height(16.dp))
+
                                         Text(
-                                            text = "A",
-                                            color = Color.White,
-                                            style = MaterialTheme.typography.titleMedium
+                                            text = "${nurse.name} ${nurse.surname}",
+                                            style = MaterialTheme.typography.titleLarge
                                         )
+                                        Text(
+                                            text = nurse.email,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+
+                                        Spacer(modifier = Modifier.height(16.dp))
+
+                                        Text(
+                                            text = "Material is a design system – backed by open source code – that helps teams build high-quality digital experiences.",
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+
+                                        Spacer(modifier = Modifier.height(16.dp))
                                     }
-
-                                    Icon(
-                                        modifier = Modifier.size(25.dp).clickable {
-                                            isFilled = !isFilled
-                                        },
-                                        imageVector = if (isFilled) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                        contentDescription = "Star Icon",
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
                                 }
-
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Text(
-                                    text = "${nurse.name} ${nurse.surname}",
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                                Text(
-                                    text = nurse.email,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Text(
-                                    text = "Material is a design system – backed by open source code – that helps teams build high-quality digital experiences.",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-
-                                Spacer(modifier = Modifier.height(16.dp))
                             }
                         }
+                    }
+                    state.onError -> {
+                        Log.e("HomeView", "Error al cargar datos")
+                        // Mostrar mensaje de error
+                        Text("Ocurrió un error")
                     }
                 }
             }

@@ -14,9 +14,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.panacea.R
-import com.example.panacea.navigation.HOME
+import com.example.panacea.ui.navigation.HOME
 import com.example.panacea.ui.components.DrawerAppBar
-import com.example.panacea.utils.Constants.MENU
+import com.example.panacea.data.utils.Constants.MENU
 
 @Composable
 fun NewsView(nav: NavHostController) {

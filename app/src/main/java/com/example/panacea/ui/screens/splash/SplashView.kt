@@ -1,109 +1,146 @@
 package com.example.panacea.ui.screens.splash
 
-import android.content.Context
-import android.net.Uri
-import androidx.annotation.OptIn
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.media3.common.MediaItem
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.example.panacea.R
-import com.example.panacea.navigation.LOGIN
-import com.example.panacea.utils.Constants
+import com.example.panacea.ui.components.PrimaryButton
+import com.example.panacea.ui.components.Splash
+import com.example.panacea.ui.navigation.LOGIN
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
+
+//@Composable
+//fun AppScreen(nav: NavController) {
+//    LaunchedEffect(key1 = true) {
+//        delay(200)
+//        nav.navigate(LOGIN)
+//    }
+//    Splash()
+//}
+
 
 @Composable
-fun SplashScreen(navController: NavController) {
-    LaunchedEffect(key1 = true) {
-        delay(1500)
-        navController.popBackStack()
-        navController.navigate(LOGIN)
+fun SplashView(nav: NavController, vm: NetworkViewModel = koinViewModel()) {
+    // Observar la variable connectionError para ver si hay un error de conexión
+    val connectionError by vm.connectionError.observeAsState()
+    val isLoading by vm.isLoading.observeAsState(false)
+
+    // Usar LaunchedEffect para navegar solo después de que la conexión haya sido procesada
+    LaunchedEffect(connectionError, isLoading) {
+        // Navegar solo cuando ya se haya determinado que hay error o que la carga terminó
+        if (connectionError == null && !isLoading) {
+            // Solo navegar al login si la conexión es exitosa
+            delay(1000)
+            nav.navigate(LOGIN)
+        }
     }
-    Splash()
+
+    // Si connectionError es null, significa que no hay error de conexión
+    if (connectionError != null) {
+        // Mostrar la pantalla de desconexión cuando hay error de conexión
+        Splash()
+        DisconnectionScreen(onRetry = { vm.onReconnect() }, errorMessage = connectionError)
+    } else {
+        if (isLoading) {
+            // Mostrar la pantalla principal cuando no hay error de conexión
+            Splash()
+            MainScreen() // O la pantalla de inicio que prefieras
+        } else {
+            // Mostrar la pantalla principal cuando no hay error de conexión
+            Splash()
+            //MainScreen() // O la pantalla de inicio que prefieras
+        }
+
+    }
 }
 
-@kotlin.OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun Splash() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+fun MainScreen() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+        Spacer(modifier = Modifier.weight(1f))
+        Text(text = "Conectado al servidor", style = MaterialTheme.typography.titleLarge)
+        Spacer(modifier = Modifier.height(32.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth().height(45.dp),
+            contentAlignment = Alignment.BottomCenter
         ) {
-            GlideImage(
-                model = R.drawable.panacea,
-                contentDescription = "Glide image ",
-                modifier = Modifier.fillMaxSize()
+            CircularProgressIndicator()
+        }
+        Spacer(modifier = Modifier.height(32.dp))
+    }
+}
+
+@Composable
+fun DisconnectionScreen(onRetry: () -> Unit, errorMessage: String? = null) {
+
+    val isLoading by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        errorMessage?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.titleLarge
             )
         }
-    }
-}
 
+        Spacer(modifier = Modifier.height(32.dp))
 
-@OptIn(UnstableApi::class)
-@Composable
-fun VideoScreenSlpash(
-    context: Context,
-    videoResId: Int,
-    modifier: Modifier = Modifier,
-) {
+        Box(
+            modifier = Modifier.fillMaxWidth().height(45.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                // Llamar al callback para reintentar
 
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
-            val mediaItem = MediaItem.fromUri(videoUri)
-            setMediaItem(mediaItem)
-            repeatMode = ExoPlayer.REPEAT_MODE_ALL
-            prepare()
-            playWhenReady = true
-        }
-    }
-
-    DisposableEffect(exoPlayer) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-
-    AndroidView(
-        factory = {
-            PlayerView(it).apply {
-                player = exoPlayer
-                useController = false // Ocultar controles
-                resizeMode =
-                    AspectRatioFrameLayout.RESIZE_MODE_ZOOM // Forzar zoom para llenar el contenedor
+                PrimaryButton(
+                    onClick = { onRetry() },
+                    icon = Icons.Outlined.Refresh,
+                    text = "Reintentar",
+                    description = "refresh button"
+                )
             }
-        },
-        modifier = modifier
-    )
-}
+        }
 
 
-@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun SplashScreenPreview() {
-    Splash()
+        Spacer(modifier = Modifier.height(32.dp))
+    }
+
 }
