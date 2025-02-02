@@ -10,7 +10,7 @@ interface NurseRepository {
     fun getNurseById(nurseID: Int): Flow<Nurse>
     fun validateLogin(email: String, password: String): Flow<Nurse?>
     fun getCurrentNurse(): Nurse?
-    fun getNurseList(): List<Nurse>
+    suspend fun getNurseList(): List<Nurse>
     fun addNurse(nurse: Nurse)
     fun deleteNurse(userId: Int): Flow<Boolean>
     fun updateNurse(updateData: Nurse): Flow<Nurse>

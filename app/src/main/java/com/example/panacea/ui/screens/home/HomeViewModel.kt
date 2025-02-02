@@ -1,59 +1,44 @@
 package com.example.panacea.ui.screens.home
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.panacea.data.repositories.NurseRepositoryImpl
 import kotlinx.coroutines.launch
 import com.example.panacea.domain.models.nurse.Nurse
-import com.example.panacea.ui.screens.profile.ProfileViewModel.UiData
-import com.example.panacea.ui.screens.profile.ProfileViewModel.UiState
-import kotlinx.coroutines.delay
-import java.io.IOException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
 
 class HomeViewModel(
     private val repository: NurseRepositoryImpl
 ) : ViewModel() {
 
-    var state by mutableStateOf(UiState())
-        private set
+    private val _state = MutableStateFlow(UiState())
+    val state: StateFlow<UiState> = _state
 
-    var data by mutableStateOf(UiData())
-        private set
+    private val _data = MutableStateFlow(UiData())
+    val data: StateFlow<UiData> = _data
 
-    init {
-        fetchHomeData()
-    }
 
-    private fun fetchHomeData() {
+    fun fetchHomeData() {
         viewModelScope.launch {
-            state = UiState(isLoading = true)
+            _state.value.isLoading = true
             println("GETTING HOME DATA....")
-            try {
-                data = UiData(
-                    nurseList = repository.getNurseList(),
-                    currentUser = repository.getCurrentNurse()
-                )
-                state = UiState(onSuccess = true)
-            } catch (e: IOException) {
-                println("Network error: ${e.message}")
-                state = UiState(onError = true)
-            } catch (e: Exception) {
-                println("Unexpected error: ${e.message}")
-                state = UiState(onError = true)
-            } finally {
-                state = state.copy(isLoading = false)
-            }
+            _data.value = UiData(
+                nurseList = repository.getNurseList(),
+                currentUser = repository.getCurrentNurse()
+            )
+            Log.d("HomeViewModel", "Nurse list: ${_data.value.nurseList}")
+            _state.value = UiState(isLoading = false, onSuccess = true)
         }
     }
 
     data class UiState(
-        val isLoading: Boolean = false,
+        var isLoading: Boolean = false,
         val onError: Boolean = false,
-        val onSuccess: Boolean = false
+        var onSuccess: Boolean = false
     )
 
     data class UiData(

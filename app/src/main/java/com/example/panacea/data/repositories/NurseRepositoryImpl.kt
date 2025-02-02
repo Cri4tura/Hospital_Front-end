@@ -69,7 +69,9 @@ class NurseRepositoryImpl(
         return currentNurse
     }
 
-    override fun getNurseList(): List<Nurse> {
+    override suspend fun getNurseList(): List<Nurse> {
+        val nurses = conn.getNurses()
+        nurseList = nurses.toMutableList()
         return nurseList
     }
 

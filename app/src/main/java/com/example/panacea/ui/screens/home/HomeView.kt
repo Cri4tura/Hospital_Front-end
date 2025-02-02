@@ -1,5 +1,6 @@
 package com.example.panacea.ui.screens.home
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +53,8 @@ import com.example.panacea.R
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.components.DrawerAppBar
 import com.example.panacea.data.utils.Constants.MENU
+import com.example.panacea.ui.navigation.SPLASH
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -59,12 +63,22 @@ fun HomeView(
     vm: HomeViewModel
 ) {
 
+    // Observa el estado usando collectAsState
+    val state by vm.state.collectAsState()
+    val data by vm.data.collectAsState()
+
+
+    LaunchedEffect(vm.state) {
+        vm.fetchHomeData()
+        Log.e("HomeView", "Fetching data... ${state}")
+    }
+
     val context = LocalContext.current
 
     DrawerAppBar(
         nav = nav,
         index = MENU.OPTION_2,
-        userName = "${vm.data.currentUser?.name} ${vm.data.currentUser?.surname}",
+        userName = "${data.currentUser?.name} ${data.currentUser?.surname}",
         pageTitle = {
             Image(
                 painter = painterResource(id = R.drawable.panacea),
@@ -81,86 +95,97 @@ fun HomeView(
             }
         },
         screenContent = {
-            Box (
+            Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
-            ){
-                if(vm.state.isLoading){
-                    CircularProgressIndicator()
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        items(vm.data.nurseList) { nurse ->
+            ) {
 
-                            var isFavorite by remember { mutableStateOf(false) }
+                when {
+                    state.isLoading -> {
+                        Log.e("HomeView", "Cargando datos... ${state.isLoading}")
+                        CircularProgressIndicator()
+                    }
+                    state.onSuccess -> {
+                        Log.e("HomeView", "Datos cargados exitosamente")
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                        ) {
+                            items(data.nurseList) { nurse ->
 
-                            Card(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                elevation = CardDefaults.cardElevation(4.dp),
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(16.dp)
+                                var isFavorite by remember { mutableStateOf(false) }
+
+                                Card(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
+                                    elevation = CardDefaults.cardElevation(4.dp),
                                 ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Column(
+                                        modifier = Modifier.padding(16.dp)
                                     ) {
-
-                                        Box(
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .clip(CircleShape)
-                                                .background(MaterialTheme.colorScheme.primary),
-                                            contentAlignment = Alignment.Center
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                            Text(
-                                                text = nurse.name[0].uppercase(),
-                                                color = Color.White,
-                                                style = MaterialTheme.typography.titleMedium,
+
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(40.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.primary),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = nurse.name[0].uppercase(),
+                                                    color = Color.White,
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                )
+                                            }
+                                            Icon(
+                                                modifier = Modifier
+                                                    .padding(4.dp)
+                                                    .size(25.dp)
+                                                    .clip(CircleShape)
+                                                    .clickable { isFavorite = !isFavorite },
+                                                imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Filled.FavoriteBorder,
+                                                contentDescription = null,
+                                                tint = lerp(Color.Red, Color.Black, 0.2f)
                                             )
+
                                         }
-                                        Icon(
-                                            modifier = Modifier
-                                                .padding(4.dp)
-                                                .size(25.dp)
-                                                .clip(CircleShape)
-                                                .clickable { isFavorite = !isFavorite },
-                                            imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Filled.FavoriteBorder,
-                                            contentDescription = null,
-                                            tint = lerp(Color.Red, Color.Black, 0.2f)
+
+                                        Spacer(modifier = Modifier.height(16.dp))
+
+                                        Text(
+                                            text = "${nurse.name} ${nurse.surname}",
+                                            style = MaterialTheme.typography.titleLarge
+                                        )
+                                        Text(
+                                            text = nurse.email,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
 
+                                        Spacer(modifier = Modifier.height(16.dp))
+
+                                        Text(
+                                            text = "Material is a design system – backed by open source code – that helps teams build high-quality digital experiences.",
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+
+                                        Spacer(modifier = Modifier.height(16.dp))
                                     }
-
-                                    Spacer(modifier = Modifier.height(16.dp))
-
-                                    Text(
-                                        text = "${nurse.name} ${nurse.surname}",
-                                        style = MaterialTheme.typography.titleLarge
-                                    )
-                                    Text(
-                                        text = nurse.email,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-
-                                    Spacer(modifier = Modifier.height(16.dp))
-
-                                    Text(
-                                        text = "Material is a design system – backed by open source code – that helps teams build high-quality digital experiences.",
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-
-                                    Spacer(modifier = Modifier.height(16.dp))
                                 }
                             }
                         }
+                    }
+                    state.onError -> {
+                        Log.e("HomeView", "Error al cargar datos")
+                        // Mostrar mensaje de error
+                        Text("Ocurrió un error")
                     }
                 }
             }
