@@ -31,34 +31,25 @@ class NetworkServicesImpl(
 
     override suspend fun getNurses(): List<Nurse> {
         val allNurses = mutableListOf<Nurse>()
-
-        println("Llamada a getNurses()")  // Log para rastrear la llamada
-
+        println("Llamada a getNurses()")
         try {
-            // Realizamos la petición GET
             val response = client.get("/nurse")
-
-            // Verificamos que la respuesta sea exitosa
             if (response.status == HttpStatusCode.OK) {
-                // Si la respuesta es exitosa, la deserializamos
                 val nurseResponse: NurseResponse = Json.decodeFromString(response.bodyAsText())
                 nurseResponse.data.forEach { nurse ->
                     allNurses.add(nurse)
                 }
             } else {
-                // Si la respuesta no es exitosa, lanzar una excepción personalizada o loguear el error
-                throw Exception("Error en la respuesta del servidor: ${response.status.value}")
+                if(response.status == HttpStatusCode.NoContent){
+                    throw Exception("HttpStatus NO CONTENT: ${response.status.value}")
+                }
+                throw Exception("STATUS CODE: ${response.status.value}")
             }
-
         } catch (e: Exception) {
-            // Manejo de cualquier tipo de excepción que ocurra durante la petición
             println("Error al obtener enfermeras: ${e.localizedMessage}")
-            // Aquí puedes lanzar una excepción personalizada si lo deseas o manejar el error de otra manera
-            throw e // Vuelves a lanzar la excepción para propagarla
+            throw e
         }
-
         println("getNurses() ha terminado") // Log para indicar que la función terminó
-
         return allNurses
     }
 
@@ -181,7 +172,7 @@ class NetworkServicesImpl(
             return nurse
         } else {
             val newNurse = Nurse(id = -1, name = "", surname = "", email = "", password = "",
-                birthDate = Date(), registerDate = Date())
+                birthDate = Date(), registerDate = Date(), profileImage = "")
             return newNurse
         }
 

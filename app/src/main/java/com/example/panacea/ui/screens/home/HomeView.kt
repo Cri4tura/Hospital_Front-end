@@ -1,5 +1,6 @@
 package com.example.panacea.ui.screens.home
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -57,6 +58,7 @@ import com.example.panacea.ui.navigation.SPLASH
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun HomeView(
     nav: NavHostController,
@@ -93,6 +95,7 @@ fun HomeView(
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         },
+        userImage = "${vm.data.value.currentUser?.profileImage}",
         screenContent = {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -131,17 +134,37 @@ fun HomeView(
                                         ) {
 
                                             Box(
+                                                contentAlignment = Alignment.Center,
                                                 modifier = Modifier
-                                                    .size(40.dp)
+                                                    .size(80.dp)
                                                     .clip(CircleShape)
-                                                    .background(MaterialTheme.colorScheme.primary),
-                                                contentAlignment = Alignment.Center
+                                                    .background(
+                                                        lerp(
+                                                            MaterialTheme.colorScheme.onPrimary,
+                                                            MaterialTheme.colorScheme.primary,
+                                                            0.35f
+                                                        )
+                                                    )
+                                                //.border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
                                             ) {
-                                                Text(
-                                                    text = nurse.name[0].uppercase(),
-                                                    color = Color.White,
-                                                    style = MaterialTheme.typography.titleMedium,
+
+                                                val resourceId = LocalContext.current.resources.getIdentifier(
+                                                    nurse.profileImage,
+                                                    "drawable",
+                                                    LocalContext.current.packageName
                                                 )
+
+                                                if (resourceId != 0) {
+                                                    Image(
+                                                        painter = painterResource(id = resourceId),
+                                                        contentDescription = null,
+                                                    )
+                                                } else {
+                                                    Image(
+                                                        painter = painterResource(id = R.drawable.nurse_register),
+                                                        contentDescription = null
+                                                    )
+                                                }
                                             }
                                             Icon(
                                                 modifier = Modifier

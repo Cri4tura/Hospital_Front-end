@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,15 +30,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
@@ -88,6 +85,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -110,6 +108,7 @@ import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.panacea.R
+import com.example.panacea.data.utils.Constants.MENU
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.navigation.DETAIL
 import com.example.panacea.ui.navigation.DIRECTORY
@@ -119,7 +118,6 @@ import com.example.panacea.ui.navigation.HOME
 import com.example.panacea.ui.navigation.LOGIN
 import com.example.panacea.ui.navigation.NEWS
 import com.example.panacea.ui.navigation.PROFILE
-import com.example.panacea.data.utils.Constants.MENU
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -129,6 +127,7 @@ import java.util.Locale
 @Composable
 fun DrawerAppBar(
     nav: NavHostController,
+    userImage: String,
     userName: String?,
     index: Int,
     pageTitle: @Composable () -> Unit,
@@ -158,11 +157,41 @@ fun DrawerAppBar(
                 ) {
                     Spacer(Modifier.height(16.dp))
 
-                    Image(
-                        painter = painterResource(id = R.drawable.nurse_register),
-                        contentDescription = "User Image",
-                        modifier = Modifier.size(100.dp)
-                    )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .zIndex(0.1f)
+                            .size(240.dp)
+                            .clip(CircleShape)
+                            .background(
+                                lerp(
+                                    MaterialTheme.colorScheme.onPrimary,
+                                    MaterialTheme.colorScheme.primary,
+                                    0.35f
+                                )
+                            )
+                            .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                    ) {
+
+                        val resourceId = LocalContext.current.resources.getIdentifier(
+                            userImage,
+                            "drawable",
+                            LocalContext.current.packageName
+                        )
+
+                        if (resourceId != 0) {
+                            Image(
+                                painter = painterResource(id = resourceId),
+                                contentDescription = null,
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(id = R.drawable.nurse_register),
+                                contentDescription = null
+                            )
+                        }
+                    }
+
                     Spacer(Modifier.height(16.dp))
 
                     userName?.let {
@@ -790,7 +819,6 @@ fun NurseItem(
     nurse: Nurse,
     nav: NavHostController
 ) {
-    var isFavorite by remember { mutableStateOf(false) }
 
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -802,13 +830,40 @@ fun NurseItem(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Image(
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
+                .zIndex(0.1f)
+                .size(60.dp)
                 .clip(CircleShape)
-                .size(60.dp),
-            painter = painterResource(id = R.drawable.user),
-            contentDescription = "Nurse Icon"
-        )
+                .background(
+                    lerp(
+                        MaterialTheme.colorScheme.onPrimary,
+                        MaterialTheme.colorScheme.primary,
+                        0.35f
+                    )
+                )
+                //.border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+        ) {
+
+            val resourceId = LocalContext.current.resources.getIdentifier(
+                nurse.profileImage,
+                "drawable",
+                LocalContext.current.packageName
+            )
+
+            if (resourceId != 0) {
+                Image(
+                    painter = painterResource(id = resourceId),
+                    contentDescription = null,
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.nurse_register),
+                    contentDescription = null
+                )
+            }
+        }
 
         Column(modifier = Modifier.padding(start = 16.dp)) {
             Text(
@@ -835,6 +890,7 @@ fun NurseItem(
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary
         )
+        Spacer(Modifier.width(8.dp))
     }
 }
 
@@ -842,78 +898,116 @@ fun NurseItem(
 fun NurseExtendedItem(
     nurse: Nurse
 ) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Image(
-            painter = painterResource(id = R.drawable.user),
-            contentDescription = "Nurse Icon", modifier = Modifier.size(120.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .zIndex(0.1f)
+                .size(240.dp)
+                .clip(CircleShape)
+                .background(
+                    lerp(
+                        MaterialTheme.colorScheme.onPrimary,
+                        MaterialTheme.colorScheme.primary,
+                        0.35f
+                    )
+                )
+                .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+        ) {
+
+            val resourceId = LocalContext.current.resources.getIdentifier(
+                nurse.profileImage,
+                "drawable",
+                LocalContext.current.packageName
+            )
+
+            if (resourceId != 0) {
+                Image(
+                    painter = painterResource(id = resourceId),
+                    contentDescription = null,
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.nurse_register),
+                    contentDescription = null
+                )
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
         Text(
             text = "${nurse.name} ${nurse.surname}",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             fontSize = 28.sp
         )
+
+        Spacer(Modifier.height(24.dp))
+
+        Column {
+            Row {
+                Text(
+                    text = "Age: ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 22.sp
+                )
+                Text(
+                    text = nurse.age.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 22.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Row {
+                Text(
+                    text = "Birth Date: ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 22.sp
+                )
+                Text(
+                    text = nurse.dateToString(nurse.birthDate),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 22.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row {
+                Text(
+                    text = "Email: ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 22.sp
+                )
+                Text(
+                    text = nurse.email,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 22.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Row {
+                Text(
+                    text = "Register Date: ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 22.sp
+                )
+                Text(
+                    text = nurse.dateToString(nurse.registerDate),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 22.sp
+                )
+            }
+        }
     }
 
-    Spacer(modifier = Modifier.height(20.dp))
 
-    Column {
-        Row {
-            Text(
-                text = "Age: ",
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 22.sp
-            )
-            Text(
-                text = nurse.age.toString(),
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 22.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Row {
-            Text(
-                text = "Birth Date: ",
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 22.sp
-            )
-            Text(
-                text = nurse.dateToString(nurse.birthDate),
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 22.sp
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row {
-            Text(
-                text = "Email: ",
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 22.sp
-            )
-            Text(
-                text = nurse.email,
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 22.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Row {
-            Text(
-                text = "Register Date: ",
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 22.sp
-            )
-            Text(
-                text = nurse.dateToString(nurse.registerDate),
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 22.sp
-            )
-        }
-    }
 }
 
 
@@ -1017,38 +1111,55 @@ fun ResetPasswordDialog(
 
 @Composable
 fun RoundedImagePicker(
+    imageName: String,
     imageUri: Boolean,
     onImageChange: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .zIndex(0.1f)
-            .size(240.dp)
-            .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape) // Borde de color azul
-            .background(Color.Transparent) // Color de fondo por defecto
+        modifier = Modifier.wrapContentSize()
     ) {
-        if (imageUri) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Selected Image",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape) // Asegura que la imagen también sea redonda
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Default Avatar",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape)
-                    .background(Color.White)
-            )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = modifier
+                .zIndex(0.1f)
+                .size(240.dp)
+                .clip(CircleShape)
+                .background(
+                    lerp(
+                        MaterialTheme.colorScheme.onPrimary,
+                        MaterialTheme.colorScheme.primary,
+                        0.35f
+                    )
+                )
+                .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+        ) {
+            if (imageUri) {
+                val resourceId = LocalContext.current.resources.getIdentifier(
+                    imageName,
+                    "drawable",
+                    LocalContext.current.packageName
+                )
+
+                if (resourceId != 0) {
+                    Image(
+                        painter = painterResource(id = resourceId),
+                        contentDescription = null,
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.nurse_register),
+                        contentDescription = null
+                    )
+                }
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.nurse_register),
+                    contentDescription = null
+                )
+            }
         }
+
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -1060,17 +1171,17 @@ fun RoundedImagePicker(
                     .align(Alignment.BottomEnd)
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(Color.Transparent)
-                    .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Edit,
                     contentDescription = "Change Image",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)

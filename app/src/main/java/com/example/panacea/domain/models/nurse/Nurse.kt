@@ -20,6 +20,7 @@ data class Nurse(
     val birthDate: Date,
     @Serializable(with = DateSerializer::class)
     val registerDate: Date,
+    val profileImage: String? = "fake_profile_img"
 ) {
     val age: Int
         get() {

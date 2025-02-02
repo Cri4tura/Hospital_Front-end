@@ -87,6 +87,7 @@ fun ProfileView(
             .fillMaxSize()
             .padding(horizontal = 8.dp)
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -140,7 +141,8 @@ fun ProfileView(
             ) {
                 RoundedImagePicker(
                     imageUri = onChangeImageClick,
-                    onImageChange = { onChangeImageClick = !onChangeImageClick }
+                    onImageChange = { onChangeImageClick = !onChangeImageClick },
+                    imageName = "${vm.data.currentUser?.profileImage}"
                 )
 
                 Spacer(Modifier.height(16.dp))
