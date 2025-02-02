@@ -34,6 +34,7 @@ fun DocsView(nav: NavHostController) {
             )
         },
         userName = null,
+        userImage = "nurse_register",
         screenContent = {
             Column (
                 modifier = Modifier.fillMaxSize(),

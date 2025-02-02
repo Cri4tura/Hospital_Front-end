@@ -75,6 +75,7 @@ fun DirectoryView(
             )
         },
         userName = "${vm.data.currentUser?.name} ${vm.data.currentUser?.surname}",
+        userImage = "${vm.data.currentUser?.profileImage}",
         screenContent = {
 
             Box(
