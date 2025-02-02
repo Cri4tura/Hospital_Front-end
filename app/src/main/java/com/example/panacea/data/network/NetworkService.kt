@@ -21,7 +21,7 @@ class NetworkServices() {
     suspend fun getNurses(): List<Nurse> {
         val allNurses = mutableListOf<Nurse>()
 
-        val response = client.get("http://192.168.1.73:8080/nurse")  // Cambiar según el servidor
+        val response = client.get("http://192.168.1.37:8080/nurse")  // Cambiar según el servidor
 
         val nurseResponse: NurseResponse = jsonData.decodeFromString(response.bodyAsText())
 
@@ -37,8 +37,8 @@ class NetworkServices() {
         return allNurses
     }
 
-    suspend fun register(nurse: Nurse): Boolean {
-        val response = client.post("http://192.168.1.73:8080/nurse/signin") {
+    suspend fun register(nurse: Nurse): Nurse? {
+        val response = client.post("http://192.168.1.37:8080/nurse/signin") {
             contentType(ContentType.Application.Json)
             setBody(Json.encodeToString(nurse))
         }
@@ -48,8 +48,10 @@ class NetworkServices() {
         println("<-- END ${response.request.method.value}  ${response.request.url}")
         println("<-- RESPONSE CODE ${response.status}")
 
-        return response.status.value == 201 // Estatus del CREATE
+        return if (response.status.value == 201) {
+            jsonData.decodeFromString<Nurse>(response.bodyAsText()) // Devuelve el objeto Nurse
+        } else {
+            null // Retorna null si falla el registro
+        }
     }
-
-
 }

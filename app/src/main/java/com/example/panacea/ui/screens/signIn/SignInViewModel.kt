@@ -85,7 +85,6 @@ class SignInViewModel(private val nurseRepository: NurseRepository) : ViewModel(
                 )
 
 
-                // Verifica si signinNurse devuelve Flow<Boolean> o Boolean
                 viewModelScope.launch {
                     val result = nurseRepository.signinNurse(newNurse)
                     when (result) {
