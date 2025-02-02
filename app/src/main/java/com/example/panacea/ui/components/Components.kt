@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -178,12 +179,21 @@ fun DrawerAppBar(
                 DropdownMenuItem(
                     text = { Text("Profile") },
                     leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null) },
-                    onClick = { nav.navigate(PROFILE) }
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        nav.navigate(PROFILE)
+                    }
                 )
                 DropdownMenuItem(
                     text = { Text("Settings") },
                     leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
-                    onClick = { /* Do something... */ }
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                    }
                 )
 
                 HorizontalDivider()
@@ -198,7 +208,11 @@ fun DrawerAppBar(
                             contentDescription = null
                         )
                     },
-                    onClick = { /* Do something... */ }
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                    }
                 )
 
                 HorizontalDivider()
@@ -212,14 +226,26 @@ fun DrawerAppBar(
                             contentDescription = null
                         )
                     },
-                    onClick = { /* Do something... */ }
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                    }
                 )
 
                 // Third section
                 DropdownMenuItem(
                     text = { Text("About") },
                     leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
-                    onClick = { /* Do something... */ }
+                    onClick = {
+                        scope.launch {
+                            if (drawerState.isClosed) {
+                                drawerState.open()
+                            } else {
+                                drawerState.close()
+                            }
+                        }
+                    }
                 )
 
                 HorizontalDivider(modifier = Modifier.weight(1f))
@@ -237,14 +263,27 @@ fun DrawerAppBar(
                         LogoutConfirmationDialog(
                             showDialog = showDialog,
                             onDismiss = { showDialog = false },
-                            onConfirm = { nav.navigate(LOGIN) }
+                            onConfirm = {
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                                nav.navigate(LOGIN)
+                            }
                         )
                     },
                     selected = false,
                     icon = {
 
                     },
-                    onClick = { /* Handle click */ },
+                    onClick = {
+                        scope.launch {
+                            if (drawerState.isClosed) {
+                                drawerState.open()
+                            } else {
+                                drawerState.close()
+                            }
+                        }
+                    },
                 )
             }
         },
@@ -399,7 +438,7 @@ fun EmailInput(
 
 @Composable
 fun searchInput(initialQuery: String): String {
-    var searchQuery  by remember { mutableStateOf(initialQuery) }
+    var searchQuery by remember { mutableStateOf(initialQuery) }
 
     OutlinedTextField(
         value = searchQuery,
@@ -710,8 +749,6 @@ fun DeleteAccountButton(
             contentDescription = "Log Out",
             modifier = Modifier.size(ButtonDefaults.IconSize)
         )
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -762,20 +799,6 @@ fun NurseItem(
                 nav.navigate(DETAIL(nurse.id))
             }
     ) {
-
-        Icon(
-            modifier = Modifier
-                .padding(4.dp)
-                .size(25.dp)
-                .clip(CircleShape)
-                .clickable {
-                    Toast.makeText(context, "Like +1", Toast.LENGTH_SHORT).show()
-                    isFavorite = !isFavorite
-                },
-            imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Filled.FavoriteBorder,
-            contentDescription = null,
-            tint = lerp(Color.Red, Color.Black, 0.35f)
-        )
 
         Spacer(modifier = Modifier.width(8.dp))
 
@@ -892,7 +915,6 @@ fun NurseExtendedItem(
         }
     }
 }
-
 
 
 @Composable
@@ -1072,18 +1094,6 @@ fun Splash() {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @androidx.annotation.OptIn(UnstableApi::class)

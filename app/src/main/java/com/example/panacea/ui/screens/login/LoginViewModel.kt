@@ -159,9 +159,10 @@ class LoginViewModel(
 //                        state = UiState(onError = true, isLoading = false)
                         _emailError.value = "Error de conexión. Inténtalo de nuevo."
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error inesperado: ${e.localizedMessage}")
-//                        state = UiState(onError = true, isLoading = false)
-                        _emailError.value = "Ocurrió un error inesperado."
+                        Log.e(TAG, "Error msg: ${e.localizedMessage}")
+                        state = UiState(onError = true, isLoading = false)
+                        _emailError.value = " "
+                        _passwordError.value = "Usuario no encontrado"
                     } finally {
                         Log.i(TAG,"FINAL STATE: $state\n" +
                                 "LOGIN ENDED.....")

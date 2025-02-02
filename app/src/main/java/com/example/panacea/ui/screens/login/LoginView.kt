@@ -41,8 +41,8 @@ fun LoginView(
 ) {
     val context = LocalActivity.current as FragmentActivity
     var auth by remember { mutableStateOf(false) }
-    var email by remember { mutableStateOf("jose.lopez@example.com") }
-    var password by remember { mutableStateOf("password123") }
+    var email by remember { mutableStateOf("test@gmail.com") }
+    var password by remember { mutableStateOf("1234") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(vm.state.isLogged) {
@@ -69,10 +69,13 @@ fun LoginView(
                 )
             }
         }
-
-        Text("logged: ${vm.state.isLogged} \n" +
-                "success: ${vm.state.onSuccess} \n" +
-                "error: ${vm.state.onError} \n")
+        if (vm.state.onError) {
+            Text(
+                "logged: ${vm.state.isLogged} \n" +
+                        "success: ${vm.state.onSuccess} \n" +
+                        "error: ${vm.state.onError} \n"
+            )
+        }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally)
         {

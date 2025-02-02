@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -94,7 +95,7 @@ fun HomeView(
                     ) {
                         items(vm.data.nurseList) { nurse ->
 
-                            var isFilled by remember { mutableStateOf(false) }
+                            var isFavorite by remember { mutableStateOf(false) }
 
                             Card(
                                 modifier = Modifier
@@ -129,12 +130,10 @@ fun HomeView(
                                                 .padding(4.dp)
                                                 .size(25.dp)
                                                 .clip(CircleShape)
-                                                .clickable {
-                                                    Toast.makeText(context, "Sending Email...", Toast.LENGTH_SHORT).show()
-                                                },
-                                            imageVector = Icons.Outlined.Email,
+                                                .clickable { isFavorite = !isFavorite },
+                                            imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Filled.FavoriteBorder,
                                             contentDescription = null,
-                                            tint = lerp(Color.Yellow, Color.Black, 0.35f)
+                                            tint = lerp(Color.Red, Color.Black, 0.2f)
                                         )
 
                                     }

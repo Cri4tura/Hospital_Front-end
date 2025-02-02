@@ -67,6 +67,9 @@ class NetworkServicesImpl(
                 }
 
             } else {
+                if (response.status == HttpStatusCode.NotFound){
+                    println("Usuario no encontrado en la BBDD".uppercase())
+                }
                 println("LOGIN FAILED")
                 null
             }

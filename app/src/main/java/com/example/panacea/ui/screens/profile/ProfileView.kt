@@ -69,7 +69,7 @@ fun ProfileView(
     LaunchedEffect(vm.state.isDeleted) {
         if (vm.state.isDeleted) {
             Toast.makeText(context, "Account Deleted...", Toast.LENGTH_SHORT).show()
-            delay(1000)
+            delay(800)
             nav.navigate(LOGIN)
         }
     }
@@ -77,7 +77,7 @@ fun ProfileView(
     LaunchedEffect(vm.state.isUpdated) {
         if (vm.state.isUpdated) {
             Toast.makeText(context, "Account Updated...", Toast.LENGTH_SHORT).show()
-            delay(1000)
+            nav.popBackStack()
             nav.navigate(PROFILE)
         }
     }
@@ -117,41 +117,15 @@ fun ProfileView(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            PrimaryButton(
+            DeleteAccountButton(
                 onClick = {
-
-                    val dateFormat = SimpleDateFormat(
-                        "dd/MM/yyyy",
-                        Locale.getDefault()
-                    )  // Asegúrate de que el formato coincida con el input
-                    val updatedNurse = vm.data.currentUser?.let {
-                        val parsedBirthDate = try {
-                            if (birthDate.isNotBlank()) dateFormat.parse(birthDate) else it.birthDate
-                        } catch (e: Exception) {
-                            println("Error al convertir la fecha: ${e.message}")
-                            it.birthDate  // Si hay un error, se mantiene la fecha actual
-                        }
-
-                        Nurse(
-                            id = it.id,
-                            name = name.ifBlank { it.name },
-                            surname = surname.ifBlank { it.surname },
-                            email = email.ifBlank { it.email },
-                            password = newPassword.value.ifBlank { it.password },
-                            birthDate = parsedBirthDate!!,
-                            registerDate = it.registerDate
-                        )
-                    }
-
-                    println(updatedNurse)
-                    if (updatedNurse != null) {
-                        vm.updateNurse(updatedNurse)
+                    vm.data.currentUser?.id?.let {
+                        Toast.makeText(context, "Deleting Account...", Toast.LENGTH_SHORT).show()
+                        vm.deleteAccount(it)
                     }
                 },
-                icon = Icons.Outlined.Create,
-                text = "Save",
+                text = "",
                 enabled = !vm.state.isLoading,
-                description = "Save changes"
             )
         }
 
@@ -170,6 +144,7 @@ fun ProfileView(
                 )
 
                 Spacer(Modifier.height(16.dp))
+
                 Text(
                     text = "Reset Password",
                     fontSize = 14.sp,
@@ -243,15 +218,41 @@ fun ProfileView(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            DeleteAccountButton(
+            PrimaryButton(
                 onClick = {
-                    vm.data.currentUser?.id?.let {
-                        Toast.makeText(context, "Deleting Account...", Toast.LENGTH_SHORT).show()
-                        vm.deleteAccount(it)
+
+                    val dateFormat = SimpleDateFormat(
+                        "dd/MM/yyyy",
+                        Locale.getDefault()
+                    )  // Asegúrate de que el formato coincida con el input
+                    val updatedNurse = vm.data.currentUser?.let {
+                        val parsedBirthDate = try {
+                            if (birthDate.isNotBlank()) dateFormat.parse(birthDate) else it.birthDate
+                        } catch (e: Exception) {
+                            println("Error al convertir la fecha: ${e.message}")
+                            it.birthDate  // Si hay un error, se mantiene la fecha actual
+                        }
+
+                        Nurse(
+                            id = it.id,
+                            name = name.ifBlank { it.name },
+                            surname = surname.ifBlank { it.surname },
+                            email = email.ifBlank { it.email },
+                            password = newPassword.value.ifBlank { it.password },
+                            birthDate = parsedBirthDate!!,
+                            registerDate = it.registerDate
+                        )
+                    }
+
+                    println(updatedNurse)
+                    if (updatedNurse != null) {
+                        vm.updateNurse(updatedNurse)
                     }
                 },
-                text = "Delete Account",
+                icon = Icons.Outlined.Create,
+                text = "Save",
                 enabled = !vm.state.isLoading,
+                description = "Save changes"
             )
         }
     }
