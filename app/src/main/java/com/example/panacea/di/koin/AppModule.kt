@@ -146,7 +146,6 @@ val appModule = module {
         }
     }
 
-
     // APIs
     single { NetworkServicesImpl(get()) }
 

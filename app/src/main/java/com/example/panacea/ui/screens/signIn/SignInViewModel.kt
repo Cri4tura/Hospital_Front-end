@@ -10,14 +10,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.data.repositories.NurseRepositoryImpl
 import java.text.SimpleDateFormat
+import androidx.lifecycle.viewModelScope
+import com.example.panacea.ui.screens.profile.ProfileViewModel.UiData
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.Locale
 
-class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewModel() {
+class SignInViewModel(private val repository: NurseRepositoryImpl) : ViewModel() {
 
     data class ValidationResult(val isValid: Boolean, val errorMessage: String)
 
-    private val _authenticationState = MutableStateFlow<Boolean>(false)
+    private val _authenticationState = MutableStateFlow(false)
     val authenticationState: StateFlow<Boolean> = _authenticationState.asStateFlow()
 
     private val _nameError = mutableStateOf<String?>(null)
@@ -36,7 +39,6 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
     val passwordError: State<String?> = _passwordError
 
     private val _confirmPasswordError = mutableStateOf<String?>(null)
-    val confirmPasswordError: State<String?> = _confirmPasswordError
 
     fun signIn(
         name: String,
@@ -53,6 +55,11 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
         val birthDateParsed = parseBirthDate(birthDate)
         val passwordsValid = validatePasswords(password1, password2)
 
+        println("Validando nombre: $name -> isValid: ${nameValid.isValid}, error: ${nameValid.errorMessage}")
+        println("Validando apellido(s): $lastName -> isValid: ${lastNameValid.isValid}, error: ${lastNameValid.errorMessage}")
+        println("Validando email: $email -> isValid: ${emailValid.isValid}, error: ${emailValid.errorMessage}")
+        println("Validando birth date: $birthDate -> isValid: ${birthDateValid.isValid}, error: ${birthDateValid.errorMessage}")
+        println("Validando password: $password1 -> isValid: ${passwordsValid.isValid}, error: ${passwordsValid.errorMessage}")
 
         println("DOB: $birthDateParsed")
         _nameError.value = nameValid.errorMessage
@@ -60,23 +67,32 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
         _emailError.value = emailValid.errorMessage
         _birthDateError.value = birthDateValid.errorMessage
         _passwordError.value = passwordsValid.errorMessage
-        _authenticationState.value = nameValid.isValid && lastNameValid.isValid && emailValid.isValid && birthDateValid.isValid && passwordsValid.isValid
-        if(_authenticationState.value) {
-            addNurseToRepository(name, lastName, email, birthDateParsed!!, password1)
-        }
-    }
+        _authenticationState.value =
+            nameValid.isValid && lastNameValid.isValid && emailValid.isValid && birthDateValid.isValid && passwordsValid.isValid
 
-    private fun addNurseToRepository(name: String, lastName: String, email: String, birthDate: Date, password1: String) {
-        val newNurse = Nurse(
-            id = 99,
-            name = name,
-            surname = lastName,
-            email = email,
-            registerDate = Date(),
-            birthDate = birthDate,
-            password = password1
-        )
-        nurseRepository.addNurse(newNurse)
+        if (_authenticationState.value) {
+            val newNurse = Nurse(
+                id = 99,
+                name = name,
+                surname = lastName,
+                email = email,
+                registerDate = Date(),
+                birthDate = birthDateParsed!!,
+                password = password1
+            )
+
+            viewModelScope.launch {
+                repository.signinNurse(newNurse).collect {
+
+                    if (it.id != -1) {
+                        _authenticationState.value = true
+                    } else {
+                        _authenticationState.value = false
+                    }
+
+                }
+            }
+        }
     }
 
     private fun validateName(name: String): ValidationResult {
@@ -101,7 +117,6 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
             }
 
             else -> {
-                _surnameError.value = null
                 ValidationResult(true, "")
             }
         }
@@ -116,6 +131,7 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
                     "Email is empty"
                 )
             }
+
             !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
                 _emailError.value = "Invalid email format"
                 ValidationResult(
@@ -123,6 +139,7 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
                     "Invalid email format"
                 )
             }
+
             else -> {
                 _emailError.value = null
                 ValidationResult(
@@ -139,6 +156,7 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
                 _birthDateError.value = "Birth date is empty"
                 ValidationResult(false, "Birth date is empty")
             }
+
             else -> {
                 _birthDateError.value = birthDate
                 ValidationResult(true, "")
@@ -152,15 +170,18 @@ class SignInViewModel(private val nurseRepository: NurseRepositoryImpl) : ViewMo
                 _passwordError.value = "Password is empty"
                 ValidationResult(false, "Password is empty")
             }
+
             password2.isBlank() -> {
                 _confirmPasswordError.value = "Password is empty"
                 ValidationResult(false, "Password is empty")
             }
+
             password1 != password2 -> {
                 _passwordError.value = "Passwords do not match"
                 _confirmPasswordError.value = "Passwords do not match"
                 ValidationResult(false, "Passwords do not match")
             }
+
             else -> {
                 _passwordError.value = null
                 _confirmPasswordError.value = null
