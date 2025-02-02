@@ -25,20 +25,64 @@ class NetworkServicesImpl(
     private val client: HttpClient
 ) : NetworkServices {
 
+    init {
+        println("NetworkServicesImpl inicializado")
+    }
+
     override suspend fun getNurses(): List<Nurse> {
         val allNurses = mutableListOf<Nurse>()
-        val response = client.get("/nurse")
-        val nurseResponse: NurseResponse = Json.decodeFromString(response.bodyAsText())
-        nurseResponse.data.forEach { nurse ->
-            allNurses.add(nurse)
+
+        println("Llamada a getNurses()")  // Log para rastrear la llamada
+
+        try {
+            // Realizamos la petición GET
+            val response = client.get("/nurse")
+
+            // Verificamos que la respuesta sea exitosa
+            if (response.status == HttpStatusCode.OK) {
+                // Si la respuesta es exitosa, la deserializamos
+                val nurseResponse: NurseResponse = Json.decodeFromString(response.bodyAsText())
+                nurseResponse.data.forEach { nurse ->
+                    allNurses.add(nurse)
+                }
+            } else {
+                // Si la respuesta no es exitosa, lanzar una excepción personalizada o loguear el error
+                throw Exception("Error en la respuesta del servidor: ${response.status.value}")
+            }
+
+        } catch (e: Exception) {
+            // Manejo de cualquier tipo de excepción que ocurra durante la petición
+            println("Error al obtener enfermeras: ${e.localizedMessage}")
+            // Aquí puedes lanzar una excepción personalizada si lo deseas o manejar el error de otra manera
+            throw e // Vuelves a lanzar la excepción para propagarla
         }
+
+        println("getNurses() ha terminado") // Log para indicar que la función terminó
+
         return allNurses
     }
 
     override suspend fun getNurseById(nurseId: Int): Nurse {
-        val response = client.get("/nurse/id/$nurseId")
-        val nurseResponse: Nurse = Json.decodeFromString<Nurse>(response.bodyAsText())
-        return nurseResponse
+        try {
+            // Realizamos la petición GET
+            val response = client.get("/nurse/id/$nurseId")
+
+            // Verificamos que la respuesta sea exitosa
+            if (response.status == HttpStatusCode.OK) {
+                // Si la respuesta es exitosa, la deserializamos
+                val nurseResponse: Nurse = Json.decodeFromString(response.bodyAsText())
+                return nurseResponse
+            } else {
+                // Si la respuesta no es exitosa, lanzar una excepción personalizada o loguear el error
+                throw Exception("Error en la respuesta del servidor: ${response.status.value}")
+            }
+
+        } catch (e: Exception) {
+            // Manejo de cualquier tipo de excepción que ocurra durante la petición o la deserialización
+            println("Error al obtener la enfermera con ID $nurseId: ${e.localizedMessage}")
+            // Aquí puedes lanzar una excepción personalizada si lo deseas o manejar el error de otra manera
+            throw e // Vuelves a lanzar la excepción para propagarla
+        }
     }
 
     override suspend fun validateLogin(email: String, password: String): Nurse? {

@@ -84,9 +84,13 @@ dependencies {
     implementation(libs.bundles.ktor.common)
     implementation(libs.coil.network.ktor)
 
-
-
+    // Glide para Compose
     implementation(libs.compose)
+
+    // Glide tradicional
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

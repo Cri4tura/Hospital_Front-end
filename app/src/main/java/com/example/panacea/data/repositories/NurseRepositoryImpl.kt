@@ -27,14 +27,9 @@ class NurseRepositoryImpl(
         registerDate = SimpleDateFormat("dd/MM/yyyy").parse("01/02/2024")
     )
 
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            nurseList = conn.getNurses().toMutableList()
-        }
-    }
-
     override val remoteNurses: Flow<List<Nurse>> = flow {
         val nurses = conn.getNurses()
+        nurseList = nurses.toMutableList()
         emit(nurses)
     }
 

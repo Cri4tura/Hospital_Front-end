@@ -37,7 +37,8 @@ import kotlinx.coroutines.delay
 fun LoginView(
     vm: LoginViewModel,
     onLogIn: () -> Unit,
-    onSignIn: () -> Unit
+    onSignIn: () -> Unit,
+    onConectionError: () -> Unit
 ) {
     val context = LocalActivity.current as FragmentActivity
     var auth by remember { mutableStateOf(false) }
@@ -45,10 +46,16 @@ fun LoginView(
     var password by remember { mutableStateOf("1234") }
     var passwordVisible by remember { mutableStateOf(false) }
 
+    // Verificar el estado de inicio de sesión y la conexión
     LaunchedEffect(vm.state.isLogged) {
-        delay(1000)
         if (vm.state.isLogged) {
-            onLogIn()
+            onLogIn() // Si está logueado, ejecutar onLogIn
+        }
+    }
+
+    LaunchedEffect(vm.state.onError && !vm.state.isLoading) {
+        if (vm.state.onError) {
+            onConectionError() // Si hay un error, llamar onConectionError
         }
     }
 
@@ -69,13 +76,7 @@ fun LoginView(
                 )
             }
         }
-        if (vm.state.onError) {
-            Text(
-                "logged: ${vm.state.isLogged} \n" +
-                        "success: ${vm.state.onSuccess} \n" +
-                        "error: ${vm.state.onError} \n"
-            )
-        }
+
 
         Column(horizontalAlignment = Alignment.CenterHorizontally)
         {

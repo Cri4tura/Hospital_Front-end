@@ -162,7 +162,7 @@ class LoginViewModel(
                         Log.e(TAG, "Error msg: ${e.localizedMessage}")
                         state = UiState(onError = true, isLoading = false)
                         _emailError.value = " "
-                        _passwordError.value = "Usuario no encontrado"
+                        _passwordError.value = e.localizedMessage
                     } finally {
                         Log.i(TAG,"FINAL STATE: $state\n" +
                                 "LOGIN ENDED.....")

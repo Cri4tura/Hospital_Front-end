@@ -21,6 +21,7 @@ import com.example.panacea.ui.screens.profile.ProfileViewModel
 import com.example.panacea.ui.screens.signIn.SignInView
 import com.example.panacea.ui.screens.splash.SplashView
 import com.example.panacea.ui.screens.signIn.SignInViewModel
+import com.example.panacea.ui.screens.splash.NetworkViewModel
 import org.koin.compose.koinInject
 
 @Composable
@@ -28,9 +29,9 @@ fun Navigation(
     nav: NavHostController
 ) {
 
-    NavHost(navController = nav, startDestination = LOGIN) {
+    NavHost(navController = nav, startDestination = SPLASH) {
         composable<SPLASH> {
-            SplashView(nav = nav)
+            SplashView(nav = nav, NetworkViewModel(koinInject()))
         }
         composable<HOME> {
             HomeView(
@@ -42,7 +43,8 @@ fun Navigation(
             LoginView(
                 vm = LoginViewModel(koinInject()),
                 onLogIn = { nav.navigate(HOME) },
-                onSignIn = { nav.navigate(SIGNING) }
+                onSignIn = { nav.navigate(SIGNING) },
+                onConectionError = { nav.navigate(SPLASH) }
             )
         }
         composable<SIGNING> {
