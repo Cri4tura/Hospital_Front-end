@@ -2,6 +2,7 @@ package com.example.panacea.domain.repositories
 
 import com.example.panacea.domain.models.nurse.Nurse
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.Date
 
 interface NurseRepository {
@@ -14,4 +15,5 @@ interface NurseRepository {
     fun addNurse(nurse: Nurse)
     fun deleteNurse(userId: Int): Flow<Boolean>
     fun updateNurse(updateData: Nurse): Flow<Nurse>
+    suspend fun signinNurse(nurse: Nurse): Flow<Nurse>
 }

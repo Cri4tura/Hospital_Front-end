@@ -9,5 +9,5 @@ interface NetworkServices {
     suspend fun validateLogin(email: String, password: String): Nurse?
     suspend fun deleteNurse(userId: Int): Boolean
     suspend fun updateNurse(updatedData: Nurse): Nurse
-
+    suspend fun register(nurse: Nurse): Nurse
 }

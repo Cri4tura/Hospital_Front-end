@@ -111,7 +111,7 @@ class NetworkServicesImpl(
                 }
 
             } else {
-                if (response.status == HttpStatusCode.NotFound){
+                if (response.status == HttpStatusCode.NotFound) {
                     println("Usuario no encontrado en la BBDD".uppercase())
                 }
                 println("LOGIN FAILED")
@@ -164,5 +164,31 @@ class NetworkServicesImpl(
             return updatedData
         }
 
+    }
+
+    override suspend fun register(nurse: Nurse): Nurse {
+        val response = client.post("/nurse/signin") {
+            contentType(ContentType.Application.Json)
+            setBody(nurse)
+        }
+
+        println("--> ${response.request.method.value}  ${response.request.url} ")
+        println(response.bodyAsText())
+        println("<-- END ${response.request.method.value}  ${response.request.url}")
+        println("<-- RESPONSE CODE ${response.status}")
+
+        if (response.status == HttpStatusCode.Created){
+            return nurse
+        } else {
+            val newNurse = Nurse(id = -1, name = "", surname = "", email = "", password = "",
+                birthDate = Date(), registerDate = Date())
+            return newNurse
+        }
+
+//        return if (response.status == HttpStatusCode.Created) {
+//            jsonData.decodeFromString<Nurse>(response.bodyAsText()) // Devuelve el objeto Nurse
+//        } else {
+//            null // Retorna null si falla el registro
+//        }
     }
 }

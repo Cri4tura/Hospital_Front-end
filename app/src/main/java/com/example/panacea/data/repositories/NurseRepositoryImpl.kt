@@ -65,6 +65,23 @@ class NurseRepositoryImpl(
         emit(currentNurse)
     }
 
+    override suspend fun signinNurse(nurse: Nurse): Flow<Nurse> = flow {
+        val registeredNurse = conn.register(nurse)  // register devuelve un Nurse? (o null si falla)
+
+        if (registeredNurse.id != -1) {
+            currentNurse = registeredNurse
+            nurseList.add(registeredNurse)
+            emit(nurse)  // Signin exitoso
+        } else {
+            val errorNurse = Nurse(
+                id = -1, name = "", surname = "", email = "", password = "",
+                birthDate = Date(), registerDate = Date()
+            )
+            currentNurse = errorNurse
+            emit(errorNurse) // Signin falló
+        }
+    }
+
     override fun getCurrentNurse(): Nurse {
         return currentNurse
     }

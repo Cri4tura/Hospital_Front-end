@@ -67,7 +67,6 @@ fun HomeView(
     val state by vm.state.collectAsState()
     val data by vm.data.collectAsState()
 
-
     LaunchedEffect(vm.state) {
         vm.fetchHomeData()
         Log.e("HomeView", "Fetching data... ${state}")
