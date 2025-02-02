@@ -1,5 +1,6 @@
 package com.example.panacea.ui.screens.home
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,7 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.panacea.data.repositories.NurseRepositoryImpl
 import kotlinx.coroutines.launch
 import com.example.panacea.domain.models.nurse.Nurse
+import com.example.panacea.ui.screens.profile.ProfileViewModel.UiData
+import com.example.panacea.ui.screens.profile.ProfileViewModel.UiState
 import kotlinx.coroutines.delay
+import java.io.IOException
 
 class HomeViewModel(
     private val repository: NurseRepositoryImpl
@@ -21,19 +25,28 @@ class HomeViewModel(
         private set
 
     init {
+        fetchHomeData()
+    }
+
+    private fun fetchHomeData() {
         viewModelScope.launch {
             state = UiState(isLoading = true)
-            delay(50)
-            val user = repository.getCurrentNurse()
-            repository.remoteNurses.collect {
-                if (it.isEmpty()) {
-                    state = UiState(onError = true)
-                } else {
-                    state = UiState(onSuccess = true)
-                    data = UiData(nurseList = it, currentUser = user)
-                }
+            println("GETTING HOME DATA....")
+            try {
+                data = UiData(
+                    nurseList = repository.getNurseList(),
+                    currentUser = repository.getCurrentNurse()
+                )
+                state = UiState(onSuccess = true)
+            } catch (e: IOException) {
+                println("Network error: ${e.message}")
+                state = UiState(onError = true)
+            } catch (e: Exception) {
+                println("Unexpected error: ${e.message}")
+                state = UiState(onError = true)
+            } finally {
+                state = state.copy(isLoading = false)
             }
-            state = UiState(isLoading = false)
         }
     }
 

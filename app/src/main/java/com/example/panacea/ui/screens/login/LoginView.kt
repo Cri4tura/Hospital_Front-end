@@ -31,6 +31,7 @@ import com.example.panacea.ui.components.EmailInput
 import com.example.panacea.ui.components.FingerPrintAuth
 import com.example.panacea.ui.components.PasswordInput
 import com.example.panacea.ui.components.PrimaryButton
+import kotlinx.coroutines.delay
 
 @Composable
 fun LoginView(
@@ -39,17 +40,14 @@ fun LoginView(
     onSignIn: () -> Unit
 ) {
     val context = LocalActivity.current as FragmentActivity
-
     var auth by remember { mutableStateOf(false) }
-    var email by remember { mutableStateOf("marta.hernandez@example.com") }
+    var email by remember { mutableStateOf("jose.lopez@example.com") }
     var password by remember { mutableStateOf("password123") }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // setup biometrics
-    vm.setupAuth(context)
-
-    LaunchedEffect(vm.authenticationState.value) {
-        if (vm.authenticationState.value) {
+    LaunchedEffect(vm.state.isLogged) {
+        delay(1000)
+        if (vm.state.isLogged) {
             onLogIn()
         }
     }
@@ -65,12 +63,16 @@ fun LoginView(
                 .fillMaxWidth()
                 .height(4.dp)
         ) {
-            if (vm.isLoading.value) {
+            if (vm.state.isLoading) {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxSize()
                 )
             }
         }
+
+        Text("logged: ${vm.state.isLogged} \n" +
+                "success: ${vm.state.onSuccess} \n" +
+                "error: ${vm.state.onError} \n")
 
         Column(horizontalAlignment = Alignment.CenterHorizontally)
         {
@@ -115,6 +117,7 @@ fun LoginView(
 
             FingerPrintAuth(
                 modifier = Modifier.clickable {
+                    vm.onLoginClicked(context)
                     vm.setupAuth(context)
                     if (auth) {
                         onLogIn()

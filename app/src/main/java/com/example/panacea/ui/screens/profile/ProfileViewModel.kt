@@ -18,6 +18,7 @@ class ProfileViewModel(
         private set
 
     var data by mutableStateOf(UiData())
+        private set
 
     init {
         viewModelScope.launch {
@@ -32,8 +33,19 @@ class ProfileViewModel(
         viewModelScope.launch {
             state = UiState(isLoading = true)
             println("DELETING DATA USER....")
-            repository.deleteAccount(userId).collect{
+            repository.deleteNurse(userId).collect {
                 state = state.copy(isLoading = false, isDeleted = true)
+            }
+        }
+    }
+
+    fun updateNurse(updateData: Nurse) {
+        viewModelScope.launch {
+            state = UiState(isLoading = true)
+            println("UPDATING DATA USER....")
+            repository.updateNurse(updateData).collect{
+                data = UiData(updateData)
+                state = state.copy(isLoading = false, isUpdated = true)
             }
         }
     }
@@ -41,8 +53,8 @@ class ProfileViewModel(
     data class UiState(
         val isLoading: Boolean = false,
         val isDeleted: Boolean = false,
+        val isUpdated: Boolean = false,
         val onError: Boolean = false,
-        val onSuccess: Boolean = false,
     )
 
     data class UiData(

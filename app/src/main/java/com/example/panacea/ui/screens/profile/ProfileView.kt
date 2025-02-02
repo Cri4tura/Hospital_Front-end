@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.components.DateInput
 import com.example.panacea.ui.components.DeleteAccountButton
 import com.example.panacea.ui.components.EmailInput
@@ -40,7 +41,11 @@ import com.example.panacea.ui.components.ResetPasswordDialog
 import com.example.panacea.ui.components.RoundedImagePicker
 import com.example.panacea.ui.components.TextInput
 import com.example.panacea.ui.navigation.LOGIN
+import com.example.panacea.ui.navigation.PROFILE
 import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ProfileView(
@@ -64,8 +69,16 @@ fun ProfileView(
     LaunchedEffect(vm.state.isDeleted) {
         if (vm.state.isDeleted) {
             Toast.makeText(context, "Account Deleted...", Toast.LENGTH_SHORT).show()
-            delay(2000)
+            delay(1000)
             nav.navigate(LOGIN)
+        }
+    }
+
+    LaunchedEffect(vm.state.isUpdated) {
+        if (vm.state.isUpdated) {
+            Toast.makeText(context, "Account Updated...", Toast.LENGTH_SHORT).show()
+            delay(1000)
+            nav.navigate(PROFILE)
         }
     }
 
@@ -106,7 +119,34 @@ fun ProfileView(
 
             PrimaryButton(
                 onClick = {
-                    Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+
+                    val dateFormat = SimpleDateFormat(
+                        "dd/MM/yyyy",
+                        Locale.getDefault()
+                    )  // Asegúrate de que el formato coincida con el input
+                    val updatedNurse = vm.data.currentUser?.let {
+                        val parsedBirthDate = try {
+                            if (birthDate.isNotBlank()) dateFormat.parse(birthDate) else it.birthDate
+                        } catch (e: Exception) {
+                            println("Error al convertir la fecha: ${e.message}")
+                            it.birthDate  // Si hay un error, se mantiene la fecha actual
+                        }
+
+                        Nurse(
+                            id = it.id,
+                            name = name.ifBlank { it.name },
+                            surname = surname.ifBlank { it.surname },
+                            email = email.ifBlank { it.email },
+                            password = newPassword.value.ifBlank { it.password },
+                            birthDate = parsedBirthDate!!,
+                            registerDate = it.registerDate
+                        )
+                    }
+
+                    println(updatedNurse)
+                    if (updatedNurse != null) {
+                        vm.updateNurse(updatedNurse)
+                    }
                 },
                 icon = Icons.Outlined.Create,
                 text = "Save",
@@ -179,7 +219,7 @@ fun ProfileView(
                 DateInput(
                     value = birthDate,
                     onValueChange = { birthDate = it },
-                    label = vm.data.currentUser?.formatDate(vm.data.currentUser?.birthDate),
+                    label = vm.data.currentUser?.dateToString(vm.data.currentUser?.birthDate),
                     placeholder = null,
                     isError = null
                 )

@@ -1,7 +1,9 @@
 package com.example.panacea.ui.screens.home
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -52,6 +57,8 @@ fun HomeView(
     nav: NavHostController,
     vm: HomeViewModel
 ) {
+
+    val context = LocalContext.current
 
     DrawerAppBar(
         nav = nav,
@@ -73,7 +80,6 @@ fun HomeView(
             }
         },
         screenContent = {
-
             Box (
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
@@ -82,8 +88,7 @@ fun HomeView(
                     CircularProgressIndicator()
                 } else {
                     LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
@@ -100,8 +105,6 @@ fun HomeView(
                                 Column(
                                     modifier = Modifier.padding(16.dp)
                                 ) {
-                                    Spacer(modifier = Modifier.height(16.dp))
-
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -121,19 +124,18 @@ fun HomeView(
                                                 style = MaterialTheme.typography.titleMedium,
                                             )
                                         }
-                                        IconButton(
-                                            onClick = {
-                                                isFilled = !isFilled
-                                            },
-                                            modifier = Modifier.size(45.dp).padding(4.dp)
-                                        ) {
-                                            Icon(
-                                                modifier = Modifier.fillMaxSize(),
-                                                imageVector = if (isFilled) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                                contentDescription = "Star Icon",
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
+                                        Icon(
+                                            modifier = Modifier
+                                                .padding(4.dp)
+                                                .size(25.dp)
+                                                .clip(CircleShape)
+                                                .clickable {
+                                                    Toast.makeText(context, "Sending Email...", Toast.LENGTH_SHORT).show()
+                                                },
+                                            imageVector = Icons.Outlined.Email,
+                                            contentDescription = null,
+                                            tint = lerp(Color.Yellow, Color.Black, 0.35f)
+                                        )
 
                                     }
 
@@ -163,7 +165,6 @@ fun HomeView(
                     }
                 }
             }
-
         }
     )
 }

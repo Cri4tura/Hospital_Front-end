@@ -1,11 +1,15 @@
 package com.example.panacea.ui.screens.login
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import android.util.Patterns
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
@@ -13,6 +17,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.panacea.data.repositories.NurseRepositoryImpl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.net.HttpRetryException
 
 class LoginViewModel(
     private val repository: NurseRepositoryImpl
@@ -21,23 +27,22 @@ class LoginViewModel(
     private var isBiometricAuthAvailable = false
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
-    private val _isLoading = mutableStateOf(false)
-    private val _authenticationState = mutableStateOf(false)
-    private val _isLoginSuccessful = mutableStateOf(false)
-    private val _passwordError = mutableStateOf("")
-    private val _emailError = mutableStateOf("")
+    var state by mutableStateOf(UiState())
+        private set
 
-    // ESTADOS
-    val isLoading: State<Boolean> = _isLoading
-    val authenticationState: State<Boolean> = _authenticationState
+    private val _passwordError = mutableStateOf("")
     val passwordError: State<String> = _passwordError
+    private val _emailError = mutableStateOf("")
     val emailError: State<String> = _emailError
 
     fun setupAuth(context: Context) {
 
-        if (BiometricManager.from(context)
-                .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL) == BiometricManager.BIOMETRIC_SUCCESS
-        ) {
+        if (isBiometricAuthAvailable) return  // Evitar configuración redundante
+
+        val biometricManager = BiometricManager.from(context)
+        val canAuthenticate = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+
+        if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
             isBiometricAuthAvailable = true
             promptInfo = BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Biometric Authentication")
@@ -46,7 +51,25 @@ class LoginViewModel(
         }
     }
 
+    // Llama a setupAuth cuando el usuario intente iniciar sesión o acceder a una pantalla protegida
+    fun onLoginClicked(context: Context) {
+        setupAuth(context)
+        // Llamar luego al método de autenticación, si la biometría está disponible
+        if (isBiometricAuthAvailable) {
+            authenticate(context as FragmentActivity) { success ->
+                if (success) {
+                    // Autenticación exitosa
+                    Log.d(TAG, "BIOMETRICS LOGIN____!")
+                } else {
+                    // Autenticación fallida
+                    Log.e(TAG, "BIOMETRICS LOGIN____ERROR!")
+                }
+            }
+        }
+    }
+
     fun authenticate(context: FragmentActivity, onAuthenticationResult: (Boolean) -> Unit) {
+
         if (isBiometricAuthAvailable) {
             if (!this::promptInfo.isInitialized) {
                 promptInfo =
@@ -59,27 +82,30 @@ class LoginViewModel(
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
                     onAuthenticationResult(true)
-                    _authenticationState.value = true
+                    state = UiState(isLogged = true, isLoading = false)
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
                     onAuthenticationResult(false)
-                    _authenticationState.value = false
+                    state = UiState(isLoading = false, onError = true)
                 }
             }
 
             BiometricPrompt(
-                context, ContextCompat.getMainExecutor(context), authenticationCallback
+                context,
+                ContextCompat.getMainExecutor(context),
+                authenticationCallback
             ).authenticate(promptInfo)
 
         } else {
             onAuthenticationResult(true)
-            _authenticationState.value = true
+            state = UiState(isLogged = true, isLoading = false)
         }
     }
 
     fun login(email: String, password: String) {
+
         val validationEmail = validateEmail(email)
         val validationPassword = validatePassword(password)
 
@@ -90,85 +116,110 @@ class LoginViewModel(
             !validationEmail.isValid && !validationPassword.isValid -> {
                 _emailError.value = validationEmail.errorMessage
                 _passwordError.value = validationPassword.errorMessage
-                println("Ambos son inválidos. _authenticationState: ${_authenticationState.value}")
             }
 
             validationEmail.isValid && !validationPassword.isValid -> {
                 _passwordError.value = validationPassword.errorMessage
-                println("Email válido pero password inválido. _authenticationState: ${_authenticationState.value}")
             }
 
             !validationEmail.isValid && validationPassword.isValid -> {
                 _emailError.value = validationEmail.errorMessage
-                println("Password válido pero email inválido. _authenticationState: ${_authenticationState.value}")
             }
 
-            else -> {  // Email y Password son válidos
-
-                println("Email y password válidos. Iniciando login...")
-
+            else -> {
                 viewModelScope.launch {
+                    state = UiState(isLoading = true)
+                    Log.i(TAG, "Email y password válidos. Iniciando login...\n" +
+                            "LOGIN STARTED.........")
+                    try {
+                        repository.validateLogin(email, password).collect { nurse ->
+                            if (nurse != null) {
+                                state = UiState(
+                                    log = "LOGIN SUCCESS!",
+                                    isLoading = false,
+                                    isLogged = true,
+                                    onSuccess = true,
+                                )
+                                _emailError.value = ""
+                                _passwordError.value = ""
 
-                    _isLoading.value = true
-                    delay(50)
-                    println("Llamando a validateLogin()... _isLoading: ${_isLoading.value}")
-
-                    repository.validateLogin(email, password).collect { nurse ->
-                        if(nurse != null){
-                            _authenticationState.value = true
-                            //_isLoginSuccessful.value = true
-                        } else {
-                            _emailError.value = " "
-                            _passwordError.value = "Incorrect email or password"
+                            } else {
+                                state = UiState(
+                                    log = "LOGIN NOT SUCCESS!",
+                                    isLoading = false,
+                                    isLogged = false,
+                                    onError = false
+                                )
+                                _emailError.value = " "
+                                _passwordError.value = "Incorrect email or password"
+                            }
                         }
-
-                        println("Respuesta de validateLogin -> " +
-                                "_authenticationState: ${_authenticationState.value}, " +
-                                "_isLoginSuccessful: ${_isLoginSuccessful.value}, " +
-                                "_isLoading: ${_isLoading.value}")
+                    } catch (e: HttpRetryException) {
+                        Log.e(TAG, "Error de red: ${e.localizedMessage}")
+//                        state = UiState(onError = true, isLoading = false)
+                        _emailError.value = "Error de conexión. Inténtalo de nuevo."
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error inesperado: ${e.localizedMessage}")
+//                        state = UiState(onError = true, isLoading = false)
+                        _emailError.value = "Ocurrió un error inesperado."
+                    } finally {
+                        Log.i(TAG,"FINAL STATE: $state\n" +
+                                "LOGIN ENDED.....")
                     }
-
-                    _isLoading.value = false
                 }
             }
         }
     }
 
 
-    private fun validateEmail(email: String): ValidationResult {
+    private fun validateEmail(email: String): UiValid {
         return when {
             email.isBlank() -> {
                 _emailError.value = "Email cannot be empty"
-                ValidationResult(false, "Email is empty")
+                UiValid(false, "Email is empty")
             }
+
             !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
                 _emailError.value = "Invalid email format"
-                ValidationResult(false, "Invalid email format")
+                UiValid(false, "Invalid email format")
             }
+
             else -> {
                 _emailError.value = ""
-                ValidationResult(true, "")
+                UiValid(true, "")
             }
         }
     }
 
-    private fun validatePassword(password: String): ValidationResult {
+    private fun validatePassword(password: String): UiValid {
         return when {
             password.isBlank() -> {
                 _passwordError.value = "Password cannot be empty"
-                ValidationResult(false, "Password is empty")
+                UiValid(false, "Password is empty")
             }
+
             password.length < 4 -> {
                 _passwordError.value = "Password must be at least 4 characters long"
-                ValidationResult(false, "Password too short")
+                UiValid(false, "Password too short")
             }
+
             else -> {
                 _passwordError.value = ""
-                ValidationResult(true, "")
+                UiValid(true, "")
             }
         }
     }
 
-    data class ValidationResult(val isValid: Boolean, val errorMessage: String)
+    data class UiState(
+        val log: String = " ",
+        val isLoading: Boolean = false,
+        val isLogged: Boolean = false,
+        val onError: Boolean = false,
+        val onSuccess: Boolean = false
+    )
 
+    data class UiValid(
+        val isValid: Boolean,
+        val errorMessage: String
+    )
 }

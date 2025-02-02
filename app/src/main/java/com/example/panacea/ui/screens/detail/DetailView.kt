@@ -31,44 +31,44 @@ fun DetailView(
     vm: DetailViewModel = koinViewModel { parametersOf(nurseId) }
 ) {
 
-    Column(
-        modifier = Modifier
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
-        IconButton(
-            onClick = { nav.popBackStack() },
-            modifier = Modifier.align(Alignment.Start)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier.size(35.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (vm.state.isLoading) {
-                Box (
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ){
-                    CircularProgressIndicator()
-                }
-            } else {
-                vm.state.nurse?.let {
-                    Spacer(modifier = Modifier.weight(0.25f))
-                    NurseExtendedItem(
-                        nurse = it
+        if (vm.state.isLoading) {
+            CircularProgressIndicator()
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                IconButton(
+                    onClick = { nav.popBackStack() },
+                    modifier = Modifier.align(Alignment.Start)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier.size(35.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
-                    Spacer(modifier = Modifier.weight(0.75f))
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    vm.state.nurse?.let {
+                        Spacer(modifier = Modifier.weight(0.25f))
+                        NurseExtendedItem(
+                            nurse = it
+                        )
+                        Spacer(modifier = Modifier.weight(0.75f))
+                    }
                 }
             }
         }

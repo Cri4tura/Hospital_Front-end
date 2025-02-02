@@ -1,5 +1,6 @@
 package com.example.panacea.di.koin
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.panacea.data.network.NetworkServicesImpl
 import com.example.panacea.data.repositories.NurseRepositoryImpl
@@ -24,6 +25,7 @@ import org.koin.java.KoinJavaComponent.getKoin
 // Define el módulo de Koin
 val appModule = module {
 
+    // HttpClient client singleton
     single {
         HttpClient {
             install(ContentNegotiation) {
@@ -45,7 +47,7 @@ val appModule = module {
     single { NetworkServicesImpl(get()) }
 
     // Repositorios
-    singleOf(::NurseRepositoryImpl)
+    singleOf(::NurseRepositoryImpl) // Repositorio singleton
 
     // Proveer el ViewModel e inyectar el repositorio
     viewModel { SignInViewModel(get()) }
@@ -62,8 +64,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
     }
 
     val networkServices: NetworkServicesImpl = getKoin().get()
-    Log.i("NETWORK", "CLIENTE HTTP inyectado en NetworkServices: $networkServices")
+    //Log.d(TAG, "CLIENTE HTTP INYECTADO en NetworkServices: $networkServices")
 
     val viewModelProfile: ProfileViewModel = getKoin().get()
-    Log.i("VIEWMODEL", "VM inyectado en ProfileViewModel: $viewModelProfile")
+    //Log.d(TAG, "VIEWMODEL INYECTADO en ProfileViewModel: $viewModelProfile")
 }

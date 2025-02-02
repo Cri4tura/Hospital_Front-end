@@ -29,11 +29,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Email
@@ -101,9 +101,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavHostController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.panacea.R
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.navigation.DETAIL
@@ -480,7 +484,7 @@ fun DateInput(
         onValueChange = onValueChange,
         label = {
             if (label != null) {
-                Text(label)
+                Text(label.toString())
             }
         },
         placeholder = {
@@ -660,39 +664,6 @@ fun PrimaryButton(
 }
 
 @Composable
-fun TextMenu(
-    imageResource: Int,
-    text: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
-) {
-    Row(
-        modifier = if (enabled) modifier
-            .padding(horizontal = 16.dp)
-            .height(45.dp) else modifier
-            .alpha(0.5f)
-            .padding(horizontal = 16.dp)
-            .height(45.dp)
-            .clickable() {},
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
-    ) {
-        Image(
-            painter = painterResource(id = imageResource),
-            contentDescription = text,
-            modifier = Modifier.size(35.dp)
-        )
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(
-            text = text.uppercase(),
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
-            fontSize = 22.sp
-        )
-    }
-}
-
-@Composable
 fun LogoutButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -827,51 +798,20 @@ fun NurseItem(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
 
-//        Icon(
-//            modifier = Modifier
-//                .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)
-//                .padding(4.dp)
-//                .size(ButtonDefaults.IconSize)
-//                .clip(CircleShape)
-//                .clickable { Toast.makeText(context, "Calling...", Toast.LENGTH_SHORT).show() },
-//            imageVector = Icons.Outlined.Call,
-//            contentDescription = null,
-//            tint = MaterialTheme.colorScheme.primary
-//        )
-//
-//        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         Icon(
             modifier = Modifier
+                .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)
                 .padding(4.dp)
-                .size(25.dp)
+                .size(ButtonDefaults.IconSize)
                 .clip(CircleShape)
-                .clickable {
-                    Toast.makeText(context, "Sending Email...", Toast.LENGTH_SHORT).show()
-                },
-            imageVector = Icons.Outlined.Email,
+                .clickable { Toast.makeText(context, "Calling...", Toast.LENGTH_SHORT).show() },
+            imageVector = Icons.Outlined.Call,
             contentDescription = null,
-            tint = lerp(Color.Yellow, Color.Black, 0.35f)
+            tint = MaterialTheme.colorScheme.primary
         )
-
-//        Spacer(modifier = Modifier.width(8.dp))
-//
-//        Icon(
-//            modifier = Modifier
-//                .border(1.dp, MaterialTheme.colorScheme.onError, ButtonDefaults.shape)
-//                .padding(4.dp)
-//                .size(ButtonDefaults.IconSize)
-//                .clip(CircleShape)
-//                .clickable {
-//                    Toast.makeText(context, "Deleting Contact...", Toast.LENGTH_SHORT).show()
-//                },
-//            imageVector = Icons.Outlined.Delete,
-//            contentDescription = null,
-//            tint = MaterialTheme.colorScheme.onError
-//        )
-
     }
 }
 
@@ -918,7 +858,7 @@ fun NurseExtendedItem(
                 fontSize = 22.sp
             )
             Text(
-                text = nurse.formatDate(nurse.birthDate),
+                text = nurse.dateToString(nurse.birthDate),
                 style = MaterialTheme.typography.bodyMedium,
                 fontSize = 22.sp
             )
@@ -945,7 +885,7 @@ fun NurseExtendedItem(
                 fontSize = 22.sp
             )
             Text(
-                text = nurse.formatDate(nurse.registerDate),
+                text = nurse.dateToString(nurse.registerDate),
                 style = MaterialTheme.typography.bodyMedium,
                 fontSize = 22.sp
             )
@@ -953,38 +893,7 @@ fun NurseExtendedItem(
     }
 }
 
-@Composable
-fun VideoPlayer(
-    context: Context,
-    videoResId: Int,
-    modifier: Modifier = Modifier,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
-    borderWidth: Dp = 2.dp
-) {
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
-            val mediaItem = MediaItem.fromUri(videoUri)
-            setMediaItem(mediaItem)
-            repeatMode = ExoPlayer.REPEAT_MODE_ALL
-            prepare()
-            playWhenReady = true
-        }
-    }
 
-    DisposableEffect(exoPlayer) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-
-    AndroidView(
-        factory = { PlayerView(it).apply { player = exoPlayer; useController = false } },
-        modifier = modifier
-            .clip(CircleShape)
-            .border(borderWidth, borderColor, CircleShape)
-    )
-}
 
 @Composable
 fun PasswordResetComponent(
@@ -1139,5 +1048,145 @@ fun RoundedImagePicker(
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun Splash() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            GlideImage(
+                model = R.drawable.panacea,
+                contentDescription = "Glide image ",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@androidx.annotation.OptIn(UnstableApi::class)
+@Composable
+fun VideoScreenSlpash(
+    context: Context,
+    videoResId: Int,
+    modifier: Modifier = Modifier,
+) {
+
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
+            val mediaItem = MediaItem.fromUri(videoUri)
+            setMediaItem(mediaItem)
+            repeatMode = ExoPlayer.REPEAT_MODE_ALL
+            prepare()
+            playWhenReady = true
+        }
+    }
+
+    DisposableEffect(exoPlayer) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    AndroidView(
+        factory = {
+            PlayerView(it).apply {
+                player = exoPlayer
+                useController = false // Ocultar controles
+                resizeMode =
+                    AspectRatioFrameLayout.RESIZE_MODE_ZOOM // Forzar zoom para llenar el contenedor
+            }
+        },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun VideoPlayer(
+    context: Context,
+    videoResId: Int,
+    modifier: Modifier = Modifier,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    borderWidth: Dp = 2.dp
+) {
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            val videoUri = Uri.parse("android.resource://${context.packageName}/$videoResId")
+            val mediaItem = MediaItem.fromUri(videoUri)
+            setMediaItem(mediaItem)
+            repeatMode = ExoPlayer.REPEAT_MODE_ALL
+            prepare()
+            playWhenReady = true
+        }
+    }
+
+    DisposableEffect(exoPlayer) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    AndroidView(
+        factory = { PlayerView(it).apply { player = exoPlayer; useController = false } },
+        modifier = modifier
+            .clip(CircleShape)
+            .border(borderWidth, borderColor, CircleShape)
+    )
+}
+
+
+@Composable
+fun TextMenu(
+    imageResource: Int,
+    text: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    Row(
+        modifier = if (enabled) modifier
+            .padding(horizontal = 16.dp)
+            .height(45.dp) else modifier
+            .alpha(0.5f)
+            .padding(horizontal = 16.dp)
+            .height(45.dp)
+            .clickable() {},
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Image(
+            painter = painterResource(id = imageResource),
+            contentDescription = text,
+            modifier = Modifier.size(35.dp)
+        )
+        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        Text(
+            text = text.uppercase(),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
     }
 }

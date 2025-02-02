@@ -92,6 +92,7 @@ fun DirectoryView(
             ) {
                 if (vm.state.isLoading) {
                     Box(
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator()

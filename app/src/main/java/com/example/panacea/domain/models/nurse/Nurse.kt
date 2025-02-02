@@ -7,6 +7,7 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.ZoneId
 import java.util.Date
+import java.util.Locale
 
 @Serializable
 data class Nurse(
@@ -27,10 +28,20 @@ data class Nurse(
             return Period.between(birthLocalDate, today).years
         }
 
-    fun formatDate(date: Date?): String {
+    fun dateToString(date: Date?): String {
         return SimpleDateFormat("dd/MM/yyyy").format(date)
     }
 
+    fun stringToDate(dateString: String): Date? {
+        return try {
+            val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            format.parse(dateString)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    
 }
 
 

@@ -18,6 +18,7 @@ class DirectoryViewModel(
         private set
 
     var data by mutableStateOf(UiData())
+        private set
 
     init {
         viewModelScope.launch {
