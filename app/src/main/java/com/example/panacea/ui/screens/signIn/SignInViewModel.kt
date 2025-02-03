@@ -11,7 +11,6 @@ import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.data.repositories.NurseRepositoryImpl
 import java.text.SimpleDateFormat
 import androidx.lifecycle.viewModelScope
-import com.example.panacea.ui.screens.profile.ProfileViewModel.UiData
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.Locale
@@ -55,13 +54,6 @@ class SignInViewModel(private val repository: NurseRepositoryImpl) : ViewModel()
         val birthDateParsed = parseBirthDate(birthDate)
         val passwordsValid = validatePasswords(password1, password2)
 
-        println("Validando nombre: $name -> isValid: ${nameValid.isValid}, error: ${nameValid.errorMessage}")
-        println("Validando apellido(s): $lastName -> isValid: ${lastNameValid.isValid}, error: ${lastNameValid.errorMessage}")
-        println("Validando email: $email -> isValid: ${emailValid.isValid}, error: ${emailValid.errorMessage}")
-        println("Validando birth date: $birthDate -> isValid: ${birthDateValid.isValid}, error: ${birthDateValid.errorMessage}")
-        println("Validando password: $password1 -> isValid: ${passwordsValid.isValid}, error: ${passwordsValid.errorMessage}")
-
-        println("DOB: $birthDateParsed")
         _nameError.value = nameValid.errorMessage
         _surnameError.value = lastNameValid.errorMessage
         _emailError.value = emailValid.errorMessage

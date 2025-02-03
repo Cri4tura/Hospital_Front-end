@@ -9,7 +9,7 @@ interface NurseRepository {
     val remoteNurses: Flow<List<Nurse>>
 
     fun getNurseById(nurseID: Int): Flow<Nurse>
-    fun validateLogin(email: String, password: String): Flow<Nurse?>
+    fun login(email: String, password: String): Flow<Nurse?>
     fun getCurrentNurse(): Nurse?
     suspend fun getNurseList(): List<Nurse>
     fun addNurse(nurse: Nurse)

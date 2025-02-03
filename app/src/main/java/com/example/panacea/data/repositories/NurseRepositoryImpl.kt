@@ -33,8 +33,8 @@ class NurseRepositoryImpl(
         emit(conn.getNurseById(nurseID))
     }
 
-    override fun validateLogin(email: String, password: String): Flow<Nurse?> = flow {
-        currentNurse = checkNotNull(conn.validateLogin(email, password))
+    override fun login(email: String, password: String): Flow<Nurse?> = flow {
+        currentNurse = checkNotNull(conn.login(email, password))
         emit(currentNurse)
     }
 

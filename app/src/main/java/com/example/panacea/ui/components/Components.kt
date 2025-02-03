@@ -84,6 +84,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -1111,7 +1112,8 @@ fun ResetPasswordDialog(
 
 @Composable
 fun RoundedImagePicker(
-    imageName: String,
+    painter: Painter,
+    imageName: String?,
     imageUri: Boolean,
     onImageChange: () -> Unit,
     modifier: Modifier = Modifier

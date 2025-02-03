@@ -1,20 +1,26 @@
 package com.example.panacea.ui.screens.splash
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.panacea.data.network.ConnectionException
 import io.ktor.client.HttpClient
-import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.request.get
+import io.ktor.client.request.head
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import kotlin.system.exitProcess
 
-class NetworkViewModel(private val client: HttpClient) : ViewModel() {
+class NetworkViewModel(private val json: Json, private val client: HttpClient) : ViewModel() {
 
     // Estado para manejar los errores de conexión
     private val _connectionError = MutableLiveData<String?>()
@@ -24,31 +30,44 @@ class NetworkViewModel(private val client: HttpClient) : ViewModel() {
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    init {
-        fetchData()
-    }
 
     // Función que simula un reintento de conexión
-    private fun fetchData() {
-        val retryDelay = 2000L // 2 segundos de espera entre reintentos
+    fun ping() {
+        val retryDelay = 5000L // 5 segundos de espera entre reintentos
         var isSuccess = false
 
         viewModelScope.launch {
             while (!isSuccess) {
                 try {
                     _isLoading.postValue(true)
-                    val response = client.get("/nurse")
-                    println("Respuesta recibida: $response")
-                    // Si la respuesta es exitosa, actualizamos el estado
-                    // Aquí puedes manejar el éxito, p.ej., actualizando el UI
-                    isSuccess = true
-                    _isLoading.postValue(false)
-                    onConnectionSuccess()
-                } catch (e: Exception) {
-                    println("Retrying connection --> Intento fallido: ${e.localizedMessage}")
+
+                    // TODO: HARD INTERNET LOAD
+                    // val response = client.get("/nurse")
+                    val response: HttpResponse = client.get("nurse/ping")
+
+                    val responseBody: String = response.bodyAsText()
+                    if (responseBody.isNotEmpty()) {
+                        try {
+                            val jsonResponse: JsonObject = json.decodeFromString(responseBody)
+                            val prettyJson = json.encodeToString(jsonResponse)
+                            Log.d(TAG, "JSON:\n$prettyJson")
+                        } catch (e: Exception) {
+                            Log.d(TAG, "JSON ERR: ${e.localizedMessage}")
+                        }
+                    } else {
+                        Log.e(TAG, "JSON: Empty response body")
+                    }
+                    if(response.status == HttpStatusCode.OK){
+                        isSuccess = true
+                        onConnectionSuccess()
+                        _isLoading.postValue(false)
+                    }
+
+                } catch (e: ConnectionException) {
+                    Log.e("NETWORK", "CUSTOM EXCEPTION: ${e.localizedMessage}")
                     delay(retryDelay) // Espera antes de reintentar
                     _isLoading.postValue(false) // Finaliza la carga
-                    _connectionError.postValue("${e.localizedMessage}")
+                    _connectionError.postValue("Sin conexión")
                     break
                 }
             }
@@ -56,7 +75,7 @@ class NetworkViewModel(private val client: HttpClient) : ViewModel() {
     }
 
     // Función para indicar que la conexión fue exitosa
-    fun onConnectionSuccess() {
+    private fun onConnectionSuccess() {
         _connectionError.postValue(null)  // Se indica que la conexión fue exitosa
     }
 
@@ -75,6 +94,6 @@ class NetworkViewModel(private val client: HttpClient) : ViewModel() {
         _connectionError.postValue(null)
 
         // Llamamos a la función que reintenta la conexión
-        fetchData()
+        ping()
     }
 }

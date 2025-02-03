@@ -109,9 +109,6 @@ class LoginViewModel(
         val validationEmail = validateEmail(email)
         val validationPassword = validatePassword(password)
 
-        println("Validando email: $email -> isValid: ${validationEmail.isValid}, error: ${validationEmail.errorMessage}")
-        println("Validando password -> isValid: ${validationPassword.isValid}, error: ${validationPassword.errorMessage}")
-
         when {
             !validationEmail.isValid && !validationPassword.isValid -> {
                 _emailError.value = validationEmail.errorMessage
@@ -129,10 +126,8 @@ class LoginViewModel(
             else -> {
                 viewModelScope.launch {
                     state = UiState(isLoading = true)
-                    Log.i(TAG, "Email y password válidos. Iniciando login...\n" +
-                            "LOGIN STARTED.........")
                     try {
-                        repository.validateLogin(email, password).collect { nurse ->
+                        repository.login(email, password).collect { nurse ->
                             if (nurse != null) {
                                 state = UiState(
                                     log = "LOGIN SUCCESS!",

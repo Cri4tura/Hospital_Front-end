@@ -1,109 +1,134 @@
 package com.example.panacea.data.network
 
-
+import android.util.Log
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.domain.models.nurse.NurseResponse
 import com.example.panacea.domain.repositories.NetworkServices
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.plugin
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
 import io.ktor.client.utils.EmptyContent.contentType
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import java.io.IOException
 import java.util.Date
 
 class NetworkServicesImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
+    private val json: Json
 ) : NetworkServices {
-
-    init {
-        println("NetworkServicesImpl inicializado")
-    }
 
     override suspend fun getNurses(): List<Nurse> {
         val allNurses = mutableListOf<Nurse>()
-        println("Llamada a getNurses()")
         try {
-            val response = client.get("/nurse")
+            val response: HttpResponse = client.get("/nurse")
+
             if (response.status == HttpStatusCode.OK) {
-                val nurseResponse: NurseResponse = Json.decodeFromString(response.bodyAsText())
+                val responseBody: String = response.bodyAsText()
+                val jsonResponse: JsonObject = json.decodeFromString(responseBody)
+                val prettyJson = json.encodeToString(jsonResponse)
+                Log.d("NETWORK", prettyJson)
+
+                val nurseResponse: NurseResponse = json.decodeFromString(responseBody)
                 nurseResponse.data.forEach { nurse ->
                     allNurses.add(nurse)
                 }
             } else {
-                if(response.status == HttpStatusCode.NoContent){
+                if (response.status == HttpStatusCode.NoContent) {
+                    Log.e("NETWORK", "HttpStatus NO CONTENT: ${response.status.value}")
                     throw Exception("HttpStatus NO CONTENT: ${response.status.value}")
                 }
+                Log.e("NETWORK", "STATUS CODE: ${response.status.value}")
                 throw Exception("STATUS CODE: ${response.status.value}")
             }
         } catch (e: Exception) {
-            println("Error al obtener enfermeras: ${e.localizedMessage}")
+            Log.e("NETWORK", "Error al obtener enfermeras: ${e.localizedMessage}")
             throw e
         }
-        println("getNurses() ha terminado") // Log para indicar que la función terminó
+        Log.d("NETWORK", "getNurses() ha terminado") // Log para indicar que la función terminó
         return allNurses
     }
 
     override suspend fun getNurseById(nurseId: Int): Nurse {
         try {
-            // Realizamos la petición GET
-            val response = client.get("/nurse/id/$nurseId")
+            val response: HttpResponse = client.get("/nurse/id/$nurseId")
 
-            // Verificamos que la respuesta sea exitosa
+            val responseBody: String = response.bodyAsText()
+            if (responseBody.isNotEmpty()) {
+                try {
+                    val jsonResponse: JsonObject = json.decodeFromString(responseBody)
+                    val prettyJson = json.encodeToString(jsonResponse)
+                    Log.d("NETWORK", prettyJson)
+                } catch (e: Exception) {
+                    Log.e("NETWORK", "Error parsing JSON response: ${e.localizedMessage}")
+                }
+            } else {
+                Log.e("NETWORK", "Empty response body")
+            }
+            val nurseResponse: Nurse = json.decodeFromString(responseBody)
             if (response.status == HttpStatusCode.OK) {
-                // Si la respuesta es exitosa, la deserializamos
-                val nurseResponse: Nurse = Json.decodeFromString(response.bodyAsText())
                 return nurseResponse
             } else {
-                // Si la respuesta no es exitosa, lanzar una excepción personalizada o loguear el error
+                Log.e("NETWORK", "Error en la respuesta del servidor: ${response.status.value}")
                 throw Exception("Error en la respuesta del servidor: ${response.status.value}")
             }
 
+        } catch (e: ConnectTimeoutException) {
+            Log.e("NETWORK", "CUSTOM ${e.localizedMessage}")
+            throw e
+
         } catch (e: Exception) {
-            // Manejo de cualquier tipo de excepción que ocurra durante la petición o la deserialización
-            println("Error al obtener la enfermera con ID $nurseId: ${e.localizedMessage}")
-            // Aquí puedes lanzar una excepción personalizada si lo deseas o manejar el error de otra manera
-            throw e // Vuelves a lanzar la excepción para propagarla
+            Log.e("NETWORK", "Error al obtener la enfermera con ID $nurseId: ${e.localizedMessage}")
+            throw e
         }
     }
 
-    override suspend fun validateLogin(email: String, password: String): Nurse? {
-
+    override suspend fun login(email: String, password: String): Nurse? {
         return try {
-            println("LOGIN STARTED..................................................")
-            val response = client.post("/nurse/login") {
+            val response: HttpResponse = client.post("/nurse/login") {
                 url {
                     parameters.append("email", email)
                     parameters.append("password", password)
                 }
             }
 
-            println("--> ${response.request.method.value}  ${response.request.url}")
-            println(response.bodyAsText())
-            println("<-- END ${response.request.method.value}  ${response.request.url}")
-            println("<-- RESPONSE CODE ${response.status}")
+            val responseBody: String = response.bodyAsText()
+            if (responseBody.isNotEmpty()) {
+                try {
+                    val jsonResponse: JsonObject = json.decodeFromString(responseBody)
+                    val prettyJson = json.encodeToString(jsonResponse)
+                    Log.d("NETWORK", prettyJson)
+                } catch (e: Exception) {
+                    Log.e("NETWORK", "Error parsing JSON response: ${e.localizedMessage}")
+                }
+            } else {
+                Log.e("NETWORK", "Empty response body")
+            }
 
             if (response.status == HttpStatusCode.OK) {
-                val responseBody = response.bodyAsText()
                 if (responseBody.isNotEmpty()) {
                     Json.decodeFromString<Nurse>(responseBody)
                 } else {
                     println("ERROR: Respuesta vacía del servidor.")
                     null
                 }
-
             } else {
                 if (response.status == HttpStatusCode.NotFound) {
-                    println("Usuario no encontrado en la BBDD".uppercase())
+                    println("Usuario no encontrado en la BBDD")
                 }
                 println("LOGIN FAILED")
                 null
@@ -119,12 +144,19 @@ class NetworkServicesImpl(
 
     override suspend fun deleteNurse(userId: Int): Boolean {
         val response = client.delete("/nurse/$userId")
-        val body = response.bodyAsText()
 
-        println("--> ${response.request.method.value}  ${response.request.url} ")
-        println(body)
-        println("<-- END ${response.request.method.value}  ${response.request.url}")
-        println("<-- RESPONSE CODE ${response.status}")
+        val responseBody: String = response.bodyAsText()
+        if (responseBody.isNotEmpty()) {
+            try {
+                val jsonResponse: JsonObject = json.decodeFromString(responseBody)
+                val prettyJson = json.encodeToString(jsonResponse)
+                Log.d("NETWORK", prettyJson)
+            } catch (e: Exception) {
+                Log.e("NETWORK", "Error parsing JSON response: ${e.localizedMessage}")
+            }
+        } else {
+            Log.e("NETWORK", "Empty response body")
+        }
 
         if (response.status == HttpStatusCode.OK) {
             val isDeleted = Json.decodeFromString<Boolean>(response.bodyAsText())
@@ -136,25 +168,36 @@ class NetworkServicesImpl(
     }
 
     override suspend fun updateNurse(updatedData: Nurse): Nurse {
-        val response = client.put("/nurse/${updatedData.id}") {
-            contentType(ContentType.Application.Json)
-            setBody(updatedData)
-        }
-        println(updatedData.toString())
-        val body = response.bodyAsText()
-        println("--> ${response.request.method.value}  ${response.request.url} ")
-        println(body)
-        println("<-- END ${response.request.method.value}  ${response.request.url}")
-        println("<-- RESPONSE CODE ${response.status}")
+        try {
+            val response: HttpResponse = client.put("/nurse/${updatedData.id}") {
+                contentType(ContentType.Application.Json)
+                setBody(updatedData)
+            }
 
-        if (response.status == HttpStatusCode.OK) {
-            println("Actualización exitosa: ${response.bodyAsText()}")
-            return updatedData
-        } else {
-            println("Error al actualizar: ${response.status}")
-            return updatedData
-        }
+            val responseBody: String = response.bodyAsText()
+            if (responseBody.isNotEmpty()) {
+                try {
+                    val jsonResponse: JsonObject = json.decodeFromString(responseBody)
+                    val prettyJson = json.encodeToString(jsonResponse)
+                    Log.e("NETWORK", prettyJson)
+                } catch (e: Exception) {
+                    Log.e("NETWORK", "Error parsing JSON response: ${e.localizedMessage}")
+                }
+            } else {
+                Log.e("NETWORK", "Empty response body")
+            }
 
+            if (response.status == HttpStatusCode.OK) {
+                Log.d("NETWORK", "Nurse updated successfully: ${json.encodeToString(updatedData)}")
+                return updatedData
+            } else {
+                Log.e("NETWORK", "Error al actualizar: ${response.status}")
+                throw Exception("Error al actualizar: ${response.status}")
+            }
+        } catch (e: Exception) {
+            Log.e("NETWORK", "Error al actualizar enfermera con ID ${updatedData.id}: ${e.localizedMessage}")
+            throw e
+        }
     }
 
     override suspend fun register(nurse: Nurse): Nurse {
@@ -163,23 +206,27 @@ class NetworkServicesImpl(
             setBody(nurse)
         }
 
-        println("--> ${response.request.method.value}  ${response.request.url} ")
-        println(response.bodyAsText())
-        println("<-- END ${response.request.method.value}  ${response.request.url}")
-        println("<-- RESPONSE CODE ${response.status}")
-
-        if (response.status == HttpStatusCode.Created){
-            return nurse
+        val responseBody: String = response.bodyAsText()
+        if (responseBody.isNotEmpty()) {
+            try {
+                val jsonResponse: JsonObject = json.decodeFromString(responseBody)
+                val prettyJson = json.encodeToString(jsonResponse)
+                Log.e("NETWORK", prettyJson)
+            } catch (e: Exception) {
+                Log.e("NETWORK", "Error parsing JSON response: ${e.localizedMessage}")
+            }
         } else {
-            val newNurse = Nurse(id = -1, name = "", surname = "", email = "", password = "",
-                birthDate = Date(), registerDate = Date(), profileImage = "")
-            return newNurse
+            Log.e("NETWORK", "Empty response body")
         }
 
-//        return if (response.status == HttpStatusCode.Created) {
-//            jsonData.decodeFromString<Nurse>(response.bodyAsText()) // Devuelve el objeto Nurse
-//        } else {
-//            null // Retorna null si falla el registro
-//        }
+        if (response.status == HttpStatusCode.Created) {
+            return nurse
+        } else {
+            val newNurse = Nurse(
+                id = -1, name = "", surname = "", email = "", password = "",
+                birthDate = Date(), registerDate = Date(), profileImage = ""
+            )
+            return newNurse
+        }
     }
 }
