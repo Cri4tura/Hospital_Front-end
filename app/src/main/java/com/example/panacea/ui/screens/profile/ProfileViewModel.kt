@@ -53,6 +53,10 @@ class ProfileViewModel(
         }
     }
 
+    fun changeImage() {
+        data.currentUser?.profileImage = "fake_profile_img"
+    }
+
     fun saveImageToInternalStorage(context: Context, uri: Uri): String? {
         return try {
             val inputStream: InputStream? = context.contentResolver.openInputStream(uri)

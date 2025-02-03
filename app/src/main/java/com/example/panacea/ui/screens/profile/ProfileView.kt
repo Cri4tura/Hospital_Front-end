@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import coil3.compose.rememberAsyncImagePainter
+import com.example.panacea.R
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.components.DateInput
 import com.example.panacea.ui.components.DeleteAccountButton
@@ -66,18 +67,19 @@ fun ProfileView(
     vm: ProfileViewModel
 ) {
     val context = LocalContext.current
+
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf("") }
 
-    // Estados para el diálogo de reset de contraseña
+    // Estados
     val showPasswordResetDialog = remember { mutableStateOf(false) }
     val newPassword = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
     val passwordError = remember { mutableStateOf<String?>(null) }
-
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val uriToDisplay = selectedImageUri ?: R.drawable.fake_profile_img
 
     // Configuramos el lanzador para abrir el selector de fotos
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -85,7 +87,6 @@ fun ProfileView(
     ) { uri: Uri? ->
         selectedImageUri = uri // Guardamos la URI seleccionada
     }
-
 
     // Usar LaunchedEffect para observar cambios en el estado
     LaunchedEffect(vm.state.isDeleted) {
@@ -178,29 +179,12 @@ fun ProfileView(
                             )
                             .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
                     ) {
-                        selectedImageUri?.let { uri ->
-                            // Guarda la imagen en el almacenamiento interno y obtiene la ruta
-                            val savedImagePath = vm.saveImageToInternalStorage(context, uri)
-
-                            // Asegúrate de que la imagen se guardó correctamente antes de continuar
-                            savedImagePath?.let { path ->
-                                // Crea una nueva instancia de Nurse con la imagen actualizada
-                                val updatedNurse = vm.data.currentUser?.copy(profileImage = path)
-
-                                // Actualiza el estado y la base de datos si el usuario no es nulo
-//                                updatedNurse?.let {
-//                                    vm.updateNurse(it)
-//                                }
-
-                                // Muestra la imagen guardada desde el almacenamiento interno
-                                Image(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop,   // Recortar para llenar el círculo
-                                    painter = rememberAsyncImagePainter(model = path),
-                                    contentDescription = null,
-                                )
-                            }
-                        }
+                        Image(
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,   // Recortar para llenar el círculo
+                            painter = rememberAsyncImagePainter(model = uriToDisplay),
+                            contentDescription = null,
+                        )
                     }
 
                     Box(
@@ -211,7 +195,7 @@ fun ProfileView(
                         IconButton(
                             onClick = {
                                 photoPickerLauncher.launch("image/*")
-
+                                vm.changeImage()
                             },
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
