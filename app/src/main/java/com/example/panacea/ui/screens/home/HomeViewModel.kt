@@ -25,12 +25,10 @@ class HomeViewModel(
     fun fetchHomeData() {
         viewModelScope.launch {
             _state.value.isLoading = true
-            println("GETTING HOME DATA....")
             _data.value = UiData(
                 nurseList = repository.getNurseList(),
                 currentUser = repository.getCurrentNurse()
             )
-            Log.d("HomeViewModel", "Nurse list: ${_data.value.nurseList}")
             _state.value = UiState(isLoading = false, onSuccess = true)
         }
     }

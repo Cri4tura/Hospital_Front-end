@@ -48,9 +48,14 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SplashView(nav: NavController, vm: NetworkViewModel = koinViewModel()) {
+
     // Observar la variable connectionError para ver si hay un error de conexión
     val connectionError by vm.connectionError.observeAsState()
     val isLoading by vm.isLoading.observeAsState(false)
+
+    LaunchedEffect(Unit) {
+        vm.ping()
+    }
 
     // Usar LaunchedEffect para navegar solo después de que la conexión haya sido procesada
     LaunchedEffect(connectionError, isLoading) {
@@ -62,22 +67,16 @@ fun SplashView(nav: NavController, vm: NetworkViewModel = koinViewModel()) {
         }
     }
 
-    // Si connectionError es null, significa que no hay error de conexión
     if (connectionError != null) {
-        // Mostrar la pantalla de desconexión cuando hay error de conexión
         Splash()
         DisconnectionScreen(onRetry = { vm.onReconnect() }, errorMessage = connectionError)
     } else {
         if (isLoading) {
-            // Mostrar la pantalla principal cuando no hay error de conexión
             Splash()
-            MainScreen() // O la pantalla de inicio que prefieras
+            MainScreen()
         } else {
-            // Mostrar la pantalla principal cuando no hay error de conexión
             Splash()
-            //MainScreen() // O la pantalla de inicio que prefieras
         }
-
     }
 }
 

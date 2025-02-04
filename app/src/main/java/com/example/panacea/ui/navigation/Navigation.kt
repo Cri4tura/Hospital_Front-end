@@ -31,7 +31,7 @@ fun Navigation(
 
     NavHost(navController = nav, startDestination = SPLASH) {
         composable<SPLASH> {
-            SplashView(nav = nav, NetworkViewModel(koinInject()))
+            SplashView(nav = nav, NetworkViewModel(koinInject(), koinInject()))
         }
         composable<HOME> {
             HomeView(

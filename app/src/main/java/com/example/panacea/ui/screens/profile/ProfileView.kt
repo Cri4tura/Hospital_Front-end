@@ -1,19 +1,29 @@
 package com.example.panacea.ui.screens.profile
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Create
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -27,24 +37,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
+import coil3.compose.rememberAsyncImagePainter
+import com.example.panacea.R
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.ui.components.DateInput
 import com.example.panacea.ui.components.DeleteAccountButton
 import com.example.panacea.ui.components.EmailInput
 import com.example.panacea.ui.components.PrimaryButton
 import com.example.panacea.ui.components.ResetPasswordDialog
-import com.example.panacea.ui.components.RoundedImagePicker
 import com.example.panacea.ui.components.TextInput
 import com.example.panacea.ui.navigation.LOGIN
 import com.example.panacea.ui.navigation.PROFILE
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -53,17 +67,26 @@ fun ProfileView(
     vm: ProfileViewModel
 ) {
     val context = LocalContext.current
+
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf("") }
 
-    // Estados para el diálogo de reset de contraseña
+    // Estados
     val showPasswordResetDialog = remember { mutableStateOf(false) }
     val newPassword = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
     val passwordError = remember { mutableStateOf<String?>(null) }
-    var onChangeImageClick by remember { mutableStateOf(true) }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val uriToDisplay = selectedImageUri ?: R.drawable.fake_profile_img
+
+    // Configuramos el lanzador para abrir el selector de fotos
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        selectedImageUri = uri // Guardamos la URI seleccionada
+    }
 
     // Usar LaunchedEffect para observar cambios en el estado
     LaunchedEffect(vm.state.isDeleted) {
@@ -139,11 +162,55 @@ fun ProfileView(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RoundedImagePicker(
-                    imageUri = onChangeImageClick,
-                    onImageChange = { onChangeImageClick = !onChangeImageClick },
-                    imageName = "${vm.data.currentUser?.profileImage}"
-                )
+                Box(
+                    modifier = Modifier.wrapContentSize()
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(240.dp)
+                            .clip(CircleShape)
+                            .background(
+                                lerp(
+                                    MaterialTheme.colorScheme.onPrimary,
+                                    MaterialTheme.colorScheme.primary,
+                                    0.35f
+                                )
+                            )
+                            .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                    ) {
+                        Image(
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,   // Recortar para llenar el círculo
+                            painter = rememberAsyncImagePainter(model = uriToDisplay),
+                            contentDescription = null,
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .zIndex(1f) // Asegura que esté adelante
+                    ) {
+                        IconButton(
+                            onClick = {
+                                photoPickerLauncher.launch("image/*")
+                                vm.changeImage()
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Edit,
+                                contentDescription = "Change Image",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                }
 
                 Spacer(Modifier.height(16.dp))
 
@@ -203,6 +270,7 @@ fun ProfileView(
             }
         }
         Spacer(modifier = Modifier.weight(1f))
+
 
         Box(
             modifier = Modifier
