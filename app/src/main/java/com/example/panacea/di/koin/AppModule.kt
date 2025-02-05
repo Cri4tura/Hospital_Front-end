@@ -12,7 +12,7 @@ import com.example.panacea.ui.screens.home.HomeViewModel
 import com.example.panacea.ui.screens.login.LoginViewModel
 import com.example.panacea.ui.screens.profile.ProfileViewModel
 import com.example.panacea.ui.screens.signIn.SignInViewModel
-import com.example.panacea.ui.screens.splash.NetworkViewModel
+import com.example.panacea.ui.screens.splash.SplashViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.network.sockets.ConnectTimeoutException
@@ -25,18 +25,14 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.statement.content
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.AttributeKey
-import io.ktor.utils.io.InternalAPI
 import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
-import org.koin.java.KoinJavaComponent.getKoin
 import java.net.NoRouteToHostException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException
@@ -65,7 +61,7 @@ val appModule = module {
             install(DefaultRequest) {
                 url {
                     protocol = URLProtocol.HTTP
-                    host = "192.168.1.134"
+                    host = "10.118.3.210"
                     port = 8080
                 }
             }
@@ -77,8 +73,10 @@ val appModule = module {
             install(HttpRequestRetry) {
                 maxRetries = 1
                 retryIf { request, response ->
-                    Log.d(TAG,"START ${request.method.value}, URL: ${request.url}  " +
-                             "--->\nSTATUS CODE: ${response.status.value}")
+                    Log.d(
+                        TAG, "START ${request.method.value}, URL: ${request.url}  " +
+                                "--->\nSTATUS CODE: ${response.status.value}"
+                    )
                     // Detener el reintento si ya estamos en el último intento
                     val currentRetryAttempt = request.attributes.getOrNull(RetryAttemptKey) ?: 0
                     if (currentRetryAttempt >= maxRetries) {
@@ -171,10 +169,10 @@ val appModule = module {
     single { NetworkServicesImpl(get(), get()) }
 
     // Repositorios
-    singleOf(::NurseRepositoryImpl) // Repositorio singleton
+    single { NurseRepositoryImpl(get()) } // Repositorio singleton
 
     // Proveer el ViewModel e inyectar el repositorio
-    viewModel { NetworkViewModel(get(), get()) }
+    viewModel { SplashViewModel(get() /*, get(), get()*/) }
     viewModel { SignInViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { DirectoryViewModel(get()) }

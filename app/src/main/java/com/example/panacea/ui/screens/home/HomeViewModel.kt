@@ -1,7 +1,9 @@
 package com.example.panacea.ui.screens.home
 
 
-import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.panacea.data.repositories.NurseRepositoryImpl
@@ -15,21 +17,20 @@ class HomeViewModel(
     private val repository: NurseRepositoryImpl
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(UiState())
-    val state: StateFlow<UiState> = _state
+    var state by mutableStateOf(UiState())
+        private set
 
-    private val _data = MutableStateFlow(UiData())
-    val data: StateFlow<UiData> = _data
+    var data by mutableStateOf(UiData())
+        private set
 
-
-    fun fetchHomeData() {
+    init {
         viewModelScope.launch {
-            _state.value.isLoading = true
-            _data.value = UiData(
-                nurseList = repository.getNurseList(),
-                currentUser = repository.getCurrentNurse()
+            state = UiState(isLoading = true)
+            data = UiData(
+                nurseList = repository.getCachedNurseList(),
+                currentUser = repository.getCurrentUser()
             )
-            _state.value = UiState(isLoading = false, onSuccess = true)
+            state = UiState(isLoading = false, onSuccess = true)
         }
     }
 

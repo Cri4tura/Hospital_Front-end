@@ -5,9 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.data.repositories.NurseRepositoryImpl
-import kotlinx.coroutines.delay
+import com.example.panacea.domain.models.nurse.Nurse
 import kotlinx.coroutines.launch
 
 class DirectoryViewModel(
@@ -23,17 +22,11 @@ class DirectoryViewModel(
     init {
         viewModelScope.launch {
             state = UiState(isLoading = true)
-            delay(50)
-            val user = repository.getCurrentNurse()
-            repository.remoteNurses.collect {
-                if (it.isEmpty()) {
-                    state = UiState(onError = true)
-                } else {
-                    state = UiState(onSuccess = true)
-                    data = UiData(nurseList = it, currentUser = user)
-                }
-            }
-            state = UiState(isLoading = false)
+            data = UiData(
+                nurseList = repository.getCachedNurseList(),
+                currentUser = repository.getCurrentUser()
+            )
+            state = UiState(onSuccess = true)
         }
     }
 

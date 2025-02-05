@@ -17,17 +17,24 @@ class DetailViewModel(
     var state by mutableStateOf(UiState())
         private set
 
+    var data by mutableStateOf(UiData())
+        private set
+
     init {
         viewModelScope.launch {
             state = UiState(isLoading = true)
-            repository.getNurseById(nurseId).collect {
-                state = UiState(isLoading = false, nurse = it)
-            }
+            val nurseList = repository.getCachedNurseList()
+            val nurseToShow = nurseList.find { it.id == nurseId }
+            data = UiData(nurse = nurseToShow)
+            state = UiState(isLoading = false)
         }
     }
 
     data class UiState(
         val isLoading: Boolean = false,
-        val nurse: Nurse? = null
+    )
+
+    data class UiData(
+        val nurse: Nurse? = null,
     )
 }

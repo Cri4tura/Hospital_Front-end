@@ -1,5 +1,6 @@
 package com.example.panacea.data.network
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.panacea.domain.models.nurse.Nurse
 import com.example.panacea.domain.models.nurse.NurseResponse
@@ -195,7 +196,10 @@ class NetworkServicesImpl(
                 throw Exception("Error al actualizar: ${response.status}")
             }
         } catch (e: Exception) {
-            Log.e("NETWORK", "Error al actualizar enfermera con ID ${updatedData.id}: ${e.localizedMessage}")
+            Log.e(
+                "NETWORK",
+                "Error al actualizar enfermera con ID ${updatedData.id}: ${e.localizedMessage}"
+            )
             throw e
         }
     }

@@ -1,6 +1,5 @@
 package com.example.panacea.ui.screens.splash
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,15 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,56 +20,37 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.panacea.R
 import com.example.panacea.ui.components.PrimaryButton
 import com.example.panacea.ui.components.Splash
 import com.example.panacea.ui.navigation.LOGIN
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
-//@Composable
-//fun AppScreen(nav: NavController) {
-//    LaunchedEffect(key1 = true) {
-//        delay(200)
-//        nav.navigate(LOGIN)
-//    }
-//    Splash()
-//}
-
-
 @Composable
-fun SplashView(nav: NavController, vm: NetworkViewModel = koinViewModel()) {
-
-    // Observar la variable connectionError para ver si hay un error de conexión
-    val connectionError by vm.connectionError.observeAsState()
-    val isLoading by vm.isLoading.observeAsState(false)
-
+fun SplashView(
+    nav: NavController,
+    vm: SplashViewModel = koinViewModel()
+) {
     LaunchedEffect(Unit) {
-        vm.ping()
+        vm.fetchDataFromServer()
     }
 
-    // Usar LaunchedEffect para navegar solo después de que la conexión haya sido procesada
-    LaunchedEffect(connectionError, isLoading) {
-        // Navegar solo cuando ya se haya determinado que hay error o que la carga terminó
-        if (connectionError == null && !isLoading) {
-            // Solo navegar al login si la conexión es exitosa
-            delay(1000)
+    Splash()
+
+    when {
+        vm.state.isLoading -> {
+            MainScreen()
+        }
+        vm.state.onSuccess -> {
             nav.navigate(LOGIN)
         }
-    }
-
-    if (connectionError != null) {
-        Splash()
-        DisconnectionScreen(onRetry = { vm.onReconnect() }, errorMessage = connectionError)
-    } else {
-        if (isLoading) {
-            Splash()
-            MainScreen()
-        } else {
-            Splash()
+        vm.state.onError -> {
+            DisconnectionScreen(
+                onRetry = { vm.fetchDataFromServer() },
+                errorMessage = "Server disconnected"
+            )
         }
     }
 }
@@ -88,10 +63,12 @@ fun MainScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = "Conectado al servidor", style = MaterialTheme.typography.titleLarge)
+        Text(text = "Connecting to server", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(32.dp))
         Box(
-            modifier = Modifier.fillMaxWidth().height(45.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(45.dp),
             contentAlignment = Alignment.BottomCenter
         ) {
             CircularProgressIndicator()
@@ -121,7 +98,9 @@ fun DisconnectionScreen(onRetry: () -> Unit, errorMessage: String? = null) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Box(
-            modifier = Modifier.fillMaxWidth().height(45.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(45.dp),
             contentAlignment = Alignment.BottomCenter
         ) {
             if (isLoading) {
@@ -132,7 +111,7 @@ fun DisconnectionScreen(onRetry: () -> Unit, errorMessage: String? = null) {
                 PrimaryButton(
                     onClick = { onRetry() },
                     icon = Icons.Outlined.Refresh,
-                    text = "Reintentar",
+                    text = "Try again",
                     description = "refresh button"
                 )
             }
