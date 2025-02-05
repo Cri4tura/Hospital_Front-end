@@ -15,10 +15,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.panacea.data.repositories.NurseRepositoryImpl
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.IOException
-import java.net.HttpRetryException
 
 class LoginViewModel(
     private val repository: NurseRepositoryImpl
@@ -82,13 +79,13 @@ class LoginViewModel(
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
                     onAuthenticationResult(true)
-                    state = UiState(isLogged = true, isLoading = false)
+                    state = UiState(onSuccess = true)
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
                     onAuthenticationResult(false)
-                    state = UiState(isLoading = false, onError = true)
+                    state = UiState(onError = true)
                 }
             }
 
@@ -100,7 +97,7 @@ class LoginViewModel(
 
         } else {
             onAuthenticationResult(true)
-            state = UiState(isLogged = true, isLoading = false)
+            state = UiState(onSuccess = true)
         }
     }
 
@@ -129,38 +126,21 @@ class LoginViewModel(
                     try {
                         repository.login(email, password).collect { nurse ->
                             if (nurse != null) {
-                                state = UiState(
-                                    log = "LOGIN SUCCESS!",
-                                    isLoading = false,
-                                    isLogged = true,
-                                    onSuccess = true,
-                                )
+                                state = UiState(onSuccess = true)
                                 _emailError.value = ""
                                 _passwordError.value = ""
 
                             } else {
-                                state = UiState(
-                                    log = "LOGIN NOT SUCCESS!",
-                                    isLoading = false,
-                                    isLogged = false,
-                                    onError = false
-                                )
+                                state = UiState(onError = true)
                                 _emailError.value = " "
                                 _passwordError.value = "Incorrect email or password"
                             }
                         }
-                    } catch (e: HttpRetryException) {
-                        Log.e(TAG, "Error de red: ${e.localizedMessage}")
-//                        state = UiState(onError = true, isLoading = false)
-                        _emailError.value = "Error de conexión. Inténtalo de nuevo."
                     } catch (e: Exception) {
                         Log.e(TAG, "Error msg: ${e.localizedMessage}")
-                        state = UiState(onError = true, isLoading = false)
+                        state = UiState(onError = true)
                         _emailError.value = " "
                         _passwordError.value = e.localizedMessage
-                    } finally {
-                        Log.i(TAG,"FINAL STATE: $state\n" +
-                                "LOGIN ENDED.....")
                     }
                 }
             }
@@ -168,53 +148,51 @@ class LoginViewModel(
     }
 
 
-    private fun validateEmail(email: String): UiValid {
+    private fun validateEmail(email: String): UiInput {
         return when {
             email.isBlank() -> {
                 _emailError.value = "Email cannot be empty"
-                UiValid(false, "Email is empty")
+                UiInput(false, "Email is empty")
             }
 
             !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
                 _emailError.value = "Invalid email format"
-                UiValid(false, "Invalid email format")
+                UiInput(false, "Invalid email format")
             }
 
             else -> {
                 _emailError.value = ""
-                UiValid(true, "")
+                UiInput(true, "")
             }
         }
     }
 
-    private fun validatePassword(password: String): UiValid {
+    private fun validatePassword(password: String): UiInput {
         return when {
             password.isBlank() -> {
                 _passwordError.value = "Password cannot be empty"
-                UiValid(false, "Password is empty")
+                UiInput(false, "Password is empty")
             }
 
             password.length < 4 -> {
                 _passwordError.value = "Password must be at least 4 characters long"
-                UiValid(false, "Password too short")
+                UiInput(false, "Password too short")
             }
 
             else -> {
                 _passwordError.value = ""
-                UiValid(true, "")
+                UiInput(true, "")
             }
         }
     }
 
     data class UiState(
-        val log: String = " ",
         val isLoading: Boolean = false,
-        val isLogged: Boolean = false,
+        val onSuccess: Boolean = false,
         val onError: Boolean = false,
-        val onSuccess: Boolean = false
     )
 
-    data class UiValid(
+    data class UiInput(
         val isValid: Boolean,
         val errorMessage: String
     )

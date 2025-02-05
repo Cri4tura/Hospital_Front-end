@@ -65,21 +65,10 @@ fun HomeView(
     vm: HomeViewModel
 ) {
 
-    // Observa el estado usando collectAsState
-    val state by vm.state.collectAsState()
-    val data by vm.data.collectAsState()
-
-    LaunchedEffect(vm.state) {
-        vm.fetchHomeData()
-        Log.e("HomeView", "Fetching data... ${state}")
-    }
-
-    val context = LocalContext.current
-
     DrawerAppBar(
         nav = nav,
         index = MENU.OPTION_2,
-        userName = "${data.currentUser?.name} ${data.currentUser?.surname}",
+        userName = "${vm.data.currentUser?.name} ${vm.data.currentUser?.surname}",
         pageTitle = {
             Image(
                 painter = painterResource(id = R.drawable.panacea),
@@ -95,7 +84,7 @@ fun HomeView(
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         },
-        userImage = "${vm.data.value.currentUser?.profileImage}",
+        userImage = "${vm.data.currentUser?.profileImage}",
         screenContent = {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -103,18 +92,17 @@ fun HomeView(
             ) {
 
                 when {
-                    state.isLoading -> {
-                        Log.e("HomeView", "Cargando datos... ${state.isLoading}")
+                    vm.state.isLoading -> {
                         CircularProgressIndicator()
                     }
-                    state.onSuccess -> {
+                    vm.state.onSuccess -> {
                         Log.e("HomeView", "Datos cargados exitosamente")
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
                         ) {
-                            items(data.nurseList) { nurse ->
+                            items(vm.data.nurseList) { nurse ->
 
                                 var isFavorite by remember { mutableStateOf(false) }
 
@@ -203,11 +191,6 @@ fun HomeView(
                                 }
                             }
                         }
-                    }
-                    state.onError -> {
-                        Log.e("HomeView", "Error al cargar datos")
-                        // Mostrar mensaje de error
-                        Text("Ocurrió un error")
                     }
                 }
             }

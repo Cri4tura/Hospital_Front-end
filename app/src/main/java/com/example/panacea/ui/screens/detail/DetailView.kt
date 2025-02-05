@@ -62,7 +62,7 @@ fun DetailView(
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    vm.state.nurse?.let {
+                    vm.data.nurse?.let {
                         Spacer(modifier = Modifier.weight(0.25f))
                         NurseExtendedItem(
                             nurse = it

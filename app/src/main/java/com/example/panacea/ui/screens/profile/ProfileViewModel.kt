@@ -29,7 +29,7 @@ class ProfileViewModel(
     init {
         viewModelScope.launch {
             state = UiState(isLoading = true)
-            data = UiData(repository.getCurrentNurse())
+            data = UiData(repository.getCurrentUser())
             state = UiState(isLoading = false)
         }
     }
@@ -38,7 +38,7 @@ class ProfileViewModel(
         viewModelScope.launch {
             state = UiState(isLoading = true)
             repository.deleteNurse(userId).collect {
-                state = state.copy(isLoading = false, isDeleted = true)
+                state = state.copy(isDeleted = true)
             }
         }
     }
@@ -48,7 +48,7 @@ class ProfileViewModel(
             state = UiState(isLoading = true)
             repository.updateNurse(updateData).collect{
                 data = UiData(updateData)
-                state = state.copy(isLoading = false, isUpdated = true)
+                state = state.copy(isUpdated = true)
             }
         }
     }

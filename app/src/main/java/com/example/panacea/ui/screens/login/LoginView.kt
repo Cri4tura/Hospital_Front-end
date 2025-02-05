@@ -46,16 +46,15 @@ fun LoginView(
     var password by remember { mutableStateOf("1234") }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // Verificar el estado de inicio de sesión y la conexión
-    LaunchedEffect(vm.state.isLogged) {
-        if (vm.state.isLogged) {
-            onLogIn() // Si está logueado, ejecutar onLogIn
+    LaunchedEffect(vm.state.onSuccess) {
+        if (vm.state.onSuccess) {
+            onLogIn()
         }
     }
 
     LaunchedEffect(vm.state.onError && !vm.state.isLoading) {
         if (vm.state.onError) {
-            onConectionError() // Si hay un error, llamar onConectionError
+            onConectionError()
         }
     }
 
@@ -76,7 +75,6 @@ fun LoginView(
                 )
             }
         }
-
 
         Column(horizontalAlignment = Alignment.CenterHorizontally)
         {
@@ -113,7 +111,7 @@ fun LoginView(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 description = "Log In Button",
-                enabled = true,
+                enabled = !vm.state.isLoading,
                 icon = null
             )
 
@@ -149,7 +147,7 @@ fun LoginView(
                 icon = null,
                 text = stringResource(R.string.sign_in_button_text),
                 description = "Sign In Button",
-                enabled = true
+                enabled = !vm.state.isLoading
             )
 
             Spacer(modifier = Modifier.height(32.dp))
